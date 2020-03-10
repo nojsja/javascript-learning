@@ -1,0 +1,340 @@
+{% extends "template.htm" %}
+{% block needCss%}
+<!--<link href="css/hom.style.css" rel="stylesheet">-->
+{% endblock %}
+{%block body%}
+<div class="dt_center_a">
+  <div class="dt_homeym_sh_a flex-modal-body">
+    <!-- 左侧 -->
+    <div class="dt_homeym_left_box">
+      <div class="dt_homeym_area" style="height: 19%; position: relative; padding: 5px;">
+        <div class="dt_homeym_area_title">{{ homeLang.storage_space }}</div>
+        <div class="flex-modal-body" style="width: 100%; align-items: center;">
+          <div id="storagePie" style="width: 65%; height: 100%;"></div>
+          <div id="storageLegend" class="sy_legend_box"></div>
+        </div>
+      </div>
+      <div style="width: 100%; height: 1%;"></div>
+      <div class="flex-modal-body dt_homeym_area js-node-box" style="height: 19%; position: relative; align-items: center;">
+        <div class="dt_homeym_area_title">{{ homeLang.node }}</div>
+        <div class="center" style="width: 50%; margin: auto;">
+          <div class="js-node-total" style="font-size: 1.5rem; font-weight: bold; color: #2C82BE;"></div>
+          <div style="padding-top: 5px;">{{ homeLang.node }}</div>
+        </div>
+        <div class="sy_center_border"></div>
+        <div class="js-node-sort" style="width: 35%; line-height: 1.5; margin: auto;">
+          <div><span style="display: inline-block;"><b class="js-node-on sy_bold" style="color: #04965A;"></b>&nbsp;{{ homeLang.open }}</span></div>
+          <div><span class="js-node-off-box" style="display: inline-block;"><b class="js-node-off sy_bold" style="color: #E31100;"></b>&nbsp;{{ homeLang.close }}</span></div>
+        </div>
+      </div>
+      <div style="width: 100%; height: 1%;"></div>
+      <div class="flex-modal-body dt_homeym_area" style="height: 17%; position: relative; align-items: center;">
+        <div class="dt_homeym_area_title">{{ homeLang.disk }}</div>
+        <div class="center" style="width: 50%; margin: auto;">
+          <div class="js-disk-total" style="font-size: 1.5rem; font-weight: bold; color: #2C82BE;"></div>
+          <div style="padding-top: 5px;">{{ homeLang.disk }}</div>
+        </div>
+        <div class="sy_center_border"></div>
+        <div style="width: 35%; line-height: 1.5; margin: auto;">
+          <div><span><b class="js-disk-health sy_bold" style="color: #04965A;"></b>&nbsp;{{ homeLang.health }}</span></div>
+          <div><a href="/alarm" class="js-disk-unhealth-box" style="color: #333;"><b class="js-disk-unhealth sy_bold" style="color: #E31100;"></b>&nbsp;{{ homeLang.unhealth }}</a></div>
+        </div>
+      </div>
+      <div style="width: 100%; height: 1%;"></div>
+      <div class="dt_homeym_area" style="height: 42%;">
+        <div id="broadbandStatis" style="width: 100%; height: 100%; margin: auto;"></div>
+      </div>
+    </div>
+    <!-- 中间内容 -->
+    <div class="dt_homeym_center_box">
+      <div class="dt_homeym_area" style="height: 57%;">
+        <div class="sy_bold">{{ homeLang.load_status }}</div>
+        <div class="load_box"></div>
+      </div>
+      <div style="width: 100%; height: 1%;"></div>
+      <div class="dt_homeym_area" style="height: 42%;">
+        <div id="iopsStatis" style="width: 100%; height: 100%; margin: auto;"></div>
+      </div>
+    </div>
+    <!-- 右侧 -->
+    <div class="dt_homeym_right_box">
+      <div class="dt_homeym_area js-health-box" style="height: 21%; position: relative;">
+        <div class="dt_homeym_area_title">{{ homeLang.cluster_health_status }}</div>
+        <div class="flex-modal-body" style="align-items: center;">
+          <div class="health_text_box">
+            <a href="/alarm" class="js-health-status warn" style="color: #F5A623;">
+              <span class="js-warn-count" style="font-size: 24px;"></span>{{ homeLang.b_level_fault }}
+            </a>
+          </div>
+          <div class="health_img_box"></div>
+          <div class="health_text_box">
+            <a href="/alarm" class="js-health-status error" style="color: #E31100;">
+              <span class="js-error-count" style="font-size: 24px;"></span>{{ homeLang.a_level_fault }}
+            </a>
+          </div>
+        </div>
+      </div>
+      <div style="width: 100%; height: 1%;"></div>
+      <div class="dt_homeym_area js-data-status" style="height: 35%;">
+        <div class="sy_bold">{{ homeLang.data_status }}</div>
+        <div class="flex-modal-body" style="width: 100%; height: 70%; align-items: center;">
+          <div id="dataStatusPie" style="width: 74%; height: 100%;"></div>
+          <div id="dataStatusLegend" class="sy_legend_box" style="width: 26%;"></div>
+        </div>
+        <div class="js-tips">
+        </div>
+      </div>
+      <div style="width: 100%; height: 1%;"></div>
+      <div class="dt_homeym_area" style="height: 42%; padding: 0;">
+        <div class="sy_bold" style="padding: 10px 0 8px 10px;">{{ homeLang.monthly_health_status }}</div>
+        <div class="status" style="font-size: 16px; padding: 0 10px 10px;">
+          <a href="javascript:;" class="time" style="color: #2C82BE;">
+            <i title="{{ homeLang.last_month }}" class="js-prev fa fa-angle-left" data-type="prev"></i>
+            <span id="curDate"></span>
+            <i title="{{ homeLang.next_month }}" class="js-next fa fa-angle-right" data-type="next"></i>
+          </a>
+          <ul class="list-inline pull-right" style="font-size: 14px;">
+            <li class="item"><i class="legend_icon" style="background-color: #04965A;"></i>{{ homeLang.d_level_fault }}</li>
+            <li class="item"><i class="legend_icon" style="background-color: #D0021B;"></i>{{ homeLang.a_level_fault }}</li>
+            <li class="item"><i class="legend_icon" style="background-color: #F5A623;"></i>{{ homeLang.b_level_fault }}</li>
+          </ul>
+        </div>
+        <div>
+          <ul class="week_head">
+            <li>{{ homeLang.sunday }}</li>
+            <li>{{ homeLang.monday }}</li>
+            <li>{{ homeLang.tuesday }}</li>
+            <li>{{ homeLang.wednesday }}</li>
+            <li>{{ homeLang.thursday }}</li>
+            <li>{{ homeLang.friday }}</li>
+            <li>{{ homeLang.saturday }}</li>
+          </ul>
+          <ul class="week_body list-inline" style="height: 60%; margin-left: 0; margin-bottom: 0; font-size: 16px; color: #949494;"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+	<!--告警详细信息-->
+	<!-- <div id="smart" class="popover box-shadow js-popver-smart"  style="width:500px;max-width:500px;  background-color: #2d2d2d;">
+		<div class="arrow" style="top: 50%;"></div>
+		<h3 class="popover-title" style="font-weight: bold;margin:20px 0px 0px 0px;font-size:16px;">{{homeLang.alert_detail}}</h3>
+		<div class="popover-content">
+			<div class="dt_dtable_head well well-sm"  style="padding: 0px;">
+				<table class="table table-smart table-condensed" style="margin-bottom: 18px;padding: 0px;">
+					<thead>
+					<tr>
+						<th>{{homeLang.opt_time}}</th>
+						<th>{{homeLang.opt_module}}</th>
+						<th>{{homeLang.opt_detail}}</th>
+					</tr>
+					</thead>
+				</table>
+			</div>
+			<div class="dt_dtable_body well well-sm" style="max-height:300px;overflow:auto;padding: 0px;">
+				<table class="table main table-condensed table-smart">
+					<tbody>
+
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div> -->
+  <div id="smart" class="js-popver-smart"  style="width: 500px; max-width: 500px;">
+		<h3 class="popover-title" style="font-weight: bold;margin:20px 0px 0px 0px;font-size:16px; background-color: #fff;">{{homeLang.alert_detail}}</h3>
+    <div class="popover-content">
+			<div class="dt_dtable_head"  style="padding: 0px;">
+				<table class="table" style="margin-bottom: 18px;padding: 0px;">
+					<thead style="border-bottom: 1px solid #ccc;">
+					<tr>
+						<th>{{homeLang.opt_time}}</th>
+						<th>{{homeLang.opt_module}}</th>
+						<th>{{homeLang.opt_detail}}</th>
+					</tr>
+					</thead>
+				</table>
+			</div>
+			<div class="dt_dtable_body" style="max-height:300px;overflow:auto;padding: 0px;">
+				<table class="table">
+					<tbody>
+
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<!--负载状态扩展信息-->
+	<div id="js-popver-load" class="triangle-sign popver-left" style="min-width:380px;">
+		<!-- <div class="arrow" style="top: 50%;">
+		</div> -->
+		<div class="usage-container flex-modal-body">
+      <div style="width: 55%;">
+        <div class="use-cont">
+  				<span>{{ homeLang.performance }}：</span>
+  			</div>
+  			<div class="use-cont">
+  				<span>{{ homeLang.memory_occupancy_rate }}：</span>
+  				<span class="js-used-memory"></span>
+  			</div>
+  			<div class="use-cont">
+  				<span>{{ homeLang.cpu_occupancy_rate }}：</span>
+  				<span class="js-used-cpu"></span>
+  			</div>
+  			<!-- <div class="use-cont">
+  				<span>{{ homeLang.io_ccupancy_rate }}：</span>
+  				<span class="js-used-io"></span>
+  			</div> -->
+        <div class="use-cont">
+  				<span>{{ homeLang.net_occupancy_rate }}：</span>
+  				<span class="js-used-net"></span>
+  			</div>
+  			<div class="use-cont">
+  				<span>{{ homeLang.disk_ccupancy_rate }}：</span>
+  				<span class="js-used-disk"></span>
+  			</div>
+  			<!-- <div class="use-cont">
+  				<span>{{ homeLang.session }}：</span>
+  				<span class="js-used-sessions"></span>
+  			</div> -->
+  			<div class="use-cont">
+  				<span>{{ homeLang.load_status }}：</span>
+  				<span class="js-used-status"></span>
+  			</div>
+      </div>
+      <div style="width: 45%;">
+        <div class="use-cont">
+  				<span>{{ homeLang.abnormal_service }}：</span>
+  			</div>
+        <div class="js-abnormal-services" style="padding-right: 2px;"></div>
+      </div>
+		</div>
+	</div>
+</div>
+<!-- 关闭节点悬浮框 -->
+<div id="js-popver-nodeoff" class="triangle-sign popver-left" style="min-width: 200px;">
+  <div id="js-off-detail" style="margin: 10px;">
+    <p class="js-off-title"><span></span>{{ homeLang.node_close }}</p>
+      <table class="table table1">
+        <colgroup>
+          <col style="width: auto;" />
+          <col style="width: auto;" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>{{ homeLang.name }}</th>
+            <th>IP</th>
+          </tr>
+        </thead>
+      </table>
+    <div class="js-table-body" style="max-height: 250px; overflow-y: auto;">
+      <table class="table table1">
+        <colgroup>
+          <col style="width: auto;" />
+          <col style="width: auto;" />
+        </colgroup>
+        <tbody>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- 授权即将过期节点悬浮框 -->
+<div id="js-popver-nodeexpire" class="triangle-sign popver-left" style="min-width: 360px;">
+  <div id="js-expire-detail" style="margin: 10px;">
+    <p class="js-expire-title"><span></span>{{ homeLang.node_expire }}</p>
+    <table class="table table1">
+      <colgroup>
+        <col style="width: auto;" />
+        <col style="width: 120px;" />
+        <col style="width: 120px;" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th>{{ homeLang.name }}</th>
+          <th>IP</th>
+          <th>{{ homeLang.remain_days }}</th>
+        </tr>
+      </thead>
+    </table>
+    <div style="max-height: 300px; overflow-y: auto;">
+      <table class="table table1">
+        <colgroup>
+          <col style="width: auto;" />
+          <col style="width: 120px;" />
+          <col style="width: 120px;" />
+        </colgroup>
+        <tbody>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- 磁盘不健康悬浮框 -->
+<div id="js-popver-disk-unhealth" class="triangle-sign popver-left" style="min-width: 270px;">
+  <div id="js-unhealth-detail" style="margin: 10px;">
+    <p class="js-unhealth-title"><span></span>{{ homeLang.disk_not_healthy }}</p>
+    <table class="table table1">
+      <colgroup>
+        <col style="width: auto;" />
+        <col style="width: 130px;" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th>{{ homeLang.name }}</th>
+          <th>{{ homeLang.device_path }}</th>
+        </tr>
+      </thead>
+    </table>
+    <div style="max-height: 300px; overflow-y: auto;">
+      <table class="table table1">
+        <colgroup>
+          <col style="width: auto;" />
+          <col style="width: 130px;" />
+        </colgroup>
+        <tbody>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- 实时健康状态告警或错误信息 -->
+<div id="js-popver-health-status" style="min-width: 460px;">
+  <div id="js-state-warn-detail" style="margin: 10px;">
+    <p class="js-status-title"></p>
+    <table class="table table1">
+      <colgroup>
+        <col style="width: 80px;" />
+        <col style="width: 220px;" />
+        <col style="width: 150px;" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th>{{ homeLang.position }}</th>
+          <th>{{ homeLang.details }}</th>
+          <th>{{ homeLang.opt_time }}</th>
+        </tr>
+      </thead>
+    </table>
+    <div style="max-height: 300px; overflow-y: auto;">
+      <table class="table table1">
+        <colgroup>
+          <col style="width: 80px;" />
+          <col style="width: 220px;" />
+          <col style="width: 150px;" />
+        </colgroup>
+        <tbody>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{%endblock%}
+{% block needjs %}
+
+<script type="text/javascript" src="js/lib/dist/echarts.js"></script>
+<!--<script src="js/pages/sthome.js"></script>-->
+<script src="js/pages/home.js"></script>
+{% endblock %}

@@ -1,0 +1,4 @@
+**/.vscode/
+**/.atom/
+**/node_modules/
+/frontend-build/frontend-version-package/.git/

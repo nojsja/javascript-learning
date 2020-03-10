@@ -1,0 +1,337 @@
+{% extends 'two-float-layout.htm' %}
+{% block needcss %}
+<style type="text/css">
+	body {
+	}
+</style>
+{% endblock %}
+{% block leftnav%}
+<ul class="v-menu subdown min-size-required box-shadow" style="width:100%;max-width:100%;">
+	<li {% if cursubmenu == 'alarmlist' %}class="active"{%endif%}><a href="alarm">{{ alarmLang.alarm_detail_info }}</a></li>
+	<li {% if cursubmenu == 'historyalarm' %}class="active"{%endif%}><a href="historyalarm">{{ alarmLang.alarm_history }}</a></li>
+    <li {% if cursubmenu == 'alarmsetting' %}class="active"{%endif%}><a href="alarmsetting">{{ alarmLang.alarm_settings }}</a></li>
+</ul>
+{%endblock%}
+{% block rightcontent %}
+<div class="bs-docs-grid" style="padding-bottom:25px;">
+    <div class="row show-grid grid js-masonry">
+      	<div class="col-xs-12 col-md-5 col-lg-6  box-shadow grid-item grid-item-style smtp-content">
+			<div class="basic_content">
+				<div class="share_header" style="padding-bottom: 0px;">
+					<img src="css/image/smtp.png" style="width:43px;margin-bottom:12px;">
+					<span>{{ alarmLang.smtp_settings }}</span>
+					<a href="javascript:;" title="{{ alarmLang.send_test_email }}" class="fl-rt hidden js-send-testemail" data-toggle="modal" data-target="#sendTestEmailModal" style="margin-right:25px;margin-top:5px;">
+  						<!--<img src="css/image/send.png" style="width:25px;">-->
+						<span class="glyphicon glyphicon-envelope"></span>
+  					</a>
+  					<!--<a href="javascript:;" title="{{ alarmLang.save }}" class="fl-rt hidden js-save-smtpconf" data-toggle="modal" data-target="#saveSmtpConfModal" style="margin-right:15px;">-->
+  						<!--&lt;!&ndash;<img src="css/image/save.png" style="width:25px;">&ndash;&gt;-->
+						<!--<span class="	glyphicon glyphicon-check"></span>-->
+  					<!--</a>-->
+				</div>
+				<div class="basic_cont_row">
+	  				<div class="col-lg-2 c_left basic_name basic-lg-2">
+	  					<span class="c_left">{{ alarmLang.smtp_server }}</span>
+	  				</div>
+	  				<div class="col-lg-8 basic_name_value" title="{{ alarmLang.add_smtp_server }}">
+	  					<input class="none-border-input js-smtp-server" placeholder="{{ alarmLang.add_smtp_server }}">
+	  				</div>
+	  			</div>
+	  			<div class="basic_cont_row">
+	  				<div class="col-lg-2 c_left basic_name basic-lg-2">
+	  					<span class="c_left">{{ alarmLang.useremail }}</span>
+	  				</div>
+	  				<div class="col-lg-8 basic_name_value" title="{{ alarmLang.add_useremail }}">
+	  					<input class="none-border-input js-send-useremail" placeholder="{{ alarmLang.add_useremail }}">
+	  				</div>
+	  			</div>
+	  			<div class="basic_cont_row">
+	  				<div class="col-lg-2 c_left basic_name basic-lg-2">
+	  					<span class="c_left">{{ alarmLang.passwd }}</span>
+	  				</div>
+	  				<div class="col-lg-8 basic_name_value" title="{{ alarmLang.add_passwd }}">
+	  					<input type="password" class="none-border-input js-send-passwd" placeholder="{{ alarmLang.add_passwd }}">
+	  				</div>
+	  			</div>
+	  			<div class="basic_cont_row">
+	  				<div class="col-lg-2 c_left basic_name basic-lg-2">
+	  					<span class="c_left">{{ alarmLang.port }}</span>
+	  				</div>
+	  				<div class="col-lg-8 basic_name_value" title="{{ alarmLang.add_port }}">
+	  					<input class="none-border-input js-port" placeholder="{{ alarmLang.add_port }}">
+	  				</div>
+	  			</div>
+	  			<div class="basic_cont_row">
+	  				<div class="col-lg-2 c_left basic_name basic-lg-2">
+	  					<span class="c_left">{{ alarmLang.email_subject }}</span>
+	  				</div>
+	  				<div class="col-lg-8 basic_name_value" title="{{ alarmLang.add_email_subject }}" style="min-width:250px;">
+	  					<input class="none-border-input js-email-subject" placeholder="{{ alarmLang.add_email_subject }}">
+	  				</div>
+	  			</div>
+			</div>
+    	</div>
+    	<div class="col-xs-12 col-md-5 col-lg-6  box-shadow grid-item grid-item-style snmp-content">
+			<div class="basic_content">
+				<div class="share_header" style="padding-bottom: 0px;">
+					<img src="css/image/snmp.png" style="width:43px;margin-bottom:12px;">
+					<span>{{ alarmLang.snmp_settings }}</span>
+				</div>
+				<div class="basic_cont_row">
+	  				<div class="col-lg-2 c_left basic_name basic-lg-2">
+	  					<span class="c_left">{{ alarmLang.server }}</span>
+	  				</div>
+	  				<div class="col-lg-8 basic_name_value">
+	  					<input class="none-border-input js-nms-ip" placeholder="{{ alarmLang.add_server_ip }}">
+	  				</div>
+	  			</div>
+	  			<div class="basic_cont_row">
+	  				<div class="col-lg-2 c_left basic_name basic-lg-2">
+	  					<span class="c_left">{{ alarmLang.msg_id }}</span>
+	  				</div>
+	  				<div class="col-lg-8 basic_name_value">
+	  					<input class="none-border-input js-msg-oid" placeholder="{{ alarmLang.add_msg_id }}" disabled="disabled">
+	  				</div>
+	  			</div>
+	  			<div class="basic_cont_row">
+	  				<div class="col-lg-8 c_left basic_name basic-lg-8">
+	  					<a href="javascript:;" class="js-test-snmp">
+	  						<span>{{ alarmLang.test }}</span>
+	  					</a>
+	  					<!--<a href="javascript:;" class="js-save-snmp-setting">-->
+	  						<!--<span>{{ alarmLang.save }}</span>-->
+	  					<!--</a>-->
+	  				</div>
+	  			</div>
+			</div>
+    	</div>
+    	<div class="col-xs-12 col-md-5 col-lg-6  box-shadow grid-item grid-item-style alarm-act-content">
+			<div class="basic_content">
+				<div class="share_header" style="padding-bottom: 0px;">
+					<img src="css/image/alarm_operation.png" style="width:43px;margin-bottom:12px;">
+					<span>{{ alarmLang.alarm_act }}</span>
+				</div>
+				<div class="basic_cont_row">
+	  				<div class="col-lg-2 c_left basic_name basic-lg-2">
+	  					<span class="c_left">{{ alarmLang.email_alarm }}</span>
+	  				</div>
+	  				<div class="col-lg-8 basic_name_value">
+	  					<span class="js-emailalarm-status"></span>
+	  					<span class="js-alarm hidden">
+		  					<a href="javascript:;" class="js-start-emailalarm" title="{{ alarmLang.start_alarm }}" data-value="1">
+		  						<span class="glyphicon glyphicon-play alarm-img"></span>
+		  					</a>
+		  					<a href="javascript:;" class="js-pause-emailalarm" title="{{ alarmLang.pause_alarm }}" data-value="0">
+		  						<span class="glyphicon glyphicon-pause alarm-img"></span>
+		  					</a>
+		  				</span>
+	  				</div>
+	  			</div>
+	  			<div class="basic_cont_row">
+	  				<div class="col-lg-2 c_left basic_name basic-lg-2">
+	  					<span class="c_left">{{ alarmLang.snmp_alarm }}</span>
+	  				</div>
+	  				<div class="col-lg-8 basic_name_value">
+	  					<span class="js-snmpalarm-status"></span>
+	  					<span class="js-alarm hidden">
+		  					<a href="javascript:;" class="js-start-snmpalarm" title="{{ alarmLang.start_alarm }}" data-value="1">
+								<span class="glyphicon glyphicon-play alarm-img"></span>
+		  					</a>
+		  					<a href="javascript:;" class="js-pause-snmpalarm" title="{{ alarmLang.pause_alarm }}" data-value="0">
+								<span class="glyphicon glyphicon-pause alarm-img"></span>
+		  					</a>
+		  				</span>
+	  				</div>
+	  			</div>
+	  			<!-- <div class="basic_cont_row">
+	  				<div class="col-lg-2 c_left basic_name basic-lg-2">
+	  					<span class="c_left">{{ alarmLang.recipient_mailbox }}</span>
+	  				</div>
+	  				<div class="col-lg-8 basic_name_value">
+	  					<input class="none-border-input js-add-recipemail" placeholder="{{ alarmLang.enter_add_recipient_mailbox }}">
+	  				</div>
+	  			</div>
+	  			<div class="basic_cont_row">
+	  				<div class="col-lg-2 c_left basic_name basic-lg-2">
+	  				</div>
+	  				<div class="col-lg-8 basic_name_value">
+	  					<section>
+	  						<ul class="tabs-email" id="emaillist">
+
+	  						</ul>
+	  					</section>
+	  				</div>
+	  			</div> -->
+			</div>
+    	</div>
+		<div class="col-xs-12 col-md-5 col-lg-6  box-shadow grid-item grid-item-style">
+			<div class="basic_content">
+				<div class="share_header" style="padding-bottom: 0px;">
+					<img src="css/image/alarm_setting.png" style="width:43px;margin-bottom:12px;">
+					<span>{{ alarmLang.alarm_settings }}</span>
+				</div>
+			</div>
+			<div class="basic_content2 ">
+				<div class="basic_content_list">
+					<div class="alarm-mag" style="font-size: 1.4em;">
+						<div class="col-lg-3 basic-lg-3 col-format-row" style="text-align: left;">
+							<span>{{ alarmLang.module }}</span>
+						</div>
+						<div class="col-lg-3 basic-lg-3 col-format-row" style="text-align: left;">
+							<span>{{ alarmLang.status }}</span>
+						</div>
+						<div class="col-lg-3 basic-lg-3 col-format-row" style="text-align: left;">
+							<span>{{ alarmLang.alarm_level }}</span>
+						</div>
+						<div class="col-lg-2 basic-lg-2 col-format-row" style="text-align: left;">
+							<span>{{ alarmLang.operation_cycle }}</span>
+						</div>
+						<div class="col-lg-1 basic-lg-1 col-format-row">
+							<span></span>
+						</div>
+					</div>
+					<div class="basic_content_list alarm-info-list">
+				    </div>
+			    </div>
+		    </div>
+    	</div>
+    </div>
+</div>
+
+<!--发送测试邮件-->	
+<div class="modal fade" id="sendTestEmailModal" tabindex="-1" role="dialog" aria-labelledby="sendTestEmailModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="sendTestEmailModalLabel">{{alarmLang.send_test_email}}</h4>
+      </div>
+      <div class="modal-body">
+		    <form class="form-horizontal" role="form">
+          <div class="form-group">
+            <label for="testemail" class="col-sm-3 control-label">{{ alarmLang.test_email }}</label>
+            <div class="col-sm-8">
+            <input type="text" class="none-border-input" style="height:30px;width:100%;" id="testemail" placeholder="{{alarmLang.input_test_email}}">
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--发送测试邮件-->	
+<div class="modal fade" id="saveSmtpConfModal" tabindex="-1" role="dialog" aria-labelledby="saveSmtpConfModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.save}}</button>
+        <h4 class="modal-title" id="saveSmtpConfModalLabel">{{alarmLang.smtp_settings}}</h4>
+      </div>
+      <div class="modal-body">
+		  <p>{{ alarmLang.confirm_save_smtpconf }}</p> 
+	  </div>
+    </div>
+  </div>
+</div>
+
+<!--邮件告警开启与关闭-->	
+<div class="modal fade" id="setemailAlarmModal" tabindex="-1" role="dialog" aria-labelledby="setemailAlarmModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="setemailAlarmModalLabel">{{alarmLang.email_alarm}}</h4>
+      </div>
+      <div class="modal-body">
+		  <p></p> 
+	  </div>
+    </div>
+  </div>
+</div>
+
+<!--SNMP告警开启与关闭-->	
+<div class="modal fade" id="setSnmpAlarmModal" tabindex="-1" role="dialog" aria-labelledby="setSnmpAlarmModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="setSnmpAlarmModalLabel">{{alarmLang.snmp_alarm}}</h4>
+      </div>
+      <div class="modal-body">
+		  <p></p> 
+	  </div>
+    </div>
+  </div>
+</div>
+
+<!--编辑告警设置信息-->
+<div class="modal fade" id="editAlarmSettingModal" tabindex="-1" role="dialog" aria-labelledby="editAlarmSettingModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="editAlarmSettingModalLabel">{{alarmLang.edit_alarm_settings}}</h4>
+      </div>
+      <div class="modal-body">
+		    <form class="form-horizontal" role="form">
+	          	<div class="form-group">
+	            	<label class="col-sm-3 left control-label">{{ alarmLang.module }}</label>
+		            <div class="col-sm-8">
+		            	<span class="js-module-name" style="line-height:24px;padding-left:4px;"></span>
+		            </div>
+	          	</div>
+	          	<div class="form-group">
+	            	<label class="col-sm-3 left control-label">{{ alarmLang.status }}</label>
+		            <div class="col-sm-8">
+		            	<select  class="none-border-input opt-status-value" style="height:24px;width:100%;" >
+		            		<!--<option value="1">{{ alarmLang.status }}</option>
+		            		 <option value="2">{{ alarmLang.alarm_level }}</option> 
+		            		<option value="3">{{ alarmLang.operation_cycle }}</option>-->
+                            <option value="enable">enable</option>
+                            <option value="disable">disable</option>
+		            	</select>
+		            </div>
+	          	</div>
+	          	<div class="form-group">
+	            	<label class="col-sm-3 left control-label">{{ alarmLang.operation_cycle }}</label>
+		            <div class="col-sm-8">
+		            	<!--<select class="none-border-input opt-status-value" style="height:24px;width:100%;" >
+		            		<option value="enable">enable</option>
+		            		<option value="disable">disable</option>
+		            	</select>-->
+		            	<!-- <select class="none-border-input opt-level-value hidden" style="height:24px;width:100%;" >
+		            		<option value="INFO">INFO</option>
+		            		<option value="NOTICE">NOTICE</option>
+		            		<option value="WARNING">WARNING</option>
+		            		<option value="FATAL">FATAL</option>
+		            	</select> -->
+		            	<input class="none-border-input opt-scheduletime-value" placeholder="{{ alarmLang.input_operation_cycle }}" style="height:24px;padding-left: 4px;width:92%;" />
+		            	<span class="scheduletime-unit">s</span>
+		            </div>
+	          	</div>
+	        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block needjs %}
+    <script src="js/lib/twbsPagination/jquery.twbsPagination.min.js"></script>
+	<script type="text/javascript" src="js/lib/masonry.pkgd.min.js"></script>
+    <script src="js/pages/alarmsetting.js"></script>
+    <script type="text/javascript">
+	    $(function (ev) {
+			$('.grid').masonry({
+				itemSelector: '.grid-item',
+				columnWidth: '.col-lg-6',
+				percentPosition: true
+			});	
+		})
+	</script>
+{% endblock %}

@@ -1,0 +1,210 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+      <meta charset="utf-8">
+    	<meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="">
+      <meta name="author" content="">
+    	<title>{{ publicLang.product["title"] }}</title>
+    </head>
+    <link rel="Shortcut Icon" href="css/image/favicon.ico">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/docs.min.css">
+    <link href="css/metro.min.css" rel="stylesheet">
+    <link href="css/metro-icons.min.css" rel="stylesheet">
+    <link href="css/datatom.style.css" rel="stylesheet">
+{% block css %}
+{% endblock %}
+{% block needcss %}
+{% endblock %}
+<body>
+	{%block topnav %}
+
+	<!--导航条-->
+  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="height: 48px;min-width:768px;">
+    <div style="width:95%;height:100%;margin-left: auto;margin-right: auto;">
+      <div class="navbar-header">
+      <img style="margin-left:-10px;" src="css/image/infinity.png" alt="INFINITY" title="INFINITY">
+      </div>
+
+      <div style="min-width:750px;margin-top: 3px;">
+      <div id="navbar" class="collapse navbar-collapse dt_lgsy_tip_b dt_infinity_bar">
+
+        <ul class="nav navbar-nav navbar-right" style="background-color: #222222">
+          <ul class="nav navbar-nav">
+          {% for key, nav in adminnav %}
+            {% if nav['name'] == current_nav %}
+              <li class="active">
+                <a href="javascript:;">{{publicLang.nav_title[nav['name']]}}
+                  {% if nav['subs']|length > 0 %}
+                  <b class="caret"></b>
+                  {% endif %}
+                </a>
+                {% if nav['subs']|length > 0 %}
+                <ul class="dropdown-menu" style="right:-56px;">
+                  {% for sub in nav['subs'] %}
+                    {% if sub == 'guide' %}
+                  <li class="js-capacity-conf"><a href="#" data-toggle="modal" data-target="#capacityModal">{{publicLang.nav_title[sub]}}</a></li>
+                    <!--<li class="js-wizard-conf"><a href="#">{{publicLang.nav_title[sub]}}</a></li>-->
+                    <!--{% elseif sub == 'capacity' %}-->
+                    <!--<li class="js-capacity-conf"><a href="#" data-toggle="modal" data-target="#capacityModal">{{publicLang.nav_title[sub]}}</a></li>-->
+                    {% elseif sub == 'shutdown' %}
+                    <!-- <li class="js-shutdown-conf"><a href="#" data-toggle="modal" data-target="#clusterShutdownModal">{{publicLang.nav_title[sub]}}</a></li> -->
+                    {% else %}
+                    <li><a href="{{sub}}">{{publicLang.nav_title[sub]}}</a></li>
+                    {% endif %}
+                  {% endfor %}
+                </ul>
+                {% endif %}
+              </li>
+            {% else %}
+              <li>
+                <a href="{{nav['url']}}">{{publicLang.nav_title[nav['name']]}}
+                   {% if nav['subs']|length > 0 %}
+                  <b class="caret"></b>
+                  {% endif %}
+                </a>
+                {% if nav['subs']|length > 0 %}
+                <ul class="dropdown-menu" style="right:-56px;">
+                  {% for sub in nav['subs'] %}
+                    {% if sub == 'guide' %}
+                  <li class="js-capacity-conf"><a href="#" data-toggle="modal" data-target="#capacityModal">{{publicLang.nav_title[sub]}}</a></li>
+                    <!--<li class="js-wizard-conf"><a href="#">{{publicLang.nav_title[sub]}}</a></li>-->
+                    <!--{% elseif sub == 'capacity' %}-->
+                    <!--<li class="js-capacity-conf"><a href="#" data-toggle="modal" data-target="#capacityModal">{{publicLang.nav_title[sub]}}</a></li>-->
+                    {% elseif sub == 'shutdown' %}
+                    <!-- <li class="js-shutdown-conf"><a href="#" data-toggle="modal" data-target="#clusterShutdownModal">{{publicLang.nav_title[sub]}}</a></li> -->
+                    {% else %}
+                    <li><a href="{{sub}}">{{publicLang.nav_title[sub]}}</a></li>
+                    {% endif %}
+                  {% endfor %}
+                </ul>
+                {% endif %}
+              </li>
+            {% endif %}
+          {% endfor %}
+          </ul>
+          <li><a href="javascript:void(0);"><div style="width:1px;height:20px;background-color: white;"></div></a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" title="{{ loginUser['name'] }}">{{ loginUser['name'] }}<b class="caret"></b></a>
+            <ul class="dropdown-menu" style="font-size: 14px;right:-56px;">
+              <li><a href="#" data-toggle="modal" data-target="#changPWModal"><span class="glyphicon glyphicon-lock"></span> {{publicLang.modfiy_pwd}}</a></li>
+              <li class="divider"></li>
+              <li><a href="login/logout"><span class="glyphicon glyphicon-log-out"></span>{{publicLang.logout}}</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div>
+	{%endblock%}
+	{% block body %}
+    {% block leftnav %}
+    {% endblock %}
+    {% block rightcon %}
+    {% endblock %}
+	{% endblock %}
+
+  {%block bottomnav %}
+
+    <!--底部-->
+    <nav id="nav_bottom_fixed" class="navbar navbar-default navbar-fixed-bottom dt_lgsy_bs_a" role="navigation">
+      <ul class="nav navbar-nav" style="padding:0;margin:0;position:absolute;">
+        <a href="http://211.144.114.26:9091/" style="float:left;margin-left:20px;color:#6D7A61;">
+          <span class="glyphicon glyphicon-question-sign"></span>&nbsp;help
+        </a>
+        <!--<a href="javascript:;" style="float:left;padding-left:12px;">-->
+          <!--<span style="margin-right:12px;">|</span>-->
+          <!--<span class="mif-envelop">&nbsp;Feedback</span>-->
+        <!--</a>-->
+        <li class="dropdown" style="margin-left:12px;">
+          <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" style="padding:0;background-color:#2D2D2D;">
+            <span style="margin-right:12px;">|</span>
+            <span class="mif-earth"></span>
+            <span>{{ publicLang[langType] }}</span>
+            <span style="margin-left:12px;">|</span>
+          </a>
+          <ul class="dropdown-menu" role="menu" style="right:-56px;min-width:99px;width:99px;">
+            <li class="js-language" lang="zh_CN"><a href="javascript:;">{{ publicLang.zh_cn }}</a></li>
+            <li class="js-language" lang="en_US"><a href="javascript:;">{{ publicLang.en_us }}</a></li>
+            <!--<li class="js-language" lang="zh_TW"><a href="javascript:;">{{ publicLang.zh_tw }}</a></li>-->
+          </ul>
+        </li>
+      </ul>
+      <div>
+        <!--<span>&copy; {{copyright}} -->
+          <!--<a style="color:#7A7A7A;" href="http://www.datatom.com" target="_blank">-->
+            <!--{{ publicLang.product["datatom_name"] }}-->
+          <!--</a>-->
+          <span>&nbsp;&nbsp;{{ publicLang.product["product_name"] }}&nbsp;v{{ version }}
+          </span>
+        </span>
+      </div>
+    </nav>
+    <!-- <section class="alert-message warning loading" style="display: none;">
+      <img src="css/image/loading.gif"/> <span class="fortips"> {{publicLang.loadingajax}}</span>
+    </section> -->
+  {% endblock %}
+
+<!-- 修改邮箱 -->
+
+<!-- 修改密码 -->
+<div class="modal fade" id="changPWModal" tabindex="-1" role="dialog" aria-labelledby="changPWModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:500px;">
+  <div class="modal-content">
+    <div class="modal-header">
+    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+    <button type="button" class="btn btn-sm btn-primary">{{ publicLang.save }}</button>
+    <h4 class="modal-title" id="changPWModalLabel">{{ publicLang.modfiy_pwd }}</h4>
+    </div>
+    <div class="modal-body">
+      <form class="form-horizontal" role="form">
+        <div class="form-group">
+          <label for="old_ipasswd" class="col-sm-3 control-label">{{ publicLang.old_pwd }}</label>
+          <div class="col-sm-7">
+          <input type="password" class="form-control" id="old_ipasswd">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="new_ipasswd" class="col-sm-3 control-label">{{ publicLang.new_pwd }}</label>
+          <div class="col-sm-7">
+          <input type="password" class="form-control" id="new_ipasswd">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="newa_ipasswd" class="col-sm-3 control-label">{{ publicLang.confirm_pwd }}</label>
+          <div class="col-sm-7">
+          <input type="password" class="form-control" id="newa_ipasswd">
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  </div>
+</div>
+{% include 'wizard.htm' %}
+{% include 'capacity.htm' %}
+<!-- 需要加载不同的资源js -->
+  <script src="js/lang/{{ langType }}.js"></script>
+  <script src="js/lib/jquery-2.1.4.min.js"></script>
+  <script src="js/lib/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/lib/moment.min.js"></script>
+  <script src="js/lib/jquery.cookie.js"></script>
+  <script type="text/javascript" src="js/lib/jquery.rotate.min.js"></script>
+  <script src="js/common/common.js"></script>
+  <script src="js/pages/public.js"></script>
+  <script src="js/lib/libs.nojsja.js"></script>
+  <script src="js/lib/tableloading.js"></script>
+  <script type="text/javascript" src="js/pages/wizard.js"></script>
+  <script type="text/javascript" src="js/pages/capacity.js"></script>
+  <script type="text/javascript">
+  </script>
+
+{% block needjs %}
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}
+</html>

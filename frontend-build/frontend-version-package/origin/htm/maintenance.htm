@@ -1,0 +1,424 @@
+{% extends 'one-float-layout.htm' %}
+
+{% block rightcontent %}
+
+<div class="bs-docs-grid">
+	<div class="row show-grid grid js-masonry">
+		<div class="col-xs-12 col-md-12 col-lg-12 box-shadow maintenance" style="min-height: 520px;">
+			<div class="basic_header clearfix" style="display: flex; justify-content: space-between">
+        <span style="width: 50%; display: flex; align-items: center">
+          <a style="color:#3dbcf3; font-size: 1.3rem;"><span class="glyphicon glyphicon-object-align-bottom"></span></a>
+          <span style="font-size: 1.1rem">{{ maintenanceLang.maintenance_setting }}</span>
+
+        </span>
+        <span style="width: 50%" class="maintenance_header">
+          <span>
+            <label style="margin-bottom: 0; margin-right: 5px;font-size: 1rem; font-weight: normal">{{maintenanceLang.data_migration}}</label>
+
+            <div class="switch-wrapper" id="dataMigraSwitch">
+              <div class="switch-slider"></div>
+            </div>
+
+          </span>
+          <span>
+            <div class="btn-group">
+              <a href="#" style="color: #4795f1; margin: 0; border: solid 1px #7db4f6" class="btn btn-default btn-sm m-cluster-maintenance">{{maintenanceLang.cluster_maintenance}}</a>
+              <a href="#" style="color: #4795f1; margin: 0; border: solid 1px #7db4f6; border-left: 0" class="btn btn-default btn-sm m-cluster-start">{{maintenanceLang.cluster_start}}</a>
+            </div>
+            <!-- <lable class="m-cluster-maintenance">{{maintenanceLang.cluster_maintenance}}</lable>
+            <lable class="m-cluster-start">{{maintenanceLang.cluster_start}}</lable> -->
+          </span>
+          <span>
+            <a href="#" style="color: #f5685b; margin: 0; border: solid 1px #f48f86" class="btn btn-default btn-sm m-close-cluster">{{maintenanceLang.close_cluster}}</a>
+            <!-- <label class="m-close-cluster" >{{maintenanceLang.close_cluster}}</label> -->
+          </span>
+        </span>
+
+			</div>
+			<div class="basic_content_list m-nodelist-header">
+				<table class="table" style="width: 95%; margin: 0 auto; position: relative; left: 1%;">
+					<thead style="background-color: #fafafa">
+						<tr>
+							<th >{{maintenanceLang.node}}</th>
+              <th >{{maintenanceLang.node_ip}}</th>
+							<th >{{maintenanceLang.node_status}}
+                <span id="maintainRefresh" style=" color: #47bdf0;font-size: .8rem" class="glyphicon glyphicon-refresh" title="{{maintenanceLang.refresh}}"></span>
+              </th>
+							<th >{{maintenanceLang.maintenance_op}}</th>
+						</tr>
+					</thead>
+					<tbody id="mNodeList">
+
+            <!-- <tr>
+              <td>node1</td>
+              <td>10.0.6.231</td>
+              <td>{{maintenanceLang.node_service_normal}}</td>
+              <td class="m-nodelist-op">
+                <span class="close-service">{{maintenanceLang.node_close_service}}</span>
+                <span class="start-service">{{maintenanceLang.node_start_service}}</span>
+                <span class="node-reboot">{{maintenanceLang.node_reboot}}</span>
+                <span class="node-shutdown">{{maintenanceLang.node_shutdown}}</span>
+              </td>
+            </tr> -->
+
+					</tbody>
+				</table>
+			</div>
+      <p class="data-migration-tips hidden">{{maintenanceLang.data_migration_tips}}</p>
+		</div>
+	</div>
+</div>
+
+<!--集群开启维护模式-->
+<div class="modal fade" id="cluserMaintenanceModal" tabindex="-1" role="dialog" aria-labelledby="cluserMaintenanceModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-danger">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="cluserMaintenanceModalLabel">{{ maintenanceLang.cluster_start }}</h4>
+      </div>
+      <div class="modal-body flex-modal-body">
+		  <form class="form-horizontal col-sm-12" role="form">
+			  <div class="form-group">
+          <div class="col-sm-7 control-label left cluster-sh">{{ maintenanceLang.shutdown1 }}</div>
+				  <div class="col-sm-7 control-label left cluster-st">{{ maintenanceLang.startup1 }}</div>
+				  <div class="col-sm-3 control-label left">
+				  </div>
+				  <span class="col-sm-2 control-label step step1"></span>
+			  </div>
+			  <div class="form-group">
+				  <div class="col-sm-7 control-label left cluster-sh">{{ maintenanceLang.shutdown2 }}</div>
+          <div class="col-sm-7 control-label left cluster-st">{{ maintenanceLang.startup2 }}</div>
+
+				  <div class="col-sm-3 control-label left">
+
+				  </div>
+				  <span class="col-sm-2 control-label step step2"></span>
+			  </div>
+			  <div class="form-group">
+				  <div class="col-sm-7 control-label left cluster-sh">{{ maintenanceLang.shutdown3 }}</div>
+          <div class="col-sm-7 control-label left cluster-st">{{ maintenanceLang.startup3 }}</div>
+
+				  <div class="col-sm-3 control-label left">
+
+				  </div>
+				  <span class="col-sm-2 control-label step step3"></span>
+			  </div>
+			  <div class="form-group">
+				  <div class="col-sm-7 control-label left cluster-sh">{{ maintenanceLang.shutdown4 }}</div>
+          <div class="col-sm-7 control-label left cluster-st">{{ maintenanceLang.startup4 }}</div>
+
+				  <div class="col-sm-3 control-label left">
+
+				  </div>
+				  <span class="col-sm-2 control-label step step4"></span>
+			  </div>
+			  <div class="form-group">
+				  <div class="col-sm-7 control-label left cluster-sh">{{ maintenanceLang.shutdown5 }}</div>
+          <div class="col-sm-7 control-label left cluster-st">{{ maintenanceLang.startup5 }}</div>
+
+				  <div class="col-sm-3 control-label left">
+
+				  </div>
+				  <span class="col-sm-2 control-label step step5"></span>
+			  </div>
+		  </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--关机-->
+<div class="modal fade" id="nodeShutdownModal" tabindex="-1" role="dialog" aria-labelledby="nodeShutdownModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-danger">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="nodeShutdownModalLabel">{{maintenanceLang.node_shutdown}}</h4>
+      </div>
+      <div class="modal-body flex-modal-body">
+        <form class="form-horizontal col-sm-12" role="form">
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown1}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step1"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown2}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step2"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown3}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step3"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown4}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step4"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown5}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step5"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown6}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step6"></span>
+          </div>
+        </form>
+
+        <!-- <div class="modal-ip" style="position: absolute;width: 100%; bottom: 0; left: 0; text-align: center; color: grey">10.0.6.231</div> -->
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--重启-->
+<div class="modal fade" id="nodeRebootModal" tabindex="-1" role="dialog" aria-labelledby="rebootModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-danger">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="rebootModalLabel">{{maintenanceLang.node_reboot}}</h4>
+      </div>
+      <div class="modal-body flex-modal-body">
+        <form class="form-horizontal col-sm-12" role="form">
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown1}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step1"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown2}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step2"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown3}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step3"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown4}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step4"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown5}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step5"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown7}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step6"></span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--禁止节点关闭服务-->
+<div class="modal fade" id="nodeCloseServiceBanModal" tabindex="-1" role="dialog" aria-labelledby="nodeShutdownBanModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <h4 class="modal-title" id="nodeCloseServiceModalLabel">{{maintenanceLang.node_close_service}}</h4>
+      </div>
+      <div class="modal-body" style="width: 100%; min-height: 10rem">
+        <div style="color: #dd1238; margin-top: 1rem;text-align: center; font-size: 1.0rem" class="tips"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 节点关闭服务 -->
+<div class="modal fade" id="nodeCloseServiceModal" tabindex="-1" role="dialog" aria-labelledby="nodeCloseServiceModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-danger">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="nodeCloseServiceModalLabel">{{maintenanceLang.node_close_service}}</h4>
+      </div>
+      <div class="modal-body flex-modal-body" style="position: relative">
+        <form class="form-horizontal col-sm-12" role="form">
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown1}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step1"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown2}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step2"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown3}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step3"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown4}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step4"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown5}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step5"></span>
+          </div>
+          <!-- <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown6}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step6"></span>
+          </div> -->
+        </form>
+
+        <p class="data-migration-tips hidden" style="bottom: -.5rem">{{maintenanceLang.data_migration_tips}}</p>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- 节点开启服务 -->
+<div class="modal fade" id="nodeStartServiceModal" tabindex="-1" role="dialog" aria-labelledby="nodeStartServiceLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-danger">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="nodeStartServiceLabel">{{maintenanceLang.node_start_service}}</h4>
+      </div>
+      <div class="modal-body flex-modal-body">
+        <form class="form-horizontal col-sm-12" role="form">
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.startup1}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step1"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.startup2}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step2"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.startup3}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step3"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.startup4}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step4"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.startup5}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step5"></span>
+          </div>
+          <!-- <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown6}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step6"></span>
+          </div> -->
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--关机-->
+<div class="modal fade" id="nodeShutdownModal" tabindex="-1" role="dialog" aria-labelledby="nodeShutdownModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-danger">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="nodeShutdownModalLabel">{{maintenanceLang.node_close_service}}</h4>
+      </div>
+      <div class="modal-body flex-modal-body">
+        <form class="form-horizontal col-sm-12" role="form">
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown1}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step1"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown2}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step2"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown3}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step3"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown4}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step4"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown5}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step step5"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{maintenanceLang.shutdown6}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step6"></span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %} {% block needjs %}
+<script type="text/javascript" src="js/pages/maintenance.js"></script>
+{% endblock %}

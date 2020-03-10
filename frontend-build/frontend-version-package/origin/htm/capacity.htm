@@ -1,0 +1,377 @@
+<div class="modal fade" id="capacityModal" tabindex="-1" role="dialog" aria-labelledby="capacityModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:1000px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary hidden">{{publicLang.ok}}</button>
+        <button type="button" class="btn btn-info js-capacity-jump hidden">{{publicLang.jump}}</button>
+        <button type="button" class="btn btn-info js-capacity-priv hidden">{{publicLang.privious}}</button>
+
+        <h3 class="modal-title" id="capacityModalLabel">{{publicLang.directions}}</h3>
+      </div>
+      <div class="modal-body" style="height:400px;overflow:auto;font: 16px/1.5 arial,'\5b8b\4f53',sans-serif;">
+
+        <div id="capacityIntro" data-step="0">
+          <strong>{{publicLang.wizard_alert1}}</strong>
+          <br>{{publicLang.wizard_alert2}}<br>
+          <input type="text" id="capacityHandler">
+        </div>
+
+        <div class="expand-step" data-step="1" id="expandStep1" style="display:none;">
+          <form id="addNodeForm">
+            <div class="form-group">
+              <lable for="addNodeList" style="color:#a2a2a2">{{publicLang.wizard_alert3}}</lable>
+              <input class="form-control toFocus" type="text" id="addNodeList">
+              <label style="color:red;">{{publicLang.wizard_alert4}}</label>
+            </div>
+
+          </form>
+          <div>
+            <table class="table table-hover" id="selectToAddNodeTable">
+              <thead>
+                <tr>
+                  <th class="col-lg-4" style="font-weight: bold">IP</th>
+                  <th class="col-lg-4" style="font-weight: bold">{{publicLang.hostname}}</th>
+                  <th class="col-lg-4" style="font-weight: bold">{{publicLang.node_status}}</th>
+                </tr>
+              </thead>
+              <tbody>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="expand-step" data-step="2" id="expandStep2" style="display:none;">
+          <div>
+            <table class="table table-hover" id="networkManange">
+              <thead>
+                <tr>
+                  <th class="col-lg-4" style="font-weight: bold">{{ publicLang.internal_management_network_ip }}</th>
+                  <th class="col-lg-4" style="font-weight: bold">{{publicLang.data_sync_network_ip}}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <td class="col-lg-4 im_ip network_manage_ip">
+                  <input class="col-lg-8" placeholder="ip" style="margin: .5rem .3rem; border: solid 1px #ccc; padding: .2rem !important;" type="text"></input>
+                </td>
+                <td class="col-lg-4 dc_ip network_manage_ip">
+                  <input class="col-lg-8" placeholder="ip" style="margin: .5rem .3rem; border: solid 1px #ccc; padding: .2rem !important;" type="text"></input>
+                </td>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="expand-step" data-step="3" id="expandStep3" style="display:none;">
+          <table class="table table-hover" id="addNtpServiceTable">
+            <thead>
+              <tr>
+                <th class="col-lg-3" style="font-weight: bold">{{publicLang.hostname}}</th>
+                <th class="col-lg-3" style="font-weight: bold">IP</th>
+                <th class="col-lg-3" style="font-weight: bold">{{publicLang.ntp_service}}</th>
+                <th class="col-lg-3" style="font-weight: bold">{{publicLang.ntp_master_nodes}}</th>
+              </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+          </table>
+        </div>
+
+        <div class="expand-step" data-step="4" id="expandStep4" style="display:none;">
+          <table class="table table-hover" id="addStorageTable">
+            <thead>
+              <tr>
+                <th class="col-lg-4" style="font-weight: bold">{{publicLang.hostname}}</th>
+                <th class="col-lg-4" style="font-weight: bold">IP</th>
+                <th class="col-lg-4" style="font-weight: bold">{{publicLang.storage_cluster}}</th>
+              </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+          </table>
+        </div>
+
+        <div class="expand-step" data-step="5" id="expandStep5" style="display:none;">
+          <table class="table table-condensed">
+            <thead style="border-bottom-color: rgb(255, 255, 255) !important;">
+              <tr>
+                <th style="width:50%;font-weight: bold">
+                  <div class="left">
+                    <span style="position: relative;vertical-align: middle;">#</span>
+                  </div>
+                </th>
+                <th style="width:50%;font-weight: bold">
+                  <span style="float: left;">{{publicLang.select_all}}</span>
+                  <input type="checkbox" class="js-sel-all" style="float:left;margin-left: 3px;margin-top: 2px;width: 16px;height: 16px;">
+                </th>
+              </tr>
+            </thead>
+          </table>
+          <div style="max-height:350px;overflow-y:auto;overflow-x:hidden;">
+            <table class="table table-condensed table-hover" id="addDiskTable">
+              <tbody>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="expand-step" data-step="6" id="expandStep6" style="display:none;">
+          <table class="table table-hover" id="addServiceTable">
+            <thead>
+              <tr>
+                <th class="col-lg-1" style="font-weight: bold">{{publicLang.hostname}}</th>
+                <th class="col-lg-2" style="font-weight: bold">IP</th>
+                <th class="col-lg-2" style="font-weight: bold">{{publicLang.basick_service}}</th>
+                <th class="col-lg-2" style="font-weight: bold">{{publicLang.monitor_service}}</th>
+                <th class="col-lg-1" style="font-weight: bold">{{publicLang.mgr_service}}</th>
+                <th class="col-lg-1" style="font-weight: bold">{{publicLang.logs_service}}</th>
+                <th class="col-lg-1" style="font-weight: bold">{{publicLang.msgqueue_service}}</th>
+                <th class="col-lg-1" style="font-weight: bold">{{publicLang.metadata_service}}</th>
+              </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+          </table>
+        </div>
+
+        <div class="expand-step" data-step="7" id="expandStep7" style="display:none;">
+          <table class="table table-hover" id="addNasTable">
+            <thead style="border-bottom-color: rgb(255, 255, 255) !important;">
+              <tr>
+                <th style="font-weight: bold" class="col-lg-2">{{publicLang.hostname}}</th>
+                <th style="font-weight: bold" class="col-lg-2">IP</th>
+                <th style="font-weight: bold" class="col-lg-2">{{publicLang.add_nas_node}}</th>
+                <th style="font-weight: bold" class="col-lg-2">{{publicLang.network_port}}</th>
+                <th style="font-weight: bold">{{publicLang.public_ip}} / {{publicLang.mask}}</th>
+              </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+          </table>
+        </div>
+
+        <!--<div class="expand-step" data-step="7" id="expandStep7" style="display:none;">-->
+          <!--<table class="table table-hover" id="addDnsTable">-->
+            <!--<thead>-->
+              <!--<tr>-->
+                <!--<th>{{clusterLang.hostname}}</th>-->
+                <!--<th>IP</th>-->
+                <!--<th>{{clusterLang.domain_name_system}}</th>-->
+              <!--</tr>-->
+            <!--</thead>-->
+            <!--<tbody>-->
+              <!---->
+            <!--</tbody>-->
+          <!--</table>-->
+          <!--&lt;!&ndash;<form class="form-inline">-->
+            <!--<div class="form-group">-->
+              <!--<label for="inputDomain">{{clusterLang.domain_name}}</label>-->
+              <!--<input type="text" class="form-control" id="inputDomain" placeholder="{{clusterLang.input_domain_name}}">-->
+            <!--</div>-->
+          <!--</form>&ndash;&gt;-->
+        <!--</div>-->
+
+        <div class="expand-step" data-step="8" id="expandStep8" style="display:none;">
+          <table class="table table-hover" id="addBasicSerTable">
+            <thead>
+              <tr>
+                <th class="col-lg-4" style="font-weight: bold">{{publicLang.hostname}}</th>
+                <th class="col-lg-4" style="font-weight: bold">IP</th>
+                <th class="col-lg-4" style="font-weight: bold">{{publicLang.basick_service}}</th>
+              </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+          </table>
+        </div>
+
+        <div id="expandConfirm" style="display:none;">
+          <div class="row">
+            <div id="confirmNodes" class="col-lg-6" style="padding-left: 0;">
+              {{publicLang.add_node}}:
+              <ul></ul>
+            </div>
+            <div id="confirmNtp" class="col-lg-6">
+              {{publicLang.ntp_master_nodes}}:
+              <ul></ul>
+            </div>
+          </div>
+
+          <div class="row">
+            <div id="confirmInternalManagementNetwork" class="col-lg-6" style="padding-left: 0;">
+              {{publicLang.internal_management_network_ip}}:
+              <ul></ul>
+            </div>
+
+            <div id="confirmDataSyncNetwork" class="col-lg-6">
+              {{publicLang.data_sync_network_ip}}:
+              <ul></ul>
+            </div>
+
+            <div id="confirExternalNetwork" class="col-lg-6" style="padding-left: 0;">
+              {{publicLang.external_network}}:
+              <ul>
+              </ul>
+            </div>
+
+          </div>
+
+          <div class="row">
+            <div id="confirmMeta" class="col-lg-6" style="padding-left: 0;">
+              {{publicLang.metadata_service}}:
+              <ul></ul>
+            </div>
+            <div id="confirmNas" class="col-lg-6">
+              {{publicLang.nas_cluster}}:
+              <ul></ul>
+            </div>
+          </div>
+
+          <div class="row">
+            <div id="confirmBasicSer" class="col-lg-6" style="padding-left: 0;">
+              {{publicLang.basick_service}}:
+              <ul></ul>
+            </div>
+            <div id="confirmMonitor" class="col-lg-6">
+              {{publicLang.monitor_service}}:
+              <ul></ul>
+            </div>
+          </div>
+
+          <div class="row">
+            <div id="confrimStorage" class="col-lg-6" style="padding-left: 0;">
+              {{publicLang.storage_cluster}}:
+              <ul></ul>
+            </div>
+            <div id="confirmDisk" class="col-lg-6" style="height: 34px;">
+              {{publicLang.add_disk}}:
+              <table style="margin-top: -24px">
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="row">
+            <div id="confirmPubIp" class="col-lg-6" style="padding-left: 0;">
+             {{publicLang.public_ip}}:
+              <ul></ul>
+            </div>
+          <div id="confirmDns">
+            <ul></ul>
+          </div>
+          </div>
+
+          <div class="row">
+            <div id="confirmMgr" class="col-lg-6" style="padding-left: 0;">
+              {{publicLang.mgr_service}}:
+              <ul></ul>
+            </div>
+          </div>
+
+          <div class="row">
+            <div id="confirmLogs" class="col-lg-6" style="padding-left: 0;">
+              {{publicLang.logs_service}}:
+              <ul></ul>
+            </div>
+          </div>
+
+          <div class="row">
+            <div id="confirmMsgQueue" class="col-lg-6" style="padding-left: 0;">
+              {{publicLang.msgqueue_service}}:
+              <ul></ul>
+            </div>
+          </div>
+
+        </div>
+
+        <div id="expandProgress" style="display:none;">
+          <label></label>
+          <div class="expand-result">
+            <div>
+              <span>{{ publicLang.cur_completed }}</span>
+              <span class="js-res-count"  style="color:red;">0</span>
+              <span style="color:red;">{{ publicLang.per_step }}/</span><span class="js-total-step" style="color:red;"></span>
+              <span class="js-step-meaning"></span>
+            </div>
+          </div>
+          <div class="progress progress-striped active progress-bar-parent">
+            <div class="progress-bar progress-bar-info" role="progressbar" style="width: 10%">
+              <span>10%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="reduce-step" data-step="1" style="display:none;" id="reduceStep1">
+          <table class="table table-hover" id="reomoveNodesTable">
+            <thead>
+              <tr>
+                <th class="col-lg-4" style="font-weight: bold;text-align: left">#</th>
+                <th class="col-lg-4" style="font-weight: bold;text-align: left">{{publicLang.hostname}}</th>
+                <th class="col-lg-4" style="font-weight: bold;text-align: left">IP</th>
+              </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+          </table>
+        </div>
+        <div class="reduce-step" data-step="2" style="display:none;" id="reduceStep2">
+          <table class="table table-hover" id="reomovePubIpTable">
+            <thead>
+              <tr>
+                <th style="font-weight: bold">{{publicLang.public_ip}}</th>
+                <th style="font-weight: bold">#</th>
+              </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+          </table>
+        </div>
+
+        <div id="reduceComfirm" style="display: none">
+          <!--<p style="color:#f25758;">-->
+            <span style="color:#f2256b;">{{publicLang.reduce_alter1}}</span>
+            <span style="color:#f17108;">{{publicLang.reduce_alter2}}</span>
+            <span style="color:#f2256b;">{{publicLang.reduce_alter3}}</span>
+           <!--</p>-->
+          <input id="submitRuduce" type="text" class="col-lg-12">
+
+          <div id="confirmRemoveNodes" class="col-lg-6" style="margin-top: 20px;padding-left:0;">
+            {{publicLang.del_node}}:
+            <ul style="margin-left: 80px;margin-top:-21px;width: 200px;"></ul>
+          </div>
+          <div id="confirmRemovePubIp" class="col-lg-6" style="margin-top: 20px;">
+            {{publicLang.del_public_ip}}:
+            <ul style="margin-left: 80px;margin-top:-21px;width: 200px;"></ul>
+          </div>
+        </div>
+
+        <div id="reduceProgress" style="display:none;">
+          <label></label>
+          <div class="reduce-result">
+            <div>
+              <span>{{ publicLang.cur_completed }}</span>
+              <span class="js-res-count"  style="color:red;">0</span>
+              <span style="color:red;">{{ publicLang.per_step }}/</span><span class="js-total-step" style="color:red;"></span>
+              <span class="js-step-meaning"></span>
+            </div>
+          </div>
+          <div class="progress progress-striped active progress-bar-parent">
+            <div class="progress-bar progress-bar-info" role="progressbar" style="width: 10%">
+              <span>10%</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

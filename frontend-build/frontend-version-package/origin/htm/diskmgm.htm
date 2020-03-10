@@ -1,0 +1,147 @@
+{% extends 'two-float-layout.htm' %}
+{% block leftnav%}
+{% include 'storagemgm-left-nav.htm' %}
+<div class="bottom-icons-act" data-toggle="tooltip" title="{{clusterLang.new_osd_disk}}"  data-placement="right">
+  <a href="javascript:;" id="create-new-osddisk">
+    <span class="glyphicon glyphicon-plus"></span>
+  </a>
+</div>
+{%endblock%}
+{% block rightcontent %}
+<div class="bs-docs-grid" style="padding-bottom:44px;margin-top: 20px;">
+</div>
+<!--配置向导未添加磁盘的时候，添加osd（即一次添加多个osd）—-->
+<div class="modal fade" id="addNewOsdDiskModal" tabindex="-1" role="dialog" aria-labelledby="addNewOsdDiskModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:600px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="addNewOsdDiskModalLabel">{{clusterLang.new_osd_disk}}</h4>
+      </div>
+      <div class="modal-body">
+        <div id="addosddisk">
+          <table class="table table-condensed">
+            <thead>
+                <tr>
+                  <th style="width:50%;">
+                    <div class="left">
+                      <span style="position: relative;vertical-align: middle;">
+                          #
+                        </span>
+                    </div>
+                  </th>
+                  <th style="width:10%;">
+                    <div class="right">
+                      <span>{{clusterLang.select_all}}</span>  
+                    </div>
+                  </th>
+                  <th style="width:40%;">
+                    <input type="checkbox" class="js-sel-all">
+                  </th>
+                </tr>
+              </thead>
+          </table>
+          <div style="max-height:350px;overflow-y:auto;overflow-x:hidden;">
+            <table class="table table-condensed table-hover add-osddisk-body">
+              <tbody>
+              </tbody>
+            </table>  
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--新建磁盘信息--> 
+<div class="modal fade" id="addNewDiskModal" tabindex="-1" role="dialog" aria-labelledby="addNewDiskModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="addNewDiskModalLabel">{{clusterLang.new_disk}}</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" role="form">
+          <div class="form-group">
+            <label for="newdiskname" class="col-sm-4 control-label">{{ clusterLang.disk_devname }}</label>
+            <div class="col-sm-8">
+              <select id="newdiskname" class="none-border-input" style="height:30px;width:100%;">
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--删除磁盘--> 
+<div class="modal fade" id="delDiskModel" tabindex="-1" role="dialog" aria-labelledby="delDiskModelLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-danger">{{publicLang.delete}}</button>
+        <h4 class="modal-title" id="delDiskModelLabel">{{clusterLang.del_disk_info}}</h4>
+      </div>
+      <div class="modal-body">      
+      <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+<!--刷新磁盘--> 
+<div class="modal fade" id="refreshDiskModel" tabindex="-1" role="dialog" aria-labelledby="refreshDiskLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{clusterLang.refresh}}</button>
+        <h4 class="modal-title" id="refreshDiskLabel">{{clusterLang.refresh_disk}}</h4>
+      </div>
+      <div class="modal-body">      
+      <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+<!--确认添加磁盘-->
+<div class="modal fade" id="confirmAddDiskModel" role="dialog" tabindex="-1" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-info">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="delDiskModelLabel">{{clusterLang.sure_add_disk}}</h4>
+      </div>
+      <div class="modal-body" style="max-height:400px;overflow-y:auto;">
+      </div>
+    </div>
+  </div>
+</div>
+<!--进度条-->
+<div class="progressInfo hide" style="width: 120px; position: fixed; bottom: 63px;z-index: 99999;"><span>{{clusterLang.disk_add_progress}}</span></div>
+<div id="overflowProgress" class="progress hide" style="width: 60%; position: fixed; bottom: 40px;margin-left: 120px;background-color: rgba(255, 255, 255, 0.75);">
+  <div class="js-progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="10" aria-valuemax="100" style="min-width: 2em;">
+    <span>0% Complete</span>
+  </div>
+</div>
+
+{% endblock %}
+{% block needjs %}
+<script type="text/javascript" src="js/lib/masonry.pkgd.min.js"></script>
+<script type="text/javascript" src="js/pages/diskmgm.js"></script>
+
+{% endblock %}
+{% block javascript %}
+<script type="text/javascript">
+$(function (ev) {
+	$('.grid').masonry({
+		itemSelector: '.grid-item',
+		columnWidth: '.col-lg-6',
+		percentPosition: true
+	});	
+})
+</script>
+{% endblock %}

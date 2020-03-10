@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Animation</title>
+    <style media="screen">
+      .tp {
+        display: flex;
+        justify-content: center;
+        margin-top: 5rem;
+      }
+
+      .show-text {
+        margin-top: 6rem;
+        text-align: center;
+      }
+      .show-text span {
+        border: solid 1px #566deb;
+        padding: 5px;
+        color: blue;
+      }
+
+      #startButton {
+        padding: 5px 10px;
+        background-color: #ed8ce3;
+        color: white;
+        font-size: 1rem;
+        border-radius: 5px;
+      }
+
+      #animationTarget {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 15rem;
+        height: 15rem;
+        background-color: #3c60df;
+        position: relative;
+        color: white;
+        font-size: 1.2rem;
+        border: solid 1px white;
+        box-shadow: 0 0 1rem black;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="animation-wrapper">
+      <button id="startButton" onClick="javascript: test();">Start Animation</button>
+      <div class="tp">
+        <div id="animationTarget">
+          <p>
+            easeIn 1秒
+          </p>
+          <p>
+            linear 500毫秒
+          </p>
+          <p>
+            easeIn 1秒
+          </p>
+          <p>
+            linear 500毫秒
+          </p>
+        </div>
+      </div>
+
+      <p class="show-text">
+        <span style="" > => 向右下角由慢至快移动50个像素</span>
+        <span style="" > => 向右上角匀速移动50个像素</span>
+        <span style="" > => 向右由慢至快移动50个像素</span>
+        <span style="" > => 向下匀速移动50个像素</span>
+      </p>
+    </div>
+
+    <script type="text/javascript" src="./animation.js"></script>
+
+    <script type="text/javascript">
+
+      function test() {
+        var anime = new Animation();
+        anime.setTarget('#animationTarget');
+        // 右下角移动50px
+        anime.push('#animationTarget', { x: 50, y: 50, duration: 1000, func: 'easeIn' });
+
+        // 右上角移动50px
+        anime.push('#animationTarget', { x: -50, y: -50, duration: 500, func: 'linear' });
+
+        // 横向移动50px
+        anime.push('#animationTarget', { x: 50, y: 0, duration: 1000, func: 'easeIn' });
+
+        // 纵向移动50px
+        anime.push('#animationTarget', { x: 0, y: 50, duration: 500, func: 'linear' });
+
+        // 开始执行动画
+        anime.start('#animationTarget');
+      }
+
+    </script>
+
+    <script type="text/javascript">
+      function timer() {
+        document.querySelector('.show-text > span:nth-child(1)').style.display = 'none';
+        document.querySelector('.show-text > span:nth-child(2)').style.display = 'none';
+        document.querySelector('.show-text > span:nth-child(3)').style.display = 'none';
+        document.querySelector('.show-text > span:nth-child(4)').style.display = 'none';
+
+        setTimeout(function () {
+          document.querySelector('.show-text > span:nth-child(1)').style.display = '';
+        }, 1000);
+
+        setTimeout(function () {
+          document.querySelector('.show-text > span:nth-child(2)').style.display = '';
+        }, 1500);
+
+        setTimeout(function () {
+          document.querySelector('.show-text > span:nth-child(3)').style.display = '';
+        }, 2500);
+
+        setTimeout(function () {
+          document.querySelector('.show-text > span:nth-child(4)').style.display = '';
+        }, 3000);
+      }
+      document.querySelector('#startButton').addEventListener('click', timer);
+    </script>
+
+  </body>
+</html>

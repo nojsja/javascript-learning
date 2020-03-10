@@ -1,0 +1,89 @@
+<div class="row show-grid grid js-masonry">
+ 	<!-- 列举出卷详细信息及其下面的快照-->
+ 	{% for volumeInfo in volumesList %}
+  	<div class="col-xs-12 col-md-5 col-lg-6  box-shadow grid-item  grid-item-style volume-detail-body" data-poolname="{{ volumeInfo['pool_name'] }}">
+		<div class="basic_content">
+			<div class="share_header">
+				<span>{{ volumeInfo['pool_name'] }}</span>
+			</div>
+			<div class="basic_content_list js-volume-content" style="margin-left:0;">
+				<div class="basic_cont_row">
+		            <div class="col-lg-4 basic-lg-4 left">
+		              <span>{{ storageLang.volumename_snapshotname }}</span>
+		            </div>
+					<div class="col-lg-3 basic-lg-3">
+						<span>{{ storageLang.usedsize }}</span>
+					</div>
+		            <div class="col-lg-2 basic-lg-2">
+		              <span>{{ storageLang.totalsize }}</span>
+		            </div>
+		            <div class="col-lg-3 basic-lg-3">
+
+		            </div>
+		        </div>
+				{% if volumeInfo['image']|length > 0 %}
+				{% for volume in volumeInfo['image'] %}
+		        <div class="basic_cont_row js-volume-row" data-volname="{{ volume['name'] }}">
+		            <div class="col-lg-4 basic-lg-4 left">
+		            	<span title="{{ volume['name'] }}">{{ volume['name'] }}</span>
+		            </div>
+					<div class="col-lg-3 basic-lg-3">
+						<span class="js-volume-size">{{ volume['used_size']|sizeFormat('bytes') }}</span>
+					</div>
+		            <div class="col-lg-2 basic-lg-2">
+		              	<span class="js-volume-size">{{ volume['size']|sizeFormat('bytes') }}</span>
+		            </div>
+		            <div class="col-lg-3 basic-lg-3" style="height:30px;">
+		              	<div class="hidden js-volume-act" style="display:inline;">
+		              		<a class="fl-rt js-create-snapshot" href="javascript:;" title="{{storageLang.create_snapshot}}" style="margin-right: 15px;">
+		      					<span class="glyphicon glyphicon-plus-sign"></span>
+		      				</a>
+							<a class="fl-rt js-delete-volume" href="javascript:;" title="{{storageLang.del_volume}}" style="margin-right:15px;">
+		      					<span class="glyphicon glyphicon-trash"></span>
+		      				</a>
+							<a class="fl-rt js-edit-volume" href="javascript:;" title="{{ storageLang.edit_volume }}" style="margin-right: 15px;">
+		      					<span class="glyphicon glyphicon-edit"></span>
+		      				</a>
+      					</div>
+		            </div>
+		        </div>
+		        <div class="basic_content_list" data-volname="{{ volume['name'] }}" style="margin-left:0;">
+		        	{% for snapshot in volume['snapshot'] %}
+			        <div class="basic_cont_row js-snapshot-row" data-sname="{{ snapshot['name'] }}">
+						<!--<div class="progressInfo hide" style="width: 120px; position: fixed; bottom: 63px;z-index: 99999;"><span>{{clusterLang.disk_add_progress}}</span></div>-->
+						<!--<div id="overflowProgress" class="progress hide" style="width: 60%; position: fixed; bottom: 40px;margin-left: 120px;background-color: rgba(255, 255, 255, 0.75);">-->
+							<!--<div class="js-progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="10" aria-valuemax="100" style="min-width: 2em;">-->
+								<!--<span>0% Complete</span>-->
+							<!--</div>-->
+						<!--</div>-->
+			            <div class="col-lg-4 basic-lg-4 left" style="padding-left:10px!important;">
+			            	<div class="showleftborder" style="width:1px;height:30px;display:inline;"></div>
+			            	<div class="showcenterline" style="width:15px;display:inline-block;"></div>
+			              	<span>{{ snapshot['name'] }}</span>
+			            </div>
+						<div class="col-lg-3 basic-lg-3">
+							<span>{{ snapshot['used_size']|sizeFormat('bytes') }}</span>
+						</div>
+			            <div class="col-lg-2 basic-lg-2">
+			              	<span>{{ snapshot['size']|sizeFormat('bytes') }}</span>
+			            </div>
+			            <div class="col-lg-3 basic-lg-3 center" style="height:30px;">
+			        		<div class="hidden js-snapshot-act" style="display:inline;">
+			              		<a class="fl-rt js-new-clone" href="javascript:;" title="{{storageLang.create_clone}}" style="margin-right: 15px;">
+			      					<span class="glyphicon glyphicon-plus-sign"></span>
+			      				</a>
+								<a class="fl-rt js-delete-snapshot" href="javascript:;" title="{{storageLang.del_snapshot}}" style="margin-right:15px;">
+			      					<span class="glyphicon glyphicon-trash"></span>
+			      				</a>
+	      					</div>
+			            </div>
+			        </div>
+			    	{% endfor %}
+			    </div>
+			    {% endfor %}
+				{% endif %}
+			</div>
+		</div>
+	</div>
+	{% endfor %}
+</div>

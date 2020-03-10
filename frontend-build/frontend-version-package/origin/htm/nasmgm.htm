@@ -1,0 +1,488 @@
+{% extends 'two-float-layout.htm' %}
+{% block leftnav%}
+{% include 'storagemgm-left-nav.htm' %}
+<!--<div class="bottom-icons-act" data-toggle="tooltip" data-placement="right"  title="{{clusterLang.add_nas_service}}">
+  <a href="javascript:;" id="create-nasip-service">
+    <span class="glyphicon glyphicon-plus"></span>
+  </a>
+</div>-->
+{%endblock%}
+
+{% block rightcontent %}
+
+<style type="text/css">
+  .circle {
+    display: inline-block;
+    width: 1.5rem;
+    height: 1.5rem;
+    cursor: pointer;
+  }
+
+  #addPubIpModal input[type=text] {
+    color: #555;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+  }
+
+  .public_ip_netmask span:nth-child(2n) {
+    margin: 1rem;
+  }
+
+</style>
+
+<div class="nas_table_list_third nas_service_info" style="font-size:0.875rem;margin:0 0 2% 2%;padding:30px 0;border:0;background-color:#FFFFFF;">
+  <div class="basic_header">
+    <img src="css/image/nas_info.png">
+    <span style="font-size: 18px;">{{ clusterLang.nas_service_info }}</span>
+    <span class="c_right c_basic_right fl-rt hidden" style="font-size:1em;">
+
+      <a href="javascript:;" id="clusterBalance" title="{{ clusterLang.balance_cluster }}">
+        <!--<span class="glyphicon glyphicon-play"></span>-->
+          <img src="css/image/balance.png" style="width:43px" class="test">
+      </a>
+
+      <a href="javascript:;" id="nasStartAll" title="{{ clusterLang.start_all_nas_service }}">
+        <!--<span class="glyphicon glyphicon-play"></span>-->
+          <img src="css/image/play.png" style="width:43px" class="test">
+      </a>
+      <a href="javascript:;" id="nasStopAll" title="{{ clusterLang.stop_all_nas_service }}">
+        <!--<span class="glyphicon glyphicon-pause"></span>-->
+          <img src="css/image/stop.png" style="width:43px"  class="test">
+      </a>
+    </span>
+  </div>
+  <div class="basic_content"  style="padding-right:42px;">
+    <table class="table table-hover" style="background-color:white;">
+      <thead>
+        <tr>
+          <th>{{ clusterLang.node }}</th>
+          <th>{{ clusterLang.network_port }}</th>
+          <th>{{ clusterLang.ip }}/{{ clusterLang.mask }}</th>
+          <th>{{ clusterLang.node_status }}</th>
+          <th>{{ clusterLang.service_status }}</th>
+          <th style="width:5%;">
+            <!--<button type="button" id="nasStartAll" class="btn btn-success btn-sm" title="{{ clusterLang.start_all_nas_service }}" style="margin-left:25%;">
+              <span class="glyphicon glyphicon-play"></span>
+            </button>
+            <button type="button" id="nasStopAll" class="btn btn-danger btn-sm" title="{{ clusterLang.stop_all_nas_service }}">
+              <span class="glyphicon glyphicon-pause"></span>
+            </button>-->
+          </th>
+        </tr>
+      </thead>
+      <tbody id="naspubliciplist">
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="bs-docs-grid" style="margin-bottom:2%;">
+  <div class="row show-grid grid js-masonry">
+    <!--节点列表-->
+    <div class="col-xs-12 col-md-5 col-lg-6 grid-item box-shadow nodelist_nasinfo">
+      <div class="basic_header">
+        <img src="css/image/node_list.png">
+        <span>{{ clusterLang.node_list }}</span>
+        <span class="c_right c_basic_right fl-rt hidden" style="font-size:1.4em">
+          <a class="js-add-nasnode" href="javascript:;" title="{{clusterLang.add_nas_node}}">
+            <!--<span class="glyphicon glyphicon-plus-sign"></span>-->
+              <img src="css/image/plus.png" style="width:43px"  class="test">
+          </a>
+        </span>
+      </div>
+      <div class="basic_content" style="padding-right:42px;font-size:1.4em;">
+        <table class="table table-hover left-all">
+          <thead>
+            <tr>
+              <th>{{ clusterLang.nasnode }}</th>
+              <th>IP</th>
+              <th style="width:10%"></th>
+            </tr>
+          </thead>
+          <tbody id="nasNodeTable">
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!--公共IP列表-->
+    <div class="col-xs-12 col-md-5 col-lg-6 grid-item box-shadow iplist_nasinfo">
+      <div class="basic_header">
+        <img src="css/image/pub_ip_list.png">
+        <span>{{ clusterLang.pubip_list }}</span>
+        <span class="c_right c_basic_right fl-rt hidden" style="font-size:1.4em">
+          <a href="javascript:;" title="{{clusterLang.add_pubip}}" data-toggle="modal" data-target="#addPubIpModal" >
+              <img src="css/image/plus.png" style="width:43px"  class="test">
+          </a>
+        </span>
+      </div>
+      <div class="basic_content" style="padding-right:42px;font-size:1.4em;">
+        <table class="table table-hover left-all">
+          <thead>
+            <tr>
+              <th style="width:55%;">{{ clusterLang.ip }}/{{ clusterLang.mask }}</th>
+              <th>{{ clusterLang.network_port }}</th>
+              <th style="width:10%"></th>
+            </tr>
+          </thead>
+          <tbody id="pubIpTable">
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 公共IP池 -->
+    <div class="col-xs-12 col-md-5 col-lg-6 grid-item box-shadow ippool_nasinfo" >
+      <div class="basic_header">
+        <img src="css/image/pub_ip_list.png">
+        <span>{{ clusterLang.pubip_pool }}</span>
+        <span class="c_right c_basic_right fl-rt hidden" style="font-size:1.4em">
+          <a href="javascript:;" title="{{clusterLang.add_pubip}}" data-toggle="modal" data-target="#addPubIpModal" >
+            <!--<span class="glyphicon glyphicon-plus-sign"></span>-->
+              <img src="css/image/plus.png" style="width:43px"  class="test">
+          </a>
+        </span>
+      </div>
+      <div class="basic_content" style="font-size:1.4em;">
+        <form class="form-horizontal" role="form" style="padding: 1rem 0;">
+          <div class="form-group" style="margin: 0">
+            <div for="select_node" class="col-sm-4 control-label" style="text-align: left;padding: 0">{{clusterLang.destination_network_port}}</div>
+            <div class="col-sm-7" style="padding: 0;">
+              <select id="publicipSelect" class="form-control">
+
+              </select>
+            </div>
+          </div>
+
+          <div id="publicIpPoolList">
+            <div class="form-group" style="padding: 0; margin: 1rem 0 0 0;">
+              <div for="select_node" class="col-sm-4 control-label" style="text-align:left; padding: 0">{{ clusterLang.ip }}/{{ clusterLang.mask }}</div>
+
+              <div class="col-sm-7" style="padding: 0;" id="netportIpNetmask">
+                <!-- <div class="form-group">
+                  <div class="col-sm-8" style="padding: 0 0 0 1rem;">
+                    <div class="public_ip_netmask">
+                      <span>10.0.6.201</span>
+                      <span>/</span>
+                      <span>24</span>
+                    </div>
+                  </div>
+                  <div class="col-sm-2" style="padding: 0 0 0 1rem;">
+                    <a href="javascript:;"><span class="glyphicon glyphicon-minus-sign"></span></a>
+                  </div>
+                </div> -->
+              </div>
+
+            </div>
+
+          </div>
+
+
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!--添加公共IP-->
+<div class="modal fade" id="addPubIpModal" tabindex="-1" role="dialog" aria-labelledby="addPubIpModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:600px;">
+    <div class="modal-content">
+      	<div class="modal-header">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+	        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+	        <h4 class="modal-title" id="addPubIpModalLabel">{{ clusterLang.add_pubip }}</h4>
+      	</div>
+      	<div class="modal-body">
+	      	<form class="form-horizontal" role="form">
+            <div class="form-group" style="display: flex; flex-direction: row; justify-content: center; height: 1.5rem">
+            	<label for="select_node" class="col-sm-2 control-label" style="text-align:center;">{{clusterLang.public_ip}}</label>
+            	<div class="col-sm-8" style="display: flex; flex-direction: row; justify-content: center; height: 1.5rem; align-items: center;">
+                <input class="col-sm-6" style="height: 100%" type="text" placeholder="ip addrress" id="inputIpaddr">
+                <span class="col-sm-2" style="text-align: center">/</span>
+                <input class="col-sm-4" style="height: 100%" type="text" placeholder="netmask" id="inputNetmask">
+            	</div>
+              <div class="col-sm-2" style="text-align: center;">
+                <img src="css/image/plus.png" class="circle">
+              </div>
+          	</div>
+
+            <div id="publicIpList">
+              <!-- <div class="form-group" style="display: flex; flex-direction: row; justify-content: center; height: 1.5rem; font-size: .9rem;">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-8" style="padding-left: 1rem;">
+                  <div class="public_ip_netmask">
+                    <span>10.0.6.200</span>
+                    <span>/</span>
+                    <span>24</span>
+                  </div>
+                </div>
+                <div class="col-sm-2" style="text-align: center;" >
+                  <a href="javascript:;"><span class="glyphicon glyphicon-minus-sign"></span></a>
+                </div>
+              </div> -->
+            </div>
+
+	        </form>
+     	</div>
+    </div>
+  </div>
+</div>
+
+<!--修改NAS、公共IP-->
+<div class="modal fade" id="editNasPubModel" tabindex="-1" role="dialog" aria-labelledby="editNasPubModelLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      	<div class="modal-header">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+	        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+	        <h4 class="modal-title" id="editNasPubModelLabel">{{ clusterLang.edit_nas_service }}</h4>
+      	</div>
+      	<div class="modal-body">
+	      	<form class="form-horizontal" role="form">
+	          	<div class="form-group">
+		            <label for="select_public_ip" class="col-sm-3 control-label left">{{ clusterLang.public_ip }}</label>
+		            <div class="col-sm-5 modal-div-lineheight">
+		            	<input type="text" class="none-border-input js-input-public-ip" style="width:100%;">
+		            </div>
+		            <div class="col-sm-1 modal-div-lineheight">
+		            	<span>/</span>
+		            </div>
+		            <div class="col-sm-2 modal-div-lineheight">
+		            	<input type="text" class="none-border-input js-input-mask" value="24" style="width:100%;"/>
+		            </div>
+	          	</div>
+	          	<div class="form-group">
+	            	<label for="select_net_port" class="col-sm-3 control-label left">{{ clusterLang.network_port }}</label>
+	            	<div class="col-sm-5  modal-div-lineheight">
+		              	<select class="none-border-input js-input-netport"  style="width:100%;">
+                    </select>
+	            	</div>
+	          	</div>
+	        </form>
+     	</div>
+    </div>
+  </div>
+</div>
+
+<!--删除公共IP-->
+<div class="modal fade" id="delPublicIpModel" tabindex="-1" role="dialog" aria-labelledby="delPublicIpModelLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+    	<div class="modal-header">
+        	<button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        	<button type="button" class="btn btn-danger">{{publicLang.delete}}</button>
+        	<h4 class="modal-title" id="delPublicIpModelLabel">{{ clusterLang.del_public_ip }}</h4>
+      	</div>
+      	<div class="modal-body">
+      		<p></p>
+      	</div>
+    </div>
+  </div>
+</div>
+
+<!--删除NAS节点-->
+<div class="modal fade" id="delNasNodeModel" tabindex="-1" role="dialog" aria-labelledby="delNasNodeModelLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+    	<div class="modal-header">
+        	<button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        	<button type="button" class="btn btn-danger">{{publicLang.delete}}</button>
+        	<h4 class="modal-title" id="delNasNodeModelLabel">{{ clusterLang.remove_nas_node }}</h4>
+      	</div>
+      	<div class="modal-body">
+      		<p></p>
+      	</div>
+    </div>
+  </div>
+</div>
+
+<!--添加NAS网关服务-->
+<div class="modal fade" id="addNASModal" tabindex="-1" role="dialog" aria-labelledby="addNASModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="addNASModalLabel">{{clusterLang.add_nas_service}}</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" role="form">
+          <div class="form-group">
+            <label for="newnas" class="col-sm-3 control-label">{{ clusterLang.hostname }}</label>
+            <div class="col-sm-8">
+            <select class="none-border-input" style="height:30px;width:100%;" id="newnas">
+              {% for node in nodeList %}
+              <option data-host="{{node['ip']}}">{{node['hostname']}}</option>
+              {% endfor %}
+            </select>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--删除NAS网关服务-->
+<div class="modal fade" id="delNASModel" tabindex="-1" role="dialog" aria-labelledby="delNASModelLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-danger">{{publicLang.delete}}</button>
+        <h4 class="modal-title" id="delNASLabel">{{clusterLang.del_nas_service}}</h4>
+      </div>
+      <div class="modal-body">
+      <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+<!--启动NAS网关服务-->
+<div class="modal fade" id="startNASModal" tabindex="-1" role="dialog" aria-labelledby="startNASModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="startNASModalLabel">{{clusterLang.start_nas_service}}</h4>
+      </div>
+      <div class="modal-body">
+        <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+<!--暂停NAS网关服务-->
+<div class="modal fade" id="stopNASModal" tabindex="-1" role="dialog" aria-labelledby="stopNASModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="stopNASLabel">{{clusterLang.stop_nas_service}}</h4>
+      </div>
+      <div class="modal-body">
+        <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--删除公共IP-->
+<div class="modal fade" id="removePubIpModal" tabindex="-1" role="dialog" aria-labelledby="removePubIpModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="stopNASLabel">{{clusterLang.remove_pubip}}</h4>
+      </div>
+      <div class="modal-body">
+        <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--添加NAS节点-->
+<div class="modal fade" id="addNasNodeModal" tabindex="-1" role="dialog" aria-labelledby="addNasNodeModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="addNasNodeModalLabel">{{ clusterLang.add_nas_node }}</h4>
+      </div>
+      <div class="modal-body">
+        <form id="checkNasNode" style="text-align:center;">
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--整体配置-->
+<div class="modal fade" id="confNASModal" tabindex="-1" role="dialog" aria-labelledby="confNASModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:450px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary" id="add-nas">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="confNASModalLabel">{{clusterLang.configure_all_nas_service}}</h4>
+      </div>
+      <div class="modal-body">
+          <table class="table">
+              <thead style="text-align: left;font-size: 14px;padding: 20px">
+              <th>{{clusterLang.ip}}/{{clusterLang.mask}}</th>
+              <th>{{clusterLang.network_port}}</th>
+              </thead>
+              <tbody id="nasoption-list" style="text-align: left;font-size: 14px;padding: 20px">
+
+              </tbody>
+          </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 平衡集群 -->
+<div class="modal fade" id="clusterBalanceModal" tabindex="-1" role="dialog" aria-labelledby="clusterBalanceModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title">{{ clusterLang.balance_cluster }}</h4>
+      </div>
+      <div class="modal-body">
+        <p>{{clusterLang.confirm_to_balance_cluster}}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--暂停所有NAS网关服务-->
+<div class="modal fade" id="stopAllNASModal" tabindex="-1" role="dialog" aria-labelledby="stopAllNASModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title">{{clusterLang.stop_all_nas_service}}</h4>
+      </div>
+      <div class="modal-body">
+        <p>{{clusterLang.confirm_to_stop_all_nas_service}}</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!--启动所有NAS网关服务-->
+<div class="modal fade" id="startAllNASModal" tabindex="-1" role="dialog" aria-labelledby="startAllNASModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title">{{clusterLang.start_all_nas_service}}</h4>
+      </div>
+      <div class="modal-body">
+        <p>{{clusterLang.confirm_to_start_all_nas_service}}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+{% block needjs %}
+<script type="text/javascript" src="js/lib/masonry.pkgd.min.js"></script>
+{% endblock %}
+{% block javascript %}
+<script type="text/javascript" src="js/pages/dnsip.js"></script>
+{% endblock %}

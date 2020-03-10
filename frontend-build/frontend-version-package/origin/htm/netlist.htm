@@ -1,0 +1,126 @@
+
+	{% for net in netInfo['netlist'] %}
+    <div class="basic_content_list net-content" style="overflow: hidden">
+	<div class="network-mag js-network-mag {% if net['slaves']|length > 1%} bound-network-mag{%else%} tobebind{%endif%}">
+		<!--<div class="col-lg-2 pic-ntw basic-lg-2 left">
+			<img src="css/image/ntw.PNG" style="width:30px;height:25px;">
+			<input type="checkbox" class="mg-ntw-checked" style="display:none;">
+		</div>-->
+		{% if net['nictype'] == 0 %}
+		<div class="col-lg-2 pic-ntw basic-lg-2 left">
+			<a href="javascript:;" class="js-plus-subdisks hidden" data-ip="" data-name="">
+		        <span class="glyphicon glyphicon-plus-sign" style="z-index: 1000;background-color: #ffffff"></span>
+		    </a>
+		    <a href="javascript:;" class="js-minus-subdisks" data-ip="">
+                <div style="width: 20px;height: 20px;position:absolute;background-color: #ffffff;z-index: 1000"></div>
+		        <span class="glyphicon glyphicon-minus-sign" style="z-index: 1000;background-color: #ffffff"></span>
+		    </a>
+	    </div>
+	    {% endif %}
+	    {% if net['nictype'] == 1 %}
+		<div class="col-lg-2 pic-ntw basic-lg-2 left">
+			<img src="css/image/ntw.PNG" style="width:20px;height:15px;">
+		</div>
+	    {% endif %}
+		<div class="col-lg-3 nic-ntw left" style="cursor:pointer;" data-gateway="{{net['gateway']}}" data-hwaddr="{{net['hwaddr']}}" data-bondmode="{{net['bondmode']}}" data-speed="{{net['speed']}}" data-maxspeed="{{net['maxspeed']}}" data-link="{{net['link']}}" data-subnet="{{net['prefix']}}" title="{{net['name']}}">
+			<span>{{net['name']}}</span>
+		</div>
+		<div class="col-lg-4 ip-ntw left">
+			{% for ip in net['ipaddr'] %}
+            <!--{% if net['nictype'] != 1 %}-->
+            <!--<div class="tree-left" style="border-left: 1px solid #A7E1FF;height: 30px;position: absolute;margin-top: 15px"></div>-->
+            <!--{% endif %}-->
+			<span>{{ ip }}</span> / {{net['prefix']}}<br>
+			{% endfor %}
+		</div>
+		<div class="other-action-ntw col-lg-2" data-netports="{{net['name']}}" data-ismonitor="{{net['ismonitor']}}">
+			<div class="hidden">
+				{% if net['nictype'] == 0 %}
+				<a href="javascript:;" class="addbondnic" title="{{nodeLang.add_net_card_to_binding}}">
+					<span class="mif-lock"></span>
+				</a>
+				{% endif %}
+
+				{% if net['nictype'] == 0 %}
+				<a href="javascript:;" id="setBondIp" title="{{ nodeLang.IP_setting }}">
+					<span class="mif-cog"></span>
+				</a>
+				{% endif %}
+				{% if net['nictype'] != 0 %}
+				<a href="javascript:;" id="setIp" title="{{ nodeLang.IP_setting }}">
+					<span class="mif-cog"></span>
+				</a>
+				{% endif %}
+				{% if net['ismonitor'] == false %}
+				<a href="javascript:;" class="network_monitor" title="{{ nodeLang.monitor_set }}">
+					<span class="mif-cogs"></span>
+				</a>
+				{% endif %}
+				{% if net['ismonitor'] == true %}
+				<a href="javascript:;" class="network_monitor" title="{{ nodeLang.monitor_delete }}">
+					<span class="mif-cogs" style="color: red"></span>
+				</a>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+	{% for subnet in  net['slaves']%}
+	<div class="network-mag js-network-mag bound-sub" >
+		<div class="col-lg-2 left pic-ntw basic-lg-2 " style="margin-left: 7px">
+            <div style="border-left: 1px solid #A7E1FF;height: 200px;position: absolute;bottom: 15px"></div>
+			<div class="showcenterline" style="margin-top:15px;width:15px;float:left;"></div>
+
+			<img src="css/image/ntw.PNG" style="width:20px;height:15px;">
+			<!--<input type="checkbox" class="mg-ntw-checked" style="display:none;">-->
+		</div>
+		<div class="col-lg-3 nic-ntw left" style="cursor:pointer;" data-gateway="{{net['gateway']}}" data-hwaddr="{{subnet['hwaddr']}}" data-speed="{{subnet['speed']}}" data-maxspeed="{{subnet['maxspeed']}}" data-link="{{subnet['link']}}" title="{{subnet['name']}}">
+			<span>{{subnet['name']}}</span>
+		</div>
+		<div class="col-lg-3 ip-ntw left" style="height:30px;">
+		</div>
+		<div class="other-action-ntw col-lg-2">
+      <a href="javascript:;" class="monitor_sub hidden">
+        <span class="mif-cogs" data-name="{{ subnet['name'] }}" data-ismonitor="0" title="{{nodeLang.set_net_card_monitor}}"></span>
+      </a>
+			<a href="javascript:;" class="delbondnic hidden">
+				<span class="glyphicon glyphicon-remove " title="{{nodeLang.del_net_card_from_binding}}"></span>
+			</a>
+		</div>
+	</div>
+	{%endfor%}
+    </div>
+	{% endfor %}
+
+<div class="basic_content_list" style="margin-top: 20px">
+	<div class="network-mag dns-ntw-row">
+		<div class="col-lg-2 left pic-ntw basic-lg-2">
+			<span>DNS:</span>
+		</div>
+		<div class="col-lg-8 dns-ntw basic-lg-8">
+			<input placeholder="{{nodeLang.divide_dns_by_comma}}" style="width:100%;" value="{% if dnsInfo['dns1'] is empty %}{%else%}{{dnsInfo['dns1']}},{%endif%}{% if dnsInfo['dns2'] is empty %}{%else%}{{dnsInfo['dns2']}}{%endif%}">
+		</div>
+		<div class="other-action-ntw col-lg-2 basic-lg-2 remove-dns-value hidden">
+			<a href="javascript:;">
+				<span class="glyphicon glyphicon-remove" title="{{ nodeLang.remove_field_name }}"></span>
+			</a>
+		</div>
+	</div>
+	<div class="network-mag gateway-ntw-row">
+		<div class="col-lg-2 left gateway-ntw basic-lg-2 ellipsis" title="{{nodeLang.default_gateway}}">
+			<span>{{nodeLang.default_gateway}}</span>
+		</div>
+		<div class="col-lg-8 gateway-ntw basic-lg-8">
+            <select class="gateway-select none-border-input" style="margin-top: -5px">
+                <option value="">{{nodeLang.no_setting}}</option>
+                {% for nett in netInfo['netlist'] %}
+					{% if (nett['name'] == gatewayinfo['name']) and (nett['link'] == 0) %}
+                        <option value="{{nett['name']}}:{{nett['gateway']}}" selected>{{nett['name']}}，{{nett['gateway']}}</option>
+					{% endif %}
+                    {% if (nett['name'] != gatewayinfo['name']) and (nett['link'] == 0) %}
+                        <option value="{{nett['name']}}:{{nett['gateway']}}">{{nett['name']}}，{{nett['gateway']}}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+		</div>
+	</div>
+</div>

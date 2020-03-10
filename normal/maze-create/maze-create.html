@@ -1,0 +1,154 @@
+<html>
+<head>
+<title>Maze</title>
+<style>
+    
+.maze_outer { position:absolute; left:20px; top:20px; }
+.maze_inner { position:relative; }
+.maze_cell { position:absolute; width:16px; height:16px; overflow:hidden; border:1px solid black; }
+    
+</style>
+    
+<script>
+window.onload = init;
+function init(){
+	var mz = new Maze();
+	mz.create();
+	document.body.appendChild(mz.toHTMLObject());
+}
+    
+function Maze(){
+    // 横纵坐标是的单位格子数
+	this.size = [40,40];
+    // 初始化状态
+	this.inited = false;
+    // 初始化方法
+	this.init = function(){
+		this.nodes = [];
+		for (var y=0; y<this.size[1]; y++){
+            // 建立40个Y轴数组
+			this.nodes[y] = [];
+            // 每个Y轴数组建立40个X轴单位格子
+			for (var x=0; x<this.size[0]; x++){
+				this.nodes[y][x] = new Node(this, x, y);
+			}
+		}
+		this.inited = true;
+	}
+	
+	this.get_node = function(x,y){
+		return this.inited && x >=0 && x < this.size[0] && y >= 0 && y < this.size[1] && this.nodes[y][x];
+	}
+	
+	this.create = function(){
+		if (!this.inited) this.init();
+		var try_count = 0;
+		var points = [];
+		var most_rightbottom_point = this.nodes[0][0];
+		//var max_p_len = 0;
+		var cp;
+		points.push(this.nodes[0][0]);
+		
+		while(points.length > 0){
+			var np = random_init_cell(cp = points.pop());
+			if (cp.x >= most_rightbottom_point.x && cp.y >= most_rightbottom_point.y) most_rightbottom_point = cp;
+			for (var i=0; i<np.length; i++) points.unshift(np[i]);
+			//if (max_p_len < points.length) max_p_len = points.length;
+			if (points.length == 0 && !this.nodes[this.size[1]-1][this.size[0]-1].inited && ++try_count < 1000){
+				most_rightbottom_point.inited = false;
+				points.push(most_rightbottom_point);
+				
+			}
+		}
+		
+		//alert("最大并发路径数：" + max_p_len+"\r\n尝试次数："+try_count);
+
+        // 获取某一个节点的四个方向上的已经被初始化了的格子（经过概率计算）
+		function random_init_cell(p){
+			if (p.inited) return [];
+			var re = [];
+			for (var i=0, dir; i<Maze.DIR.length && (dir = Maze.DIR[i]); i++){
+			    // 如果这个节点的dir方向有节点，dir方向节点没有开通，然后是随机选择
+				if (p[dir]() && !p.dir[dir] && Math.random() < ratio(dir, p)){
+					p.open(dir);
+					re.push(p[dir]());
+				}
+			}
+			p.inited = true;
+			return re;
+			
+		}
+
+		// 关键的随机开启节点算法
+		function ratio(dir, p){
+
+		    // false * 10 = 0
+			var c = p.branches_count()*0.5 + p[dir]().branches_count() * 10;
+			console.log(c);
+			return Math.pow(0.4,c);
+		}
+	}
+	
+	this.toHTMLObject = function (){
+		var obj_outer = document.createElement("div");
+		obj_outer.className = "maze_outer";
+		var obj_inner = document.createElement("div");
+		obj_inner.className = "maze_inner";
+		obj_outer.appendChild(obj_inner);
+		
+		if (!this.inited) this.init();
+		
+		for (var y=0; y<this.size[1]; y++){
+			for (var x=0; x<this.size[0]; x++){
+				var nd = document.createElement("div");
+				nd.className = "maze_cell";
+				nd.x = x; nd.y = y;
+				nd.style.left = x * 15 + "px";
+				nd.style.top = y * 15 + "px";
+				for (var i in this.nodes[y][x].dir){
+					if (this.nodes[y][x].dir[i]) nd.style["border" + i.charAt(0).toUpperCase() + i.substring(1)] = "1px solid white";
+				}
+				obj_inner.appendChild(nd);
+			}
+		}
+		return obj_outer;
+	}
+}
+Maze.DIR = ["top", "left", "bottom", "right"];
+    
+function Node(maze, x, y){
+	this.maze = maze;
+	this.x = x || 0;
+	this.y = y || 0;
+	this.dir = {};
+	this.inited = false;
+	// 获取前一个节点
+	this.left = function(){ return this.maze.get_node(x-1, y); }
+	this.right = function(){ return this.maze.get_node(x+1, y); }
+	this.top = function(){ return this.maze.get_node(x, y-1); }
+	this.bottom = function(){ return this.maze.get_node(x, y+1); }
+	this.open = function(d){
+		if (d == "top"){
+			this.dir.top = this.top().dir.bottom = true;
+		}else if (d == "right"){
+			this.dir.right = this.right().dir.left = true;
+		}else if (d == "bottom"){
+			this.dir.bottom = this.bottom().dir.top = true;
+		}else if (d == "left"){
+			this.dir.left = this.left().dir.right = true;
+			
+		}
+	}
+	// 分支开启数量
+	this.branches_count = function(){
+		var re = 0;
+		for (var i in this.dir) if (this.dir[i]) re++;
+		return re;
+	}
+}
+</script>
+    
+
+</head>
+<body></body>
+</html>

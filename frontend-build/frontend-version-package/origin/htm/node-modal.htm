@@ -1,0 +1,700 @@
+<!--关机-->
+<div class="modal fade" id="shutdownModal" tabindex="-1" role="dialog" aria-labelledby="shutdownModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-danger">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="shutdownModalLabel">{{nodeLang.shut}}</h4>
+      </div>
+      <div class="modal-body flex-modal-body">
+        <form class="form-horizontal col-sm-12" role="form">
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{nodeLang.shutdown1}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step1"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{nodeLang.shutdown2}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step2"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{nodeLang.shutdown3}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step3"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{nodeLang.shutdown4}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step4"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{nodeLang.shutdown5}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step5"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{nodeLang.shutdown6}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step6"></span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--重启-->
+<div class="modal fade" id="rebootModal" tabindex="-1" role="dialog" aria-labelledby="rebootModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-danger">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="rebootModalLabel">{{nodeLang.reboot}}</h4>
+      </div>
+      <div class="modal-body flex-modal-body">
+        <form class="form-horizontal col-sm-12" role="form">
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{nodeLang.shutdown1}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step1"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{nodeLang.shutdown2}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step2"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{nodeLang.shutdown3}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step3"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{nodeLang.shutdown4}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step4"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{nodeLang.shutdown5}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step5"></span>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-7 control-label left">{{nodeLang.shutdown7}}</div>
+            <div class="col-sm-3 control-label left">
+            </div>
+            <span class="col-sm-2 control-label step6"></span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--添加网卡到绑定-->
+<div class="modal fade" id="addbondnicIdModal" tabindex="-1" role="dialog" aria-labelledby="addBindModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="addBindModalLabel">{{nodeLang.select_need_to_bind}}</h4>
+      </div>
+      <div class="modal-body" style="width: 100%;">
+
+      </div>
+    </div>
+  </div>
+</div>
+<!--从绑定删除网卡-->
+<div class="modal fade" id="delbondnicIdModal" tabindex="-1" role="dialog" aria-labelledby="delBindModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width: 400px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="BindModalLabel">{{nodeLang.delete_adapter}}</h4>
+      </div>
+      <div class="modal-body" style="width: 100%;height: 100px;">
+
+      </div>
+    </div>
+  </div>
+</div>
+<!--创建网卡绑定-->
+<div class="modal fade" id="setBindModal" tabindex="-1" role="dialog" aria-labelledby="BindModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="BindModalLabel">{{nodeLang.nic_binding}}</h4>
+      </div>
+      <div class="modal-body">
+      <form class="form-horizontal" role="form">
+        <div class="form-group">
+          <label for="bond_Type" class="col-sm-3 control-label">{{nodeLang.bind_type}}</label>
+          <div class="col-sm-7">
+            <select id="bond_Type" class="form-control">
+              <option value="6">{{nodeLang.mode6}}</option>
+              <option value="1">{{nodeLang.mode1}}</option>
+              <option value="0">{{nodeLang.mode0}}</option>
+            </select>
+
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="bond_Ip" class="col-sm-3 control-label">{{nodeLang.ip_address}}</label>
+          <div class="col-sm-7">
+          <input type="text" class="form-control" id="bond_Ip">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="bond_Mask" class="col-sm-3 control-label">{{nodeLang.subnet_mask}}</label>
+          <div class="col-sm-7">
+          <input type="text" class="form-control" id="bond_Mask" value="24">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="bond_Gateway" class="col-sm-3 control-label">{{nodeLang.gateway}}</label>
+          <div class="col-sm-7">
+          <input type="text" class="form-control" id="bond_Gateway">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-3 control-label">{{nodeLang.select_adapter}}</label>
+          <div class="form-net col-sm-7">
+            <table class="table table-hover" style="border: 1px solid #ccc">
+            <thead>
+              <tr>
+              <td>#</td>
+              <td style="">{{nodeLang.adapter_name}}</td>
+              <td style="">IP</td>
+              </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--删除绑定-->
+<div class="modal fade" id="cancelBindModal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="cancelModalLabel">{{nodeLang.delete_bind}}</h4>
+      </div>
+      <div class="modal-body">
+      <!--<p>{{nodeLang.areu_sure_cancel_bind}}</p>-->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--新建分区-->
+<div class="modal fade" id="addPartModel" tabindex="-1" role="dialog" aria-labelledby="addPartModelLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="addPartModelLabel">{{nodeLang.new_partition}}</h4>
+      </div>
+      <div class="modal-body">
+        <div style="max-height:300px;overflow:auto;">
+          <table class="table table-condensed table-hover">
+            <thead>
+            <tr>
+              <th><input type='checkbox' id='select_create_part' /></th>
+              <th>{{nodeLang.name}}</th>
+              <th>{{nodeLang.path}}</th>
+              <th style="text-align: right">{{nodeLang.capacity}}</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--批量删除分区-->
+<div class="modal fade" id="delMultiPartModel" tabindex="-1" role="dialog" aria-labelledby="delMultiPartModelLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.delete}}</button>
+        <h4 class="modal-title" id="delMultiPartModelLabel">{{publicLang.delete}}{{nodeLang.partition}}</h4>
+      </div>
+      <div class="modal-body">
+      <p class="modal-word-break"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--批量卸载分区-->
+<div class="modal fade" id="umountMultiModel" tabindex="-1" role="dialog" aria-labelledby="umountMultiModelLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="umountMultiModelLabel">{{nodeLang.unmount_part}}</h4>
+      </div>
+      <div class="modal-body">
+      <p>{{nodeLang.sure_to_delete_partition}}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--删除指定分区-->
+<div class="modal fade" id="delSinglePartModel" tabindex="-1" role="dialog" aria-labelledby="delSinglePartModelabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.delete}}</button>
+        <h4 class="modal-title" id="delSinglePartModelLabel">{{publicLang.delete}}{{nodeLang.partition}}</h4>
+      </div>
+      <div class="modal-body">
+      <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--格式化指定分区-->
+<div class="modal fade" id="formatModel" tabindex="-1" role="dialog" aria-labelledby="formatModelLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="formatModelLabel">{{nodeLang.format_the_part}}{{nodeLang.partition}}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-horizontal" role="form">
+          <div class="form-group">
+            <label for="format_list" class="col-sm-4 control-label">{{nodeLang.partition}}</label>
+            <div class="col-sm-8">
+              <p class="format_list form-control-static" style="font-size:13px"></p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="option-type" class="col-sm-4 control-label">{{nodeLang.file_type}}</label>
+            <div class="col-sm-8">
+        <!--<p class="form-control-static" style="font-size:13px">EXT4</p>-->
+               <select id="option-type" class="dt_layout_select">
+                <option value="3">EXT4</option>
+                <!--<option value="5">XFS</option>-->
+              </select>
+            </div>
+          </div>
+          <!-- <div class="form-group">
+            <label for="" class="col-sm-4 control-label">{{nodeLang.careful}}</label>
+            <div class="col-sm-8">
+              <p style="font-size:13px;">「文件类型」元数据节点设置成EXT4。<br>存储节点设置成XFS。</p>
+            </div>
+            </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--卸载指定分区-->
+<div class="modal fade" id="umountSingleModel" tabindex="-1" role="dialog" aria-labelledby="umountSingleModelLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="umountSingleModelLabel">{{nodeLang.unmount_part}}</h4>
+      </div>
+      <div class="modal-body">
+      <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--添加节点-->
+<div class="modal fade" id="addNodeModal" tabindex="-1" role="dialog" aria-labelledby="addNodeModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.add}}</button>
+        <h4 class="modal-title" id="addNodeModalLabel">{{nodeLang.add_node}}</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-group">
+              <label for="input-ip" class="col-sm-2 control-label">{{nodeLang.ip_address}}：</label>
+              <div class="col-sm-10">
+                <textarea rows="3" cols="20" class="col-sm-12 text-area-style" id="add_aNewSip" ></textarea>
+                <p class="help-block" style="color:red;">{{nodeLang.multi_ip_divide_bycomma}}</p>
+              </div>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--删除节点-->
+<div class="modal fade" id="deleteNodeModal" tabindex="-1" role="dialog" aria-labelledby="deleteNodeModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-danger btn-sm">{{publicLang.delete}}</button>
+        <h4 class="modal-title" id="deleteNodeModalLabel">{{nodeLang.del_node}}</h4>
+      </div>
+      <div class="modal-body">
+      <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--IP设置-->
+<div class="modal fade" id="setIPModal" tabindex="-1" role="dialog" aria-labelledby="setIPModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.save}}</button>
+        <h4 class="modal-title" id="setIPModalLabel">{{nodeLang.IP_setting}}</h4>
+      </div>
+      <div class="modal-body">
+      <form class="form-horizontal" role="form">
+        <div class="form-group">
+          <label for="sip_Name" class="col-sm-3 control-label">{{nodeLang.nic}}</label>
+          <div class="col-sm-7">
+          <input type="text" class="form-control" id="sip_Name" disabled>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="sip_Newip" class="col-sm-3 control-label">{{nodeLang.ip_address}}</label>
+          <div class="col-sm-7">
+          <input type="text" class="form-control" id="sip_Newip">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="sip_Newmask" class="col-sm-3 control-label">{{nodeLang.subnet_mask}}</label>
+          <div class="col-sm-7">
+          <input type="text" class="form-control" id="sip_Newmask">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="sip_Newgateway" class="col-sm-3 control-label">{{nodeLang.gateway}}</label>
+          <div class="col-sm-7">
+          <input type="text" class="form-control" id="sip_Newgateway">
+          </div>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Bond 的IP设置-->
+<div class="modal fade" id="setBondIPModal" tabindex="-1" role="dialog" aria-labelledby="setBondIPModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.save}}</button>
+        <h4 class="modal-title" id="setBondIPModalLabel">{{nodeLang.IP_setting}}</h4>
+      </div>
+      <div class="modal-body">
+      <form class="form-horizontal" role="form">
+        <div class="form-group">
+          <label for="sip_Name" class="col-sm-3 control-label">{{nodeLang.nic}}</label>
+          <div class="col-sm-7">
+          <input type="text" class="form-control" id="sbondip_Name" disabled>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="sip_Newip" class="col-sm-3 control-label">{{nodeLang.ip_address}}</label>
+          <div class="col-sm-7">
+          <input type="text" class="form-control" id="sbondip_Newip">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="sip_Newmask" class="col-sm-3 control-label">{{nodeLang.subnet_mask}}</label>
+          <div class="col-sm-7">
+          <input type="text" class="form-control" id="sbondip_Newmask">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="sip_Newgateway" class="col-sm-3 control-label">{{nodeLang.gateway}}</label>
+          <div class="col-sm-7">
+          <input type="text" class="form-control" id="sbondip_Newgateway">
+          </div>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--设置网关-->
+<div class="modal fade" id="setDefaultGateWayModal" tabindex="-1" role="dialog" aria-labelledby="setDefaultGateWayModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.save}}</button>
+        <h4 class="modal-title" id="setDefaultGateWayModalLabel">{{nodeLang.default_getway_setting}}</h4>
+      </div>
+      <div class="modal-body">
+      <p>{{cluster.current_default_gateway}}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--刷新磁盘信息缓存-->
+<div class="modal fade" id="refreshDiskCacheModal" tabindex="-1" role="dialog" aria-labelledby="refreshDiskCacheModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary btn-sm">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="refreshDiskCacheModalLabel">{{nodeLang.refresh}}</h4>
+      </div>
+      <div class="modal-body">
+      <p>{{nodeLang.sure_to_refresh_info_cache}}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--清除磁盘信息缓存-->
+<div class="modal fade" id="cleanDiskCacheModal" tabindex="-1" role="dialog" aria-labelledby="cleanDiskCacheModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary btn-sm">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="cleanDiskCacheModalLabel">{{nodeLang.clean_disk_info_cache}}</h4>
+      </div>
+      <div class="modal-body">
+      <p>{{nodeLang.sure_to_clean_info_cache}}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--启动节点服务-->
+<div class="modal fade" id="startNodeServiceModal" tabindex="-1" role="dialog" aria-labelledby="startNodeServiceModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary btn-sm">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="startNodeServiceModalLabel">{{nodeLang.start_service}}</h4>
+      </div>
+      <div class="modal-body">
+      <p>{{nodeLang.sure_start_service}}<span class="serviceName" style="color:red;"></span> ?</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!--停止节点服务-->
+<div class="modal fade" id="stopNodeServiceModal" tabindex="-1" role="dialog" aria-labelledby="stopNodeServiceModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary btn-sm">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="stopNodeServiceModalLabel">{{nodeLang.stop_service}}</h4>
+      </div>
+      <div class="modal-body">
+      <p>确认停止服务 <span class="serviceName" style="color:red;"></span> ?</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!--重置节点-->
+<div class="modal fade" id="nodeResetModal" tabindex="-1" role="dialog" aria-labelledby="nodeResetModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-danger btn-sm">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="nodeResetModalLabel">{{nodeLang.reset_node}}</h4>
+      </div>
+      <div class="modal-body">
+      <p style="color:red;">{{nodeLang.sure_reset_current_node}}</p><br>
+      <p>{{nodeLang.reset_node_confirm_click}}</p>
+      <input type="text" id="nodeResetConfirm">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--添加注册码-->
+<div class="modal fade" id="addRegisterCodeModal" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+    <button type="button" class="btn btn-primary" data-action="export">{{publicLang.ok}}</button>
+        <h4 class="modal-title">{{nodeLang.add_register}}</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-horizontal" role="form">
+              <div class="form-group">
+                <label for="input-liccodes" class="col-sm-3 control-label left">{{nodeLang.input_authorization_code}}:</label>
+                <div class="col-sm-9">
+                  <textarea rows="3" cols="20" class="col-sm-12 text-area-style" id="input-liccodes" style="word-break: break-all;"></textarea>
+                  <p class="help-block" style="color:red;">{{nodeLang.authcode_divide_by_comma}}</p>
+               </div>
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 添加mgr -->
+<div class="modal fade" id="addMgrModal" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-action="cancel">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary" data-action="add">{{publicLang.ok}}</button>
+        <h4 class="modal-title">{{nodeLang.add_mgr}}</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-horizontal" role="form">
+              <div class="form-group">
+                <label for="inputHostname" class="col-sm-3 control-label left">{{nodeLang.input_hostname}}:</label>
+                <div class="col-sm-9">
+                  <input class="col-sm-12" id="inputHostname" placeholder="hostname"></input>
+               </div>
+              </div>
+              <p style="text-align: center; color: red; font-size: .9rem;" class="add-mgr-info hidden"></p>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--删除注册码-->
+<div class="modal fade" id="delRegCodeModel" tabindex="-1" role="dialog" aria-labelledby="delRegCodeModelLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="delRegCodeModelLabel">{{nodeLang.del_register}}</h4>
+      </div>
+      <div class="modal-body">
+      <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+<!--手工激活-->
+<div class="modal fade" id="activeByHandModel" tabindex="-1" role="dialog" aria-labelledby="activeByHandModelLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+      <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+      <h4 class="modal-title" id="activeByHandModelLabel">{{nodeLang.input_active_code}}</h4>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+          <div class="col-sm-12">
+              <input id="input-activecode" placeholder="{{nodeLang.input_active_code}}" class="none-border-input" style="width:100%;">
+          </div>
+        </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!--节点时钟信息-->
+<div class="modal fade" id="nodeClockInfoModal" tabindex="-1" role="dialog" aria-labelledby="nodeClockInfoModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-info" style="width: 80px">{{nodeLang.initialize_clock}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="nodeClockInfoModalLabel">{{nodeLang.node_clock_info_and_option}}</h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label for="inputClockSource" class="col-sm-3 control-label">{{nodeLang.adjust_node_clock}}</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="inputClockSource" placeholder="{{nodeLang.input_clock_source}}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="srcInfo" class="col-sm-3 control-label">{{nodeLang.current_clock_source}}</label>
+                <div class="col-sm-6">
+                    <ul id="srcInfo" style="padding-top: 0.3em">
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!--<div class="col-sm-4">
+            <p>{{nodeLang.external_source}}</p>
+        </div>
+        <div class="js-src-info col-sm-7">
+            <ul>
+                <li>source1</li>
+                <li>source1</li>
+                <li>source1</li>
+                <li>source1</li>
+            </ul>
+        </div>-->
+
+
+      </div>
+    </div>
+  </div>
+</div>

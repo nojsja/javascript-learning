@@ -1,0 +1,113 @@
+{% extends 'two-float-layout.htm' %}
+{% block needcss %}
+<style type="text/css">
+	body {
+		font-size: .875rem;
+		font-family: "Hiragino Sans GB","Microsoft YaHei","微软雅黑",tahoma,arial,simsun,"宋体";
+	}
+</style>
+{% endblock %}
+{% block leftnav%}
+<ul class="v-menu subdown min-size-required box-shadow" style="width:100%;max-width:100%;">
+	<li {% if cursubmenu == 'alarmlist' %}class="active"{%endif%}><a href="alarm">{{ alarmLang.alarm_detail_info }}</a></li>
+	<li {% if cursubmenu == 'historyalarm' %}class="active"{%endif%}><a href="historyalarm">{{ alarmLang.alarm_history }}</a></li>
+    <li {% if cursubmenu == 'alarmsetting' %}class="active"{%endif%}><a href="alarmsetting">{{ alarmLang.alarm_settings }}</a></li>
+
+</ul>
+{%endblock%}
+
+{% block rightcontent %}
+<!--下载日志-->
+<div class="modal fade" id="downloadModal" tabindex="-1" role="dialog" aria-labelledby="downloadModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <h4 class="modal-title" id="delShareModelLabel">{{ alarmLang.download_logs }}</h4>
+      </div>
+      <div class="modal-body">
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 搜索菜单 -->
+  <div class="box-shadow log_search_wrapper" style="border:0;">
+    <div class="log_date_select">
+      <span>{{alarmLang.time_line}}：</span>
+      <input type="date" class='dateSelectBegin'/>
+      <span>-</span>
+      <input type="date" class='dateSelectEnd'/>
+    </div>
+
+    <div class="log_keyword_input">
+        <span>{{alarmLang.keyword}}：</span>
+        <input type="text" placeholder="{{alarmLang.please_input_keyword}}" />
+    </div>
+
+    <div class="log_submit_button">
+      <input type="button" value="{{alarmLang.search}}"/>
+    </div>
+
+  </div>
+
+<div class="margin_bot_format"></div>
+
+<div class="all_table_list_third">
+	<div class="alarm-mag" style="font-weight: bold;">
+		<div class="col-lg-2 basic-lg-2 col-format-row">
+			<span>{{ alarmLang.time }}</span>
+		</div>
+		<div class="col-lg-1 basic-lg-1 col-format-row">
+			<span>{{ alarmLang.module }}</span>
+		</div>
+    <div class="col-lg-1 basic-lg-1 col-format-row">
+			<span>{{ alarmLang.hostname_alarm }}</span>
+		</div>
+		<div class="col-lg-1 basic-lg-1 col-format-row">
+			<span>{{ alarmLang.opt_user }}</span>
+		</div>
+		<div class="col-lg-2 basic-lg-2 col-format-row">
+			<span>{{ alarmLang.alarm_level }}</span>
+		</div>
+		<div class="col-lg-5 basic-lg-5 col-format-row left">
+			<span>{{ alarmLang.detail_info }}</span>
+		</div>
+	</div>
+	<div class="magtable_list_parent" style="height:92%;">
+		<div id="historyalarmlist" class="magtable_list_third well-sm bgwhite">
+		</div>
+	</div>
+</div>
+
+<div class="margin_bot_format"></div>
+
+<div class="dt_system_bar_third">
+
+  <div class="left_nav_system">
+      <img src="css/image/info.png" style="width:25px;padding-bottom:6px;padding-right:6px;">
+      <span style="line-height: 30px;font-size:18px;color:#337AB7;">{{ alarmLang.optlogs_detail }}</span>
+      <a id="downloadLogs" title="{{ alarmLang.download_logs }}" href="javascript:void(0);" style="height:100%;margin-left:8px;">
+        <span class="glyphicon glyphicon-download-alt"></span>
+      </a>
+  </div>
+
+	<nav class="navbar_right_second">
+		<div class="navbar_system_middle">
+			<!-- 分页菜单 -->
+			<div id="pagination_alarm" class="js-pagination" style="text-align:center;">
+			</div>
+		</div>
+    <div>
+      <div class="page-jump-wrapper hidden" style="padding-top: 4px;">
+        <input type="text" class="page-jump-input" />
+        <span class="page-jump-button">{{alarmLang.jump}}&nbsp;>></span>
+      </div>
+
+    </div>
+	</nav>
+</div>
+{% endblock %}
+{% block needjs %}
+    <script src="js/lib/twbsPagination/jquery.twbsPagination.min.js"></script>
+    <script src="js/pages/historyalarm.js"></script>
+{% endblock %}

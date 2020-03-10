@@ -1,0 +1,118 @@
+<!-- 列举出创建的存储池 -->
+<div class="row show-grid grid js-masonry">
+	{% for spool in spoolsList %}
+	<div class="col-xs-12 col-md-5 col-lg-6  box-shadow grid-item grid-item-style storage-pool-detail" data-poolname="{{ spool['name'] }}" data-basepool="{{ spool['is_tier']['basepool'] }}" data-tierpool="{{ spool['has_tier']['tierpool'] }}">
+		<div class="basic_content">
+			<div class="share_header">
+				{% if spool['has_tier'] != undefined and spool['is_tier'] != undefined %}
+				<img src="css/image/tier1.png" style="width:43px">
+				{% elseif spool['has_tier'] != undefined and spool['is_tier'] == undefined %}
+				<img src="css/image/tier2.png" style="width:43px">
+				{% elseif spool['has_tier'] == undefined and spool['is_tier'] != undefined %}
+				<img src="css/image/tier3.png" style="width:43px">
+				{% elseif spool['has_tier'] == undefined and spool['is_tier'] == undefined %}
+				<img src="css/image/tier4.png" style="width:43px">
+				{% endif %}
+				<span class="ellipsis" title="{{ spool['name'] }}">{{ spool['name'] }}</span>
+				<div class="hidden js-storagepool-act" style="display:inline;">
+					<a class="fl-rt js-delete-pool" href="javascript:;" title="{{storageLang.del_storagepool}}">
+						<img src="css/image/delete.png" style="width:43px" class="test">
+	  				</a>
+					<a class="fl-rt js-set-quota" href="javascript:;" title="{{ storageLang.allocation_size }}" style="margin-right: 8px;">
+						<img src="css/image/setting.png" style="width:43px" class="test">
+					</a>
+					{% if spool['is_avail'] == 'available' or spool['is_avail'] == 'unavailable' %}
+					<a class="fl-rt js-edit-tier" href="javascript:;">
+						<img src="css/image/edit.png" style="width:43px" class="test" title="{{storageLang.add_cache_tier}}">
+					</a>
+					<a class="fl-rt js-delete-tier" href="javascript:;">
+						<img src="css/image/minus.png" style="width:43px" class="test" title="{{storageLang.remove_cache_tier}}">
+					</a>
+					{% endif %}
+	  			</div>
+			</div>
+			<div style="text-align:left;">
+				<div class="basic_cont_row">
+					<div class="fl-lt">{{storageLang.storage_total_capacity}}：</div>
+					<div class="fl-lt">
+						<span>{{ (spool['used_bytes']+spool['avail_bytes']) | sizeFormat('bytes')}}</span>
+					</div>
+				</div>
+				<div class="basic_cont_row">
+					<div class="fl-lt">{{storageLang.storage_used_capacity}}：</div>
+					<div class="fl-lt">{{ spool['used_bytes'] | sizeFormat('bytes')}}</div>
+				</div>
+				<div class="basic_cont_row">
+					<div class="fl-lt">{{storageLang.storage_avail_capacity}}：</div>
+					<div class="fl-lt">{{ spool['avail_bytes'] | sizeFormat('bytes')}}</div>
+				</div>
+				<div class="basic_cont_row">
+					<div class="fl-lt">{{storageLang.diskgroup}}：</div>
+					<div class="fl-lt">{{ spool['dg_name'] }}</div>
+				</div>
+				<div class="basic_cont_row">
+					<div class="fl-lt">{{storageLang.allocation_size}}：</div>
+					<div class="fl-lt">
+						<input type="text" class="none-border-input" style="width:50px;" value="{{ spool['quota']['max_bytes'] | sizeFormat('bytes') }}" disabled="disabled"/>
+					</div>
+				</div>
+				{% if spool['is_tier'] != undefined %}
+				<div class="basic_cont_row">
+					<div class="fl-lt">{{storageLang.is_tier_name}}：</div>
+					<div class="fl-lt">{{ spool['is_tier']['basepool'] }}</div>
+				</div>
+				<div class="basic_cont_row">
+					<div class="fl-lt">{{storageLang.is_tier_mode}}：</div>
+					<div class="fl-lt">{{ spool['is_tier']['tier_mode'] }}</div>
+				</div>
+				{% endif %}
+				{% if spool['has_tier'] != undefined %}
+				<div class="basic_cont_row">
+					<div class="fl-lt">{{storageLang.has_tier_name}}：</div>
+					<div class="fl-lt is_tier_pool">{{ spool['has_tier']['tierpool']  }}</div>
+				</div>
+				<div class="basic_cont_row">
+					<div class="fl-lt">{{storageLang.has_tier_mode}}：</div>
+					<div class="fl-lt">{{ spool['has_tier']['tier_mode'] }}</div>
+				</div>
+				{% endif %}
+				<div class="basic_cont_row">
+					<div class="fl-lt">{{ storageLang.fault_domain }}：</div>
+					<div class="fl-lt">{{ spool['failure_domain'] }}</div>
+				</div>
+				<div class="basic_cont_row">
+					<div class="fl-lt">{{storageLang.data_protection_policy}}：</div>
+					<div class="fl-lt">
+						{% if spool['type'] == 'replicated' %}
+						<span>{{ storageLang.duplicate }}</span>
+						{% elseif spool['type'] == 'erasure' %}
+						<span>{{ storageLang.erasure_code }}</span>
+						{% endif %}
+					</div>
+				</div>
+				{% if spool['type'] == 'erasure' %}
+				<div class="basic_cont_row">
+					<div class="fl-lt">{{ storageLang.erasure_code }}：</div>
+					<div class="fl-lt">
+						<span>k=</span>
+						<input type="text" class="none-border-input" style="width:50px;" value="{{spool['ksize']}}" disabled="disabled"/>
+					</div>
+					<div class="fl-lt">
+						<span>m = </span>
+						<input type="text" class="none-border-input" style="width:50px;" value="{{spool['msize']}}" disabled="disabled"/>
+					</div>
+				</div>
+				{% endif %}
+				{% if spool['type'] == 'replicated' %}
+				<div class="basic_cont_row">
+					<div class="fl-lt">{{storageLang.totalData}}：</div>
+					<div class="fl-lt">
+						<input type="text" class="none-border-input" style="width:50px;" value="{{ spool['size'] }}" disabled="disabled"/>
+					</div>
+				</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+{% endfor %}
+</div>

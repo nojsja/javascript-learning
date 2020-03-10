@@ -1,0 +1,264 @@
+{% extends "template.htm" %}
+{% block needcss %}
+<style>
+	body {
+		padding-top: 20px;
+		font-size: 16px;
+		font-family: "Open Sans",serif;
+		background-color:#2e3142 !important;
+		margin: 0px;
+		overflow: hidden;
+	}
+	input:focus{
+		color: white;
+	}
+	input::-webkit-input-placeholder { /* WebKit browsers */
+		color: white !important;
+	}
+	input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+		color: white !important;
+	}
+	input::-moz-placeholder { /* Mozilla Firefox 19+ */
+		color: white !important;
+	}
+	input:-ms-input-placeholder { /* Internet Explorer 10+ */
+		color: white !important;
+	}
+
+</style>
+{% endblock %}
+
+{%block topnav %}
+{%endblock%}
+
+{% block body %}
+<!--[if lt IE 9]>
+<script src="js/html5.js"></script>
+<![endif]-->
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="min-width:800px;" id="login-top-nav">
+	<div style="width:95%;margin-left: auto;margin-right: auto;">
+
+		<!-- <div class="navbar-collapse dt_lgsy_tip_b dt_infinity_bar">
+			<ul class="nav navbar-nav navbar-left">
+				<li>
+					<a class="dropdown-toggle" href="javascrpit:void(0);"><span class="glyphicon glyphicon-download-alt"></span>{{ publicLang.client }}</a>
+					<ul class="dropdown-menu">
+						{% for mac in macname %}
+						<li style="color: white;"><a href="{{ mac['macspath'] }}">{{ mac['macs'] }}</a></li>
+						{% endfor %}
+					</ul>
+				</li>
+				<li><a href="download/chrome.zip"><span class="glyphicon glyphicon-download-alt"></span> {{ publicLang.chrome_browse }}</a></li>
+
+			</ul>
+		</div> -->
+		<nav style="position:absolute; top:13px;right:20px">
+			<form id="loginInfinity" class="form-inline" role="form" action="sysdbconf/doLogin?url={{ url }}" method="post">
+				{% if loginfail == 'yes' %}
+				<div class="form-group" style="background-color:#c43c35;text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);color: #ffffff;font-size:12px;padding:5px;border-radius: 4px;margin-top:2px;">
+					{% if health == '0' %}
+					<span>{{ publicLang.cluster_down }}</span>
+					{% else %}
+					<span>{{ publicLang.username_pwd_error }}</span>
+					{%endif%}
+				</div>
+				{%endif%}
+				<div class="form-group">
+					<label class="sr-only" for="exampleInputEmail2">User</label>
+					<input type="text" name="pname"  class="form-control" id="exampleInputEmail2" placeholder="User">
+				</div>
+				<div class="form-group">
+					<label class="sr-only" for="exampleInputPassword2">Password</label>
+					<input type="password" name="pword" class="form-control" id="exampleInputPassword2" placeholder="Password">
+				</div>
+				<button  id="btn_login" type="submit"  class="btn btn-default btn-info"><span style="top:-3px;"class="glyphicon glyphicon-arrow-right"></span></button>
+			</form>
+		</nav>
+	</div>
+</div>
+<div>
+	<p>
+		<img width="634px" height="140px" src="css/image/infinity_logo.png" style="position: absolute;top: 8%;left: 65%;margin-left:-500px;margin-top: 200px;">
+	</p>
+</div>
+{% endblock %}
+{% block needjs %}
+<script src="js/lib/three.min.js"></script>
+<script>
+	var SEPARATION = 100, AMOUNTX = 50, AMOUNTY = 50;
+
+	var container;
+	var camera, scene, renderer;
+
+	var particles, particle, count = 0;
+
+	var mouseX = 0, mouseY = 0;
+
+	var windowHalfX = window.innerWidth / 2;
+	var windowHalfY = window.innerHeight / 2;
+
+	init();
+	animate();
+
+	function init() {
+
+		container = document.createElement( 'div' );
+		document.body.appendChild( container );
+
+		camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
+		camera.position.z = 1000;
+
+		scene = new THREE.Scene();
+
+		particles = new Array();
+
+		var PI2 = Math.PI * 2;
+		var material = new THREE.ParticleCanvasMaterial( {
+
+			color: 0xffffff,
+			program: function ( context ) {
+
+				context.beginPath();
+				context.arc( 0, 0, 1, 0, PI2, true );
+				context.fill();
+
+			}
+
+		} );
+
+		var i = 0;
+
+		for ( var ix = 0; ix < AMOUNTX; ix ++ ) {
+
+			for ( var iy = 0; iy < AMOUNTY; iy ++ ) {
+
+				particle = particles[ i ++ ] = new THREE.Particle( material );
+				particle.position.x = ix * SEPARATION - ( ( AMOUNTX * SEPARATION ) / 2 );
+				particle.position.z = iy * SEPARATION - ( ( AMOUNTY * SEPARATION ) / 2 );
+				scene.add( particle );
+
+			}
+
+		}
+
+		renderer = new THREE.CanvasRenderer();
+		renderer.setSize( window.innerWidth, window.innerHeight );
+		container.appendChild( renderer.domElement );
+
+		document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+		document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+		document.addEventListener( 'touchmove', onDocumentTouchMove, false );
+
+		//
+
+		window.addEventListener( 'resize', onWindowResize, false );
+
+	}
+
+	function onWindowResize() {
+
+		windowHalfX = window.innerWidth / 2;
+		windowHalfY = window.innerHeight / 2;
+
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+
+		renderer.setSize( window.innerWidth, window.innerHeight );
+
+	}
+
+	//
+
+	function onDocumentMouseMove( event ) {
+
+		mouseX = event.clientX - windowHalfX;
+		mouseY = event.clientY - windowHalfY;
+
+	}
+
+	function onDocumentTouchStart( event ) {
+
+		if ( event.touches.length === 1 ) {
+
+			event.preventDefault();
+
+			mouseX = event.touches[ 0 ].pageX - windowHalfX;
+			mouseY = event.touches[ 0 ].pageY - windowHalfY;
+
+		}
+
+	}
+
+	function onDocumentTouchMove( event ) {
+
+		if ( event.touches.length === 1 ) {
+
+			event.preventDefault();
+
+			mouseX = event.touches[ 0 ].pageX - windowHalfX;
+			mouseY = event.touches[ 0 ].pageY - windowHalfY;
+
+		}
+
+	}
+
+	//
+
+	function animate() {
+
+		requestAnimationFrame( animate );
+
+		render();
+
+
+	}
+
+	function render() {
+
+		camera.position.x += ( mouseX - camera.position.x ) * .05;
+		camera.position.y += ( - mouseY - camera.position.y ) * .05;
+		camera.lookAt( scene.position );
+
+		var i = 0;
+
+		for ( var ix = 0; ix < AMOUNTX; ix ++ ) {
+
+			for ( var iy = 0; iy < AMOUNTY; iy ++ ) {
+
+				particle = particles[ i++ ];
+				particle.position.y = ( Math.sin( ( ix + count ) * 0.3 ) * 50 ) + ( Math.sin( ( iy + count ) * 0.5 ) * 50 );
+				particle.scale.x = particle.scale.y = ( Math.sin( ( ix + count ) * 0.3 ) + 1 ) * 2 + ( Math.sin( ( iy + count ) * 0.5 ) + 1 ) * 2;
+
+			}
+
+		}
+
+		renderer.render( scene, camera );
+
+		count += 0.1;
+
+	}
+
+	$(function() {
+
+		document.removeEventListener( 'touchstart', onDocumentTouchStart, false );
+		document.removeEventListener( 'touchmove', onDocumentTouchMove, false );
+		$("input[name='pname']").on("keypress", function(event){
+			event.stopPropagation();
+			var keycode = event.which;
+			if(keycode == 13){
+				$("#loginInfinity").submit();
+			}
+		});
+
+		$("input[name='pword']").on("keypress", function(event){
+			event.stopPropagation();
+			var keycode = event.which;
+			if(keycode == 13){
+				$("#loginInfinity").submit();
+			}
+		});
+
+	});
+</script>
+{% endblock %}

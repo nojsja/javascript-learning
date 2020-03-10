@@ -1,0 +1,161 @@
+{% extends 'template.htm' %}
+{% block body %}
+<div class="dt_center_a" style="width:84%;">
+	<!--右边部分-->	
+	<div class="dt_g_right_bar_third" style="padding-left:0;">	
+		<div class="dt_g_right_subdiv_third">
+			<div class="dt_system_bar_third">
+				<div class="left_nav_system">
+					
+				</div>
+				<nav class="navbar_right_second">
+					<div class="navbar_system_middle">
+						<span class='fl-lt'>{{permitLang.machine_code}}</span>
+						<span style="margin-right:15px;padding-right:15px;border-right:1px solid #d0cfcf;">{{machinecode}}</span>	
+					</div>
+					<div class="navbar_system_middle">
+						<a href="javascript:void(0);" id="add_regcode" role="dialog" aria-hidden="true" title="{{ permitLang.add_register }}" style="margin-right:15px;">
+							<span class="glyphicon glyphicon-plus-sign"></span>
+						</a>
+					</div>
+				</nav>
+			</div>
+			<div class="margin_bot_format"></div>
+			<div class="all_table_list_third">
+				<div class="permit-mag" style="font-weight: bold;">
+					<div class="col-lg-5 basic-lg-5 col-format-row liccode-permit">
+						<span>{{ permitLang.license }}</span>
+					</div>
+					<div class="col-lg-2 basic-lg-2 col-format-row lictype-permit">
+						<span>{{ permitLang.authorization_module }}</span>
+					</div>
+					<div class="col-lg-2 basic-lg-2 col-format-row activetime-permit">
+						<span>{{ permitLang.activation_time }}</span>
+					</div>
+					<div class="col-lg-2 basic-lg-2 col-format-row status-permit">
+						<span>{{ permitLang.status }}</span>
+					</div>
+					<div class="col-lg-1 basic-lg-1 col-format-row other-action"></div>
+				</div>
+				<div class="magtable_list_parent" style="height:92%;">
+					<div id="" class="magtable_list_third well-sm bgwhite">
+						{% for code in regCodes%}
+						<div class="permit-mag" style="font-weight: bold;" data-liccode="{{ code['liccode'] }}">
+							<div class="col-lg-5 basic-lg-5 col-format-row liccode-permit ellipsis">
+								<span title="{{ code['liccode'] }}">{{ code['liccode'] }}</span>
+							</div>
+							<div class="col-lg-2 basic-lg-2 col-format-row lictype-permit">
+								<span>{{ code['lictype'] }}</span>
+							</div>
+							<div class="col-lg-2 basic-lg-2 col-format-row activetime-permit">
+								<span>{{ code['activetime']|date('m/d/y H:m:s')}} </span>
+							</div>
+							<div class="col-lg-2 basic-lg-2 col-format-row status-permit">
+								<span>
+									{% if code['isactive']==1 %}
+									{{ permitLang.activated }}
+									{% else %}
+									{{ permitLang.no_active }}
+									{% endif %}
+								</span>
+							</div>
+							<div class="col-lg-1 basic-lg-1 col-format-row other-action">
+								<div class="permit-hide hidden">
+									<a href="javascript:;" title="{{publicLang.delete}}" class="js-del-regcode" data-backdrop="static" data-target="#delRegCodeModel">
+										<span class="glyphicon glyphicon-trash"></span>
+									</a>
+									<a href="javascript:;" title="{{permitLang.active}}" class="js-active-lic">
+										<span class="glyphicon glyphicon-fire"></span>
+									</a>
+								</div>
+							</div>
+						</div>
+						{%endfor%}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--激活小框-->
+<div id="js-popver-active" style="width:100px;">
+    <div class="arrow" style="top: 50%;">
+    </div>
+    <div class="usage-container">
+        <div class="use-content">
+        	<a href="javascript:;" style="color:#fff;" class="js-online-active">
+            	<span>{{permitLang.online_active}}</span>
+            </a>
+        </div>
+        <div class="use-content">
+        	<a href="javascript:;" style="color:#fff;" class="js-byhand-active" data-toggle="modal" data-target="#activeByHandModel" data-backdrop="static">
+            	<span>{{permitLang.active_byhand}}</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!--添加注册码-->
+<div class="modal fade" id="addRegisterCodeModal" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+		<button type="button" class="btn btn-primary" data-action="export">{{publicLang.ok}}</button>
+        <h4 class="modal-title">{{permitLang.add_register}}</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-horizontal" role="form">
+              <div class="form-group">
+                <label for="input-liccodes" class="col-sm-6 control-label left">{{permitLang.input_authorization_code}}:</label>
+                <div class="col-sm-10">
+                  <textarea rows="3" cols="20" class="col-sm-12 text-area-style" id="input-liccodes" ></textarea>
+                  <p class="help-block" style="color:red;">{{permitLang.authcode_divide_by_comma}}</p>
+               </div>
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--删除注册码-->
+<div class="modal fade" id="delRegCodeModel" tabindex="-1" role="dialog" aria-labelledby="delRegCodeModelLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="delRegCodeModelLabel">{{permitLang.del_register}}</h4>
+      </div>
+      <div class="modal-body">      
+      <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+<!--手工激活-->
+<div class="modal fade" id="activeByHandModel" tabindex="-1" role="dialog" aria-labelledby="activeByHandModelLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+			<button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+			<h4 class="modal-title" id="activeByHandModelLabel">{{permitLang.input_active_code}}</h4>
+		</div>
+		<div class="modal-body">
+			<div class="form-group">
+			    <div class="col-sm-12">
+			      	<input id="input-activecode" placeholder="{{permitLang.input_active_code}}" class="none-border-input" style="width:100%;">
+			    </div>
+		  	</div>      
+		</div>
+    </div>
+  </div>
+</div>
+
+{%endblock%}
+{% block needjs %}
+    <script src="js/pages/permit.js"></script>
+{% endblock %}

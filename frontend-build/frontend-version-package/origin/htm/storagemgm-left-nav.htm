@@ -1,0 +1,30 @@
+<ul class="v-menu subdown min-size-required box-shadow" style="width:100%;max-width:100%;">
+	<li {% if cursubmenu == 'nodeservice' %}class="active"{%endif%}><a href="clustermgm"><img style="position: initial;margin:0 0 4px 0;" src="css/image/list.png" class="list_img"><span>{{ clusterLang.node_and_service }}</span></a></li>
+
+  <li {% if cursubmenu == 'licensemgm' %}class="active"{%endif%}><a href="licensemgm"><img style="position: initial;margin:0 0 4px 0;" src="css/image/list.png" class="list_img"><span>{{ storageLang.license_management }}</span></a></li>
+
+	<li {% if cursubmenu == 'diskmgm' %}class="active"{%endif%}><a href="diskmgm"><img style="position: initial;margin:0 0 4px 0;" src="css/image/list.png" class="list_img"><span>{{ clusterLang.disk_mgm }}</span></a></li>
+  	<li {% if cursubmenu == 'nasmgm' %}class="active"{%endif%}><a href="nasmgm"><img style="position: initial;margin:0 0 4px 0;" src="css/image/list.png" class="list_img"><span>{{ clusterLang.high_availability }}</span></a></li>
+	<!-- <li {% if cursubmenu == 'storagepoolmgm' %}class="active"{%endif%}><a href="storagepoolmgm"><img style="position: initial;margin:0 0 4px 0;" src="css/image/list.png" class="list_img"><span>{{ storageLang.storagepoolmgm }}</span></a></li> -->
+  <li {% if cursubmenu == 'storagepoolmgm' %}class="active"{%endif%}><a href="storagepoolmgm" id="pool-mgm-act" class="dropdown-toggle"><img style="position: initial;margin:0 0 4px 0;" src="css/image/list.png" class="list_img"><span>{{ storageLang.storage_domain_mgm }}</span><span id="local-triangle-rotate"></span></a>
+  	<ul class="d-menu" style="max-width:100%;">
+  		<li class="sub-menu">
+  			<a href="javascript:void(0);">
+  				<img style="position: initial;margin:0 0 4px 0;" src="css/image/list.png" class="list_img"><span>{{ clusterLang.dg_mgm }}</span>
+  			</a>
+  		</li>
+  		<li class="sub-menu">
+  			<a href="javascript:void(0);">
+  				<img style="position: initial;margin:0 0 4px 0;" src="css/image/list.png" class="list_img"><span>{{ clusterLang.pool_mgm }}</span>
+  			</a>
+  		</li>
+  	</ul>
+	</li>
+
+  <li {% if cursubmenu == 'filesystem' %}class="active"{%endif%}><a href="filesystem"><img style="position: initial;margin:0 0 4px 0;" src="css/image/list.png" class="list_img"><span>{{ storageLang.filesystem }}</span></a></li>
+	<li {% if cursubmenu == 'objstorage' %}class="active"{%endif%}><a href="objstorage"><img style="position: initial;margin:0 0 4px 0;" src="css/image/list.png" class="list_img"><span>{{ storageLang.objstorage }}</span></a></li>
+	<li {% if cursubmenu == 'volumemgm' %}class="active"{%endif%}><a href="volumemgm"><img style="position: initial;margin:0 0 4px 0;" src="css/image/list.png" class="list_img"><span>{{ storageLang.volumemgm }}</span></a></li>
+
+  <!-- <li {% if cursubmenu == 'maintenance' %}class="active"{%endif%}><a href="maintenance"><img style="position: initial;margin:0 0 4px 0;" src="css/image/list.png" class="list_img"><span>{{ storageLang.maintenance }}</span></a></li> -->
+
+</ul>

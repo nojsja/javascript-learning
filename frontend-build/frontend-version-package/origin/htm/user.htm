@@ -1,0 +1,1007 @@
+{% extends "template.htm" %}
+{% block needcss %}
+<style type="text/css">
+	/*
+	搜索结果的高亮匹配
+	*/
+	.highlight {
+		padding: 0;
+		border: 0;
+		color: red;
+		background-color: #fff;
+	}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="dt_center_a">
+	<!--左边导航-->
+	<div class="dt_g_left_bar dt_g_left_bar_on cell usermanage cell usermanage" style="width:20%;float:left;">
+		<ul class="v-menu subdown block-shadow-impact min-size-required box-shadow" style="width:100%;max-width:100%;">
+		    <li id="mag-user-act" class="active" data-groupid="10000"><a href="javascript:void(0);"><img src="css/image/admin.png">{{ userLang.user_admin }}</a></li>
+		    <li id="local-user-act">
+		        <a href="javascript:void(0);" class="dropdown-toggle">
+		        	<img src="css/image/user.png">{{ userLang.user_local }}
+		        	<span id="local-triangle-rotate"></span>
+		        </a>
+		        <ul class="d-menu" style="max-width:100%;">
+
+		        </ul>
+		    </li>
+		    <li id="domain-user-act">
+		    	<a href="javascript:void(0);" class="dropdown-toggle">
+		    		<img src="css/image/user_filed.png">{{ userLang.user_ad_domain }}
+		        	<!--<span id="domain-triangle-rotate"></span>-->
+		    	</a>
+		    	<ul class="d-menu" style="max-width:100%;" >
+		    		<!-- {% for adgroup in adgroupList %}
+		    		<li class="sub-menu" data-groupname="{{ adgroup['gname'] }}" title="{{adgroup['gname']}}">
+		    			<a href="javascript:void(0);">
+		    				<img src="css/image/group.png"> {{ adgroup["gname"] }}
+		    			</a>
+		    		</li>
+		    		{% endfor %} -->
+		        </ul>
+		    </li>
+				<li id="ldap-user-act">
+		    	<a href="javascript:void(0);" class="dropdown-toggle">
+		    		<img src="css/image/User.AD.png">{{ userLang.user_ldap_domain }}
+		    	</a>
+						<ul class="d-menu" style="max-width:100%;" >
+
+		        </ul>
+		    </li>
+		</ul>
+		<!-- </ul> -->
+	</div>
+	<!--右边部分-->
+	<div class="dt_g_right_bar">
+		<!--管理用户-->
+		<div class="dt_g_right_subdiv js-mag-user">
+			<div class="dt_system_bar">
+				<div class="cancel-search" style="display:none;">
+					<a href="javascript:;" title="{{ userLang.cancel_search }}">
+						<span class="glyphicon glyphicon-arrow-left"></span>
+					</a>
+				</div>
+				<div class="cancel-selectusers" style="display:none;">
+					<a href="javascript:;" title="{{ userLang.cancel_select }}">
+						<span class="glyphicon glyphicon-arrow-left"></span>
+					</a>
+				</div>
+				<div class="is-select-all" style="display:none;">
+					<a href="javascript:;">
+						<input type="checkbox"/>
+					</a>
+					<span class="selectall_users" style="position:relative;top:2px;">{{publicLang.selectall}}
+					</span>
+				</div>
+				<nav class="navbar-right" style="margin-right:0;">
+					<div class="has-selected-admins" style="display:none;">
+						<span>{{ userLang.has_selected }}</span>
+						<span class="hasselected-admins-count"></span>
+						<span>{{ userLang.per_count }}</span>
+					</div>
+					<div class="has-matched-users" style="display:none;">
+						<span>{{ userLang.cur_has_matched }}</span>
+						<span class="hasmatched-users-count"></span>
+						<span>{{ userLang.the_result }}</span>
+					</div>
+					<div class="statistics-user">
+						<span class="nav-mag-gname">{{ userLang.all_admin_user }}</span>
+						<span class="nav-mag-ucount">(<span></span>{{ userLang.individual_user }})</span>
+						<a href="javascript:void(0);" class="b_del_localgroup" title="{{ userLang.del_user_group }}" style="margin-left:5px;display:none;">
+							<span class="glyphicon glyphicon-trash"></span>
+						</a>
+					</div>
+					<div class="search-admin" style="display:inline;margin-right: 15px;font-size: 1em;">
+						<span class="form-group" style="position: relative;vertical-align: middle;">
+					        <input id="js-filter-mag" type="text" placeholder="" class="form-control filter-mag" style="border-radius:25px;">
+					        <i id="js-allsearch-magbtn" class="glyphicon glyphicon-search allsearch-magbtn"></i>
+					    </span>
+					</div>
+					<a href="javascript:void(0);" id="b_add_mag" title="{{ userLang.add_admin }}">
+						<img src="css/image/add.png" width="18px;">
+					</a>
+					<a href="javascript:void(0);" id="b_reset_mag" data-toggle="modal" data-target="#resetLotAdminPwdModal" title="{{ userLang.pwd_reset }}" style="display:none;">
+						<span class="glyphicon glyphicon-gift"></span>
+					</a>
+					<a href="javascript:void(0);" id="b_del_mag" data-toggle="modal" data-target="#lotAdminUserDelModal" title="{{ userLang.del_user }}" style="display:none;">
+						<span class="glyphicon glyphicon-floppy-remove"></span>
+					</a>
+				</nav>
+			</div>
+			<!--显示管理员的列表-->
+		</div>
+		<div class="dt_g_right_subdiv js-local-user" style="display:none;">
+			<div class="dt_system_bar">
+				<div class="cancel-search" style="display:none;">
+					<a href="javascript:;" title="{{ userLang.cancel_search }}">
+						<span class="glyphicon glyphicon-arrow-left"></span>
+					</a>
+				</div>
+				<div class="cancel-selectusers" style="display:none;">
+					<a href="javascript:;" title="{{ userLang.cancel_select }}">
+						<span class="glyphicon glyphicon-arrow-left"></span>
+					</a>
+				</div>
+				<div class="is-select-all" style="display:none;">
+					<a href="javascript:;">
+						<input type="checkbox"/>
+					</a>
+					<span class="selectall_users" style="position:relative;top:2px;">{{publicLang.selectall}}
+					</span>
+				</div>
+				<nav class="navbar-right" style="margin-right:0;">
+					<div class="has-selected-users" style="display:none;">
+						<span>{{ userLang.has_selected }}</span>
+						<span class="hasselected-users-count"></span>
+						<span>{{ userLang.per_count }}</span>
+					</div>
+					<div class="has-matched-users" style="display:none;">
+						<span>{{ userLang.cur_has_matched }}</span>
+						<span class="hasmatched-users-count"></span>
+						<span>{{ userLang.the_result }}</span>
+					</div>
+					<div class="statistics-user">
+						<span class="nav-local-gname"></span>
+						<span class="nav-local-ucount"></span>
+						<a href="javascript:void(0);" class="b_del_localgroup" title="{{ userLang.del_user_group }}" style="margin-left:5px;display:none;">
+							<span class="glyphicon glyphicon-trash"></span>
+						</a>
+					</div>
+					<div class="search-bytext">
+						<span class="form-group" style="position: relative;vertical-align: middle;">
+					        <input id="js-filter-local" class="form-control filter-local" type="text">
+					        <i id="js-allsearch-localbtn" class="glyphicon glyphicon-search allsearch-localbtn"></i>
+					    </span>
+					</div>
+					<a href="javascript:void(0);" id="b_add_localuser" title="{{ userLang.add_local_user }}">
+						<img src="css/image/add.png" width="18px;">
+					</a>
+					<a href="javascript:void(0);" class="b_modify_localuser" title="{{ userLang.modi_user_group }}" style="display:none;">
+						<span class="glyphicon glyphicon-grain"></span>
+					</a>
+					<a href="javascript:void(0);" id="b_reset_lotLocal" data-toggle="modal" data-target="#resetLotLocalPwdModal" title="{{ userLang.pwd_reset }}" style="display:none;">
+						<span class="glyphicon glyphicon-gift"></span>
+					</a>
+					<a href="javascript:void(0);" id="b_del_lotLocal" data-toggle="modal" data-target="#lotLocaluserDelModal" title="{{ userLang.del_all_user }}" style="display:none;">
+						<span class="glyphicon glyphicon-floppy-remove"></span>
+					</a>
+				</nav>
+			</div>
+			<div class="all_table_list" style="padding-bottom: 2rem">
+				<!--<div class="user-mag" style="font-weight: bold;background-color:#fafafa;">-->
+					<!--<div class="col-lg-1" style="padding: 14px 0px 0px 51px;">-->
+                        <!--<div class="is-select-all" style="display:none">-->
+                            <!--<a href="javascript:;">-->
+                                <!--<input type="checkbox"/>-->
+                            <!--</a>-->
+                        <!--</div>-->
+				<div class="user-mag" style="font-weight: bold;background-color:#fafafa;">
+					<div class="pic-user col-lg-1">
+					</div>
+					<div class="name-user col-lg-2 orderby_name_sort" style="cursor:pointer;">
+						{{ userLang.username }}
+						<a class="orderby_name_asc" title="{{publicLang.ASC}}">
+							<span class="glyphicon glyphicon-triangle-top"></span>
+						</a>
+						<a class="orderby_name_desc" title="{{publicLang.DESC}}" style="display:none;">
+							<span class="glyphicon glyphicon-triangle-bottom"></span>
+						</a>
+					</div>
+					<div class="nickname-user col-lg-2 orderby_nickname_sort">
+						{{ userLang.nickname }}
+						<a class="orderby_nickname_asc" title="{{publicLang.ASC}}">
+							<span class="glyphicon glyphicon-triangle-top"></span>
+						</a>
+						<a class="orderby_nickname_desc" title="{{publicLang.DESC}}" style="display:none;">
+							<span class="glyphicon glyphicon-triangle-bottom"></span>
+						</a>
+					</div>
+					<div class="email-user col-lg-3">{{ userLang.user_email }}</div>
+					<div class="createDate-user col-lg-2 orderby_createtime_sort" style="cursor:pointer;">{{ userLang.create_time }}
+						<a class="orderby_createtime_asc" title="{{publicLang.ASC}}">
+							<span class="glyphicon glyphicon-triangle-top"></span>
+						</a>
+						<a class="orderby_createtime_desc" title="{{publicLang.DESC}}" style="display:none;">
+							<span class="glyphicon glyphicon-triangle-bottom"></span>
+						</a>
+					</div>
+					<div class="other-action col-lg-2"></div>
+				</div>
+				<div class="magtable_list_parent">
+					<div id="" class="magtable_list well-sm bgwhite">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="dt_g_right_subdiv js-domain-user" style="display:none;">
+			<div class="dt_system_bar">
+				<div class="is-select-all col-lg-1" style="display:none;margin-left:25px;text-align:right;">
+					<a href="javascript:;">
+						<input type="checkbox"/>
+					</a>
+					<span class="selectall_users" style="position:relative;top:2px;">{{publicLang.selectall}}
+					</span>
+				</div>
+				<nav class="navbar-right" style="margin-right:0;">
+					<div class="statistics-user">
+						<a href="javascript:;">
+						<span class="nav-domain-gname"></span>
+						<span class="nav-domain-ucount"></span>
+						</a>
+					</div>
+					<div style="display:inline;margin-right: 15px;font-size: 1em;">
+						<span class="form-group" style="position: relative;vertical-align: middle;">
+							<input id="js-filter-domain" type="text" placeholder="" class="form-control filter-domain" style="border-radius:25px;">
+							<i id="js-allsearch-domainbtn" class="glyphicon glyphicon-search allsearch-domainbtn"></i>
+						</span>
+					</div>
+					{% if doinfo["result"]["domain"] != "" %}
+					<span id="isadddomain">{{ userLang.has_add_domain }}
+						<span style="color:red;">{{ doinfo["result"]["domain"] }}</span>
+						<a href="javascript:void(0);" id="domain_exit" data-toggle="modal" data-target="#exitDomainModal" title="{{ userLang.out_domain }}">
+							<span class="glyphicon glyphicon-log-out"></span>
+						</a>
+						<a href="javascript:void(0);" id="ad_cacher" data-toggle="modal" data-target="#adCacherModal" title="{{ userLang.domain_data_cacher }}">
+							<span class="glyphicon glyphicon-cloud-download"></span>
+						</a>
+					</span>
+					{%else%}
+						<span id="notadddomain">{{ userLang.not_in_domain }}</span>
+						<a href="javascript:void(0);" id="domain_add" data-toggle="modal" data-target="#addDomainModal" title="{{ userLang.in_domain }}">
+						<span class="glyphicon glyphicon-log-in"></span>
+					</a>
+					{%endif%}
+				</nav>
+			</div>
+			<div class="all_table_list" style="padding-bottom: 2rem">
+				<div class="user-mag" style="font-weight: bold;background-color:#fafafa;">
+					<div class="pic-user col-lg-1">
+					</div>
+					<div class="name-user col-lg-2 orderby_name_sort" style="cursor:pointer;">
+						{{ userLang.username }}
+						<a class="orderby_name_asc" title="{{publicLang.ASC}}">
+							<span class="glyphicon glyphicon-triangle-top"></span>
+						</a>
+						<a class="orderby_name_desc" title="{{publicLang.DESC}}" style="display:none;">
+							<span class="glyphicon glyphicon-triangle-bottom"></span>
+						</a>
+					</div>
+
+					<div class="col-lg-2 ad-primary-g">{{ userLang.primarygroup }}</div>
+					<div class="col-lg-7 ad-secondary-g">{{ userLang.second_groups }}</div>
+				</div>
+				<div class="magtable_list_parent">
+					<div id="" class="magtable_list well-sm bgwhite">
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="dt_g_right_subdiv js-ldap-user" style="display:none;">
+			<div class="dt_system_bar">
+				<nav>
+					<ul class="pagination" id="js-ldap-pagination" style="float:left;">
+
+					</ul>
+				</nav>
+				<nav class="navbar-right" style="margin-right:0;">
+					<div class="statistics-user">
+						<a href="javascript:;">
+						<span class="nav-domain-gname"></span>
+						<span class="nav-domain-ucount"></span>
+						</a>
+					</div>
+					<!--<div style="display:inline;margin-right: 15px;font-size: 1em;">
+						<span class="form-group" style="position: relative;vertical-align: middle;">
+					        <input id="js-filter-ldap" type="text" placeholder="" class="form-control filter-domain" style="border-radius:25px;">
+					        <i id="js-allsearch-ldapbtn" class="glyphicon glyphicon-search allsearch-domainbtn"></i>
+					    </span>
+					</div>-->
+					{% if ldapinfo["server"] != "" %}
+					<span id="isJoinedLdap">{{ userLang.has_add_domain }}
+						<span style="color:red;">{{ ldapinfo["server"] }}</span>
+						<a href="javascript:void(0);" id="leaveLdap" data-toggle="modal" data-target="#leaveLdapModal" title="{{ userLang.out_domain }}">
+							<span class="glyphicon glyphicon-log-out"></span>
+						</a>
+						<a href="javascript:void(0);" id="ldap_cacher" data-toggle="modal" data-target="#ldapCacherModal" title="{{ userLang.domain_data_cacher }}">
+							<span class="glyphicon glyphicon-cloud-download"></span>
+						</a>
+						<!--LDAP域信息弹出框-->
+						<div id="js-popver-ldap-info" class="ellipsis" style="width:initial;right:10px;padding-right:10px;">
+							<div class="arrow" style="top: 50%;">
+							</div>
+							<div class="usage-container">
+								<div class="use-content">
+									<span>SERVER：</span>
+									<span>{{ldapinfo["server"]}}</span>
+								</div>
+								<div class="use-content">
+									<span>Base DN：</span>
+									<span>{{ldapinfo["basedn"]}}</span>
+								</div>
+								<div class="use-content">
+									<span>Admin DN：</span>
+									<span>{{ldapinfo["admindn"]}}</span>
+								</div>
+								<div class="use-content">
+									<span>DOMAIN：</span>
+									<span>{{ldapinfo["domain"]}}</span>
+								</div>
+							</div>
+						</div>
+					</span>
+					{%else%}
+						<span id="ldapNotJoined">{{ userLang.not_in_domain }}</span>
+						<a href="javascript:void(0);" id="joinLdap" data-toggle="modal" data-target="#joinLdapModal" title="{{ userLang.in_domain }}">
+						<span class="glyphicon glyphicon-log-in"></span>
+					</a>
+					{%endif%}
+				</nav>
+			</div>
+
+			<div class="all_table_list" style="padding-bottom: 2rem">
+				<table class="table table-hover ldap-user-table">
+					<thead style="background-color:#fafafa;border-bottom:none;">
+						<tr>
+							<th style="width:30%;font-weight: bold;">{{ userLang.username }}</th>
+							<th style="width:20%;font-weight: bold;">UID</th>
+							<th style="width:20%;font-weight: bold;">GID</th>
+							<th style="width:30%;font-weight: bold;">{{ userLang.nickname }}</th>
+						</tr>
+					</thead>
+					<tbody id="ldapTable">
+
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<!--添加管理员用户-->
+<div class="modal fade" id="userAddMagModal" tabindex="-1" role="dialog" aria-labelledby="userAddMagModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{ publicLang.cancel }}</button>
+				<button type="button" class="btn btn-primary" aria-hidden="true">{{ publicLang.save }}</button>
+        <h4 class="modal-title" id="userAddMagModalLabel">{{ userLang.add_admin }}</h4>
+      </div>
+      <div class="modal-body">
+		 <form class="form-horizontal" role="form">
+			<div class="form-group">
+				<span style="color:red;font-size:1.5em;">*</span>
+				<label for="mag_user_name" class="col-sm-3 control-label">{{ userLang.username }}</label>
+				<div class="col-sm-7">
+					<input type="text" class="form-control" id="mag_user_name" onkeyup="value=value.replace(/[\W]/g,'')" placeholder="{{ publicLang.only_letters_num }}">
+				</div>
+			</div>
+			<!--<div class="form-group">
+				<label for="user_nickname" class="col-sm-3 control-label">{{ userLang.nickname }}</label>
+				<div class="col-sm-7">
+					<input type="text" class="form-control" id="user_mag_nickname">
+				</div>
+			</div>-->
+			<div class="form-group">
+				<label for="user_mag_role" class="col-sm-3 control-label">{{ userLang.user_role }}</label>
+				<div class="col-sm-7">
+					<select id="select-maguser-role" class="form-control">
+						<option data-role="2" >{{publicLang.admin}}</option>
+						<option data-role="1" >{{publicLang.auit_admin}}</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="mag_user_email" class="col-sm-3 control-label">{{ userLang.user_email_address }}</label>
+				<div class="col-sm-7">
+				<input type="text" class="form-control" id="mag_user_email">
+				</div>
+			</div>
+		</form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--批量删除管理员-->
+<div class="modal fade" id="lotAdminUserDelModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="lotAdminUserDelModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+		<button type="button" class="btn btn-primary">{{ publicLang.delete }}</button>
+        <h4 class="modal-title" id="lotAdminUserDelModalLabel">{{ userLang.del_user }}</h4>
+      </div>
+      <div class="modal-body">
+			<p>{{ userLang.confirm_del_all_user }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--删除管理员-->
+<div class="modal fade" id="adminUserDelModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="adminUserDelModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+		<button type="button" class="btn btn-primary">{{ publicLang.delete }}</button>
+        <h4 class="modal-title" id="adminUserDelModalLabel">{{ userLang.del_user }}</h4>
+      </div>
+      <div class="modal-body">
+			<p>{{ userLang.confirm_del_user }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!--设置对象存储用户-->
+<div class="modal fade" id="setObjectUserModal" tabindex="-1" role="dialog" aria-labelledby="setObjectUserModalLabel" aria-hidden="true" data-backdrop="static">
+	<div class="modal-dialog" style="width:400px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+				<button type="button" class="btn btn-primary">{{ publicLang.ok }}</button>
+				<h4 class="modal-title" id="setObjectUserModalLabel">{{ userLang.confirm_set_objuser }}</h4>
+			</div>
+			<div class="modal-body">
+				<p>{{ userLang.confirm_set_objuser }}</p>
+			</div>
+		</div>
+	</div>
+</div>
+<!--删除对象存储用户-->
+<div class="modal fade" id="delObjectUserModal" tabindex="-1" role="dialog" aria-labelledby="delObjectUserModalLabel" aria-hidden="true" data-backdrop="static">
+	<div class="modal-dialog" style="width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+				<button type="button" class="btn btn-danger">{{ publicLang.delete }}</button>
+				<h4 class="modal-title" id="delObjectUserModalLabel">{{ userLang.confirm_del_objuser }}</h4>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal" role="form">
+					<div class="form-group">
+						<label for="access_key" class="col-sm-3 control-label left" style="margin-top: -8px">access_key:</label>
+						<div class="col-sm-9" id="access_key" style="margin-left: -40px">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="secret_key" class="col-sm-3 control-label left" style="margin-top: -8px">secret_key:</label>
+						<div class="col-sm-9" id="secret_key" style="margin-left: -40px">
+
+						</div>
+					</div>
+					<p>
+					</p>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!--重置管理员密码-->
+<div class="modal fade" id="resetAdminPwdModal" tabindex="-1" role="dialog" aria-labelledby="resetAdminPwdModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+		<button type="button" class="btn btn-primary">{{ publicLang.ok }}</button>
+        <h4 class="modal-title" id="resetAdminPwdModalLabel">{{ userLang.pwd_reset }}</h4>
+      </div>
+      <div class="modal-body">
+			<p>{{ userLang.confirm_reset_pwd }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--批量重置管理员密码-->
+<div class="modal fade" id="resetLotAdminPwdModal" tabindex="-1" role="dialog" aria-labelledby="resetLotAdminPwdModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+         <button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+		<button type="button" class="btn btn-primary">{{ publicLang.ok }}</button>
+        <h4 class="modal-title" id="resetLotAdminPwdModalLabel">{{ userLang.pwd_reset }}</h4>
+      </div>
+      <div class="modal-body">
+			<p>{{ userLang.confirm_reset_pwd }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--修改管理员-->
+<div class="modal fade" id="adminUserModiModal" tabindex="-1" role="dialog" aria-labelledby="adminUserModiModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+    	<div class="modal-header">
+      		<button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+			<button type="button" class="btn btn-primary">{{ publicLang.save }}</button>
+        <h4 class="modal-title" id="adminUserModiModalLabel">{{ userLang.modi_admin_user }}</h4>
+      	</div>
+      	<div class="modal-body">
+			<form class="form-horizontal" role="form">
+				<div class="form-group">
+					<span style="color:red;font-size:1.5em;">*</span>
+					<label for="md_mag_name" class="col-sm-3 control-label">{{ userLang.username }}</label>
+					<div class="col-sm-7">
+						<input type="text" class="form-control" id="md_mag_name" disabled>
+					</div>
+				</div>
+				<!--<div class="form-group">
+					<label for="md_mag_nickname" class="col-sm-3 control-label">{{ userLang.nickname }}</label>
+					<div class="col-sm-7">
+						<input type="text" class="form-control" id="md_mag_nickname">
+					</div>
+				</div>-->
+				<div class="form-group">
+					<label for="md-mag-role" class="col-sm-3 control-label">{{ userLang.user_role }}</label>
+					<div class="col-sm-7">
+						<select id="md-mag-role" class="form-control">
+							<option data-role="2" value="2">{{publicLang.admin}}</option>
+							<option data-role="1" value="1">{{publicLang.auit_admin}}</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="md_mag_email" class="col-sm-3 control-label">{{ userLang.user_email_address }}</label>
+					<div class="col-sm-7">
+					<input type="text" class="form-control" id="md_mag_email">
+					</div>
+				</div>
+			</form>
+	    </div>
+    </div>
+  </div>
+</div>
+
+<!--添加用户组-->
+<div class="modal fade" id="userAddGroupModal" tabindex="-1" role="dialog" aria-labelledby="userAddGroupModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+		<button type="button" class="btn btn-primary">{{ publicLang.save }}</button>
+        <h4 class="modal-title" id="userAddGroupModalLabel">{{ userLang.add_user_group }}</h4>
+      </div>
+      <div class="modal-body">
+		 <form class="form-horizontal" role="form">
+			<div class="form-group">
+				<span style="color:red;font-size:1.5em;">*</span>
+				<label for="group_name" class="col-sm-3 control-label">{{ userLang.user_groupname }}</label>
+				<div class="col-sm-7">
+					<input type="text" maxlength="32" class="form-control" id="group_name" onkeyup="value=value.replace(/[\W]/g,'')" placeholder="{{ publicLang.only_letters_num }}">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="group_nickname" class="col-sm-3 control-label">{{ userLang.nickname }}</label>
+				<div class="col-sm-7">
+					<input type="text" class="form-control" id="group_nickname">
+				</div>
+			</div>
+			<!--<div class="form-group">-->
+				<!--<label for="group_memo" class="col-sm-3 control-label">{{ userLang.description }}</label>-->
+				<!--<div class="col-sm-7">-->
+				<!--<input type="text" class="form-control" id="group_memo">-->
+				<!--</div>-->
+			<!--</div>-->
+		</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--移动至用户组-->
+<div class="modal fade" id="localUserMoveModal" tabindex="-1" role="dialog" aria-labelledby="localUserMoveModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+		<button type="button" class="btn btn-primary">{{ publicLang.save }}</button>
+        <h4 class="modal-title" id="localUserMoveModalLabel">{{ userLang.move_another_group }}</h4>
+      </div>
+      <div class="modal-body">
+		 <form class="form-horizontal" role="form">
+			<div class="form-group">
+				<label for="md_loacl_group" class="col-sm-3 control-label">{{ userLang.user_group }}</label>
+				<div class="col-sm-7">
+					<select id="moveto-local-group" class="form-control">
+
+					</select>
+				</div>
+			</div>
+		</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--删除本地用户组-->
+<div class="modal fade" id="localUserDelGroupModal" tabindex="-1" role="dialog" aria-labelledby="localUserDelGroupModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+         <button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+		<button type="button" class="btn btn-danger">{{ publicLang.delete }}</button>
+        <h4 class="modal-title" id="localUserDelGroupModalLabel">{{ userLang.del_group }}</h4>
+      </div>
+      <div class="modal-body" title="{{groupcount}}">
+		<form class="form-horizontal" role="form">
+			<div class="form-group noone-in-localgroup" style="display:none;text-align:center;">
+					{{userLang.noone_in_select_group}}
+				</div>
+			<div class="form-group del-group-users"  style="display:none;">
+				<div class="col-sm-12">
+					<input type="radio" name="del_group" value="0" checked="checked" style="margin-top:-1px;">
+					<span>{{userLang.del_group_andusers}}</span>
+					<br/>
+				</div>
+			</div>
+			<div class="form-group del-group-not-users"  style="display:none;">
+				<div class="col-sm-12">
+					<input type="radio" name="del_group" value="1" style="margin-top:-1px;">
+					<span>{{userLang.del_group_notusers}}</span>
+					<div class="form-group has-in-localgroup hidden">
+						<select id="del-local-group" class="form-control" style="width:180px;margin:10px 0 0 30px;">
+
+						</select>
+					</div>
+				</div>
+			</div>
+
+		</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--添加本地用户-->
+<div class="modal fade" id="localUserAddModal" tabindex="-1" role="dialog" aria-labelledby="localUserAddModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+		<button type="button" class="btn btn-primary">{{ publicLang.save }}</button>
+        <h4 class="modal-title" id="localUserAddModalLabel">{{ userLang.add_local_user }}</h4>
+      </div>
+      <div class="modal-body">
+		 <form class="form-horizontal" role="form">
+			<div class="form-group">
+				<span style="color:red;font-size:1.5em;">*</span>
+				<label for="user_name" class="col-sm-3 control-label">{{ userLang.username }}</label>
+				<div class="col-sm-7">
+					<input type="text" class="form-control" id="user_name" onkeyup="value=value.replace(/[\W]/g,'')" placeholder="{{ publicLang.only_letters_num }}">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="user_nickname" class="col-sm-3 control-label">{{ userLang.nickname }}</label>
+				<div class="col-sm-7">
+					<input type="text" class="form-control" id="user_nickname">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="usergroup_name" class="col-sm-3 control-label">{{ userLang.user_group }}</label>
+				<div class="col-sm-7">
+					<select id="select-user-group" class="form-control">
+
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="user_email" class="col-sm-3 control-label">{{ userLang.user_email_address }}</label>
+				<div class="col-sm-7">
+				<input type="text" class="form-control" id="user_email">
+				</div>
+			</div>
+		</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--修改本地用户-->
+<div class="modal fade" id="localuserModiModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="localuserModiModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+		<button type="button" class="btn btn-primary">{{ publicLang.save }}</button>
+        <h4 class="modal-title" id="localuserModiModalLabel">{{ userLang.modi_local_user }}</h4>
+      </div>
+      <div class="modal-body">
+		 <form class="form-horizontal" role="form">
+			<div class="form-group">
+				<label for="md_local_name" class="col-sm-3 control-label">{{ userLang.username }}</label>
+				<div class="col-sm-7">
+				<input type="text" class="form-control" id="md_local_name" disabled>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="md_local_nickname" class="col-sm-3 control-label">{{ userLang.nickname }}</label>
+				<div class="col-sm-7">
+				<input type="text" class="form-control" id="md_local_nickname">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="md_loacl_group" class="col-sm-3 control-label">{{ userLang.user_group }}</label>
+				<div class="col-sm-7">
+					<select id="md-local-group" class="form-control">
+
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="md_local_email" class="col-sm-3 control-label">{{ userLang.user_email_address }}</label>
+				<div class="col-sm-7">
+				<input type="text" class="form-control" id="md_local_email">
+				</div>
+			</div>
+		</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--重置本地用户密码-->
+<div class="modal fade" id="resetLocalPwdModal" tabindex="-1" role="dialog" aria-labelledby="resetLocalPwdModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      	<div class="modal-header">
+        	<button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+			<button type="button" class="btn btn-primary">{{ publicLang.ok }}</button>
+        	<h4 class="modal-title" id="resetLocalPwdModalLabel">{{ userLang.pwd_reset }}</h4>
+      </div>
+      <div class="modal-body">
+			<p>{{ userLang.confirm_reset_pwd }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--批量重置本地用户密码-->
+<div class="modal fade" id="resetLotLocalPwdModal" tabindex="-1" role="dialog" aria-labelledby="resetLocalPwdModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+		<button type="button" class="btn btn-primary">{{ publicLang.ok }}</button>
+        <h4 class="modal-title" id="resetLotLocalPwdModalLabel">{{ userLang.pwd_reset }}</h4>
+      </div>
+      <div class="modal-body">
+			<p>{{ userLang.confirm_reset_pwd }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--批量删除本地用户-->
+<div class="modal fade" id="lotLocaluserDelModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="lotLocaluserDelModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+		<button type="button" class="btn btn-primary">{{ publicLang.delete }}</button>
+        <h4 class="modal-title" id="lotLocaluserDelModalLabel">{{ userLang.del_user }}</h4>
+      </div>
+      <div class="modal-body">
+			<p>{{ userLang.confirm_del_all_user }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--删除本地用户-->
+<div class="modal fade" id="localuserDelModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="localuserDelModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+		<button type="button" class="btn btn-primary">{{ publicLang.delete }}</button>
+        <h4 class="modal-title" id="localuserDelModalLabel">{{ userLang.del_user }}</h4>
+      </div>
+      <div class="modal-body">
+			<p>{{ userLang.confirm_del_user }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!--加入AD域-->
+<div class="modal fade" id="addDomainModal" tabindex="-1" role="dialog" aria-labelledby="addDomainModalLabel" aria-hidden="true"
+	data-backdrop="static">
+	<div class="modal-dialog" style="width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+				<button type="button" class="btn btn-primary">{{ publicLang.save }}</button>
+				<h4 class="modal-title" id="addDomainModalLabel">{{ userLang.in_domain }}</h4>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal" role="form">
+					<div class="form-group">
+						<label for="add_belong_domain" class="col-sm-3 control-label">{{ userLang.belong_domain }}</label>
+						<div class="col-sm-7">
+							<input type="text" class="form-control" id="add_belong_domain">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="add_domain_controller_host" class="col-sm-3 control-label">{{ userLang.domaincontroller }}</label>
+						<div class="col-sm-7">
+							<input type="text" class="form-control" id="add_domain_controller_host">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="add_domain_name" class="col-sm-3 control-label">{{ userLang.domain_name }}</label>
+						<div class="col-sm-7">
+							<input type="text" class="form-control" id="add_domain_name">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="add_domain_user" class="col-sm-3 control-label">{{ userLang.user_domain }}</label>
+						<div class="col-sm-7">
+							<input type="text" class="form-control" id="add_domain_user">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="add_domain_pwd" class="col-sm-3 control-label">{{ publicLang.pwd }}</label>
+						<div class="col-sm-7">
+							<input type="password" class="form-control" id="add_domain_pwd">
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!--加入LDAP域-->
+<div class="modal fade" id="joinLdapModal" tabindex="-1" role="dialog" aria-labelledby="joinLdapModalLabel" aria-hidden="true"
+	data-backdrop="static">
+	<div class="modal-dialog" style="width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+				<button type="button" class="btn btn-primary">{{ publicLang.save }}</button>
+				<h4 class="modal-title" id="joinLdapModalLabel">{{ userLang.in_domain_ldap }}</h4>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal" role="form">
+					<div class="form-group">
+						<label for="add_server" class="col-sm-3 control-label">{{ userLang.server }}</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control" id="add_server">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="add_base_dn" class="col-sm-3 control-label">Base DN</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control" id="add_base_dn"  placeholder="example：dc=datatom,dc=com">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="add_admin_dn" class="col-sm-3 control-label">Admin DN</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control" id="add_admin_dn"  placeholder="example：cn=admin,dc=datatom,dc=com">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="ldap_domain" class="col-sm-3 control-label">{{ userLang.domain }}</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control" id="ldap_domain" value="INFINITY">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="add_ldap_pwd" class="col-sm-3 control-label">{{ userLang.password }}</label>
+						<div class="col-sm-8">
+							<input type="password" class="form-control" id="add_ldap_pwd">
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!--退出域-->
+<div class="modal fade" id="exitDomainModal" tabindex="-1" role="dialog" aria-labelledby="exitDomainModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+		<button type="button" class="btn btn-primary">{{ publicLang.save }}</button>
+        <h4 class="modal-title" id="exitDomainModalLabel">{{ userLang.out_domain }}</h4>
+      </div>
+      <div class="modal-body">
+		 <form class="form-horizontal" role="form">
+			<div class="form-group">
+				<label for="belong_domain" class="col-sm-3 control-label">{{ userLang.belong_domain }}</label>
+				<div class="col-sm-7">
+					<input type="text" disabled="disabled" class="form-control" id="belong_domain" value="{{ doinfo["result"]["domain"] }}">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="domain_controller_host" class="col-sm-3 control-label">{{ userLang.domaincontroller }}</label>
+				<div class="col-sm-7">
+					<input type="text" disabled="disabled" class="form-control" id="domain_controller_host" value="{{ doinfo["result"]["dc"] }}">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="domain_name" class="col-sm-3 control-label">{{ userLang.domain_name }}</label>
+				<div class="col-sm-7">
+				<input type="text" class="form-control" disabled="disabled" id="domain_name" value="{{ doinfo["result"]["realm"] }}">
+				</div>
+			</div>
+				<div class="form-group">
+				<label for="domain_user" class="col-sm-3 control-label">{{ userLang.user_domain }}</label>
+				<div class="col-sm-7">
+				<input type="text" class="form-control" disabled="disabled" id="domain_user" value="{{ doinfo["result"]["username"] }}">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="domain_pwd" class="col-sm-3 control-label">{{ publicLang.pwd }}</label>
+				<div class="col-sm-7">
+				<input type="password" class="form-control" id="domain_pwd">
+				</div>
+			</div>
+		</form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--退出LDAP域-->
+<div class="modal fade" id="leaveLdapModal" tabindex="-1" role="dialog" aria-labelledby="leaveLdapModalLabel" aria-hidden="true"
+	data-backdrop="static">
+	<div class="modal-dialog" style="width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+				<button type="button" class="btn btn-primary">{{ publicLang.ok }}</button>
+				<h4 class="modal-title" id="leaveLdapModalLabel">{{ userLang.out_domain }}</h4>
+			</div>
+			<div class="modal-body">
+				<p style="color:red;">{{ userLang.confirm_leave_ldap_domain }}</p>
+			</div>
+		</div>
+	</div>
+</div>
+<!--域用户信息缓存-->
+<div class="modal fade" id="adCacherModal" tabindex="-1" role="dialog" aria-labelledby="adCacherModalLabel" aria-hidden="true"
+	data-backdrop="static">
+	<div class="modal-dialog" style="width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+				<button type="button" class="btn btn-primary">{{ publicLang.ok }}</button>
+				<h4 class="modal-title" id="adCacherModalLabel">{{ userLang.ad_cacher }}</h4>
+			</div>
+			<div class="modal-body">
+				<p>{{ userLang.domain_data_cacher }} ?</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="ldapCacherModal" tabindex="-1" role="dialog" aria-labelledby="ldapCacherModalLabel" aria-hidden="true"
+	data-backdrop="static">
+	<div class="modal-dialog" style="width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="btn btn-default" data-dismiss="modal">{{ publicLang.cancel }}</button>
+				<button type="button" class="btn btn-primary">{{ publicLang.ok }}</button>
+				<h4 class="modal-title" id="ldapCacherModalLabel">{{ userLang.ldap_cacher }}</h4>
+			</div>
+			<div class="modal-body">
+				<p>{{ userLang.domain_data_cacher }} ?</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+{% endblock %}
+{% block needjs %}
+    {{ parent() }}
+    <script src="js/pages/public.js"></script>
+    <script src="js/pages/user.js"></script>
+{% endblock %}

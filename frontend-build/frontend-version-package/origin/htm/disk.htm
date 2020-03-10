@@ -1,0 +1,18 @@
+{% extends "nodeheader.htm" %}
+{%block rightcontop%}
+<nav class="navbar-right" style="margin-right:0;  padding-right: 20px;">
+	<span class="divide_vertical">|</span>
+	<div class="node_act_sub" style="">
+		<a href="javascript:;" data-toggle="modal" data-target="#rebootModal" title="{{ nodeLang.reboot }}">
+			<span class="glyphicon glyphicon-play"></span>
+		</a>
+		<a href="javascript:;" data-toggle="modal" data-target="#shutdownModal" title="{{ nodeLang.shut }}">
+			<span class="glyphicon glyphicon-off"></span>
+		</a>
+	</div>
+</nav>
+{%endblock%}
+
+{%block rightconbottom%}
+
+{%endblock%}

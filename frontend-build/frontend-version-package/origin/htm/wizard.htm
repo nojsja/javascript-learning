@@ -1,0 +1,490 @@
+<!--清除集群-->
+<div class="modal fade" id="destroyClusterModal" tabindex="-1" role="dialog" aria-labelledby="destroyClusterModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <!-- <button type="button" class="btn btn-danger">{{publicLang.ok}}</button> -->
+        <h4 class="modal-title" id="destroyClusterModalLabel">{{ publicLang.tips }}</h4>
+      </div>
+      <div class="modal-body">
+				<p><strong>{{publicLang.clear_cluster1}}, {{publicLang.init_cluster_disable}}</strong></p>
+				<!-- <p>{{publicLang.clear_cluster2}}</p>
+				<p style="color:red">{{publicLang.clear_cluster3}}</p> -->
+				<!-- <p style="text-align: center"><input id="submitDestroy" type="text"></p> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--配置向导-->
+<div class="modal fade" id="wizardConfModal" tabindex="-1" role="dialog" aria-labelledby="wizardConfModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:800px;">
+    <div class="modal-content">
+    	<!--<div id="prew-wizard-left" style="position:fixed;left:-80px;">-->
+            <!--<a href="javascript:void (0);" style="font-size:6.5em;color:#D8D8D8;" data-toggle="tooltip" title="{{clusterLang.prev_step}}">-->
+                <!--<span class="mif-chevron-thin-left"></span>-->
+            <!--</a>-->
+        <!--</div>-->
+		<!--<div id="prew-wizard-right" style="position:fixed;right:-80px;">-->
+            <!--<a href="javascript:void (0);" style="font-size:6.5em;color:#D8D8D8;" data-toggle="tooltip" title="{{clusterLang.next_step}}">-->
+                <!--<span class="mif-chevron-thin-right"></span>-->
+            <!--</a>-->
+        <!--</div>-->
+    	<div class="modal-header">
+			<!--<button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>-->
+			<!--<button type="button" class="btn btn-info js-mds-jump hidden">{{publicLang.jump}}</button>-->
+			<!--<button type="button" class="btn btn-primary hidden">{{publicLang.ok}}</button>-->
+			<!--<button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>-->
+			<span data-dismiss="modal" style="float: right;font-size: 30px;cursor: pointer;">&times;</span>
+        	<div style="float:left;width:520px;height:30px;line-height:30px;font-size:18px;">
+    			<ul class="wizard-nav-ul" style="list-style:none;margin:0 30px 0 -32px;float:left;">
+    				<li class="js-wizard-nav1" style="line-height:30px;"><strong style="color:black;">{{publicLang.directions}}</strong></li>
+    				<li class="js-wizard-nav2 hidden" style="line-height:30px;"><strong>{{clusterLang.set_masterNodes_and_clockSrc}}</strong></li>
+    				<li class="js-wizard-nav3 hidden" style="line-height:30px;"><strong style="color:black;">{{publicLang.set_cluster_stroage_node}}</strong></li>
+            <li class="js-wizard-nav4 hidden" style="line-height:30px;"><strong style="color:black;">{{publicLang.set_monitor_service}}</strong></li>
+    				<li class="js-wizard-nav5 hidden" style="line-height:30px;"><strong style="color:black;">{{publicLang.set_mgr_service}}</strong></li>
+    				<li class="js-wizard-nav6 hidden" style="line-height:30px;"><strong style="color:black;">{{publicLang.add_disk}}</strong></li>
+    				<li class="js-wizard-nav7 hidden" style="line-height:30px;"><strong style="color:black;">{{publicLang.set_metadata_service}}</strong></li>
+    				<li class="js-wizard-nav8 hidden" style="line-height:30px;"><strong style="color:black;">{{publicLang.set_NAS_service}}</strong></li>
+    				<li class="js-wizard-nav9 hidden" style="line-height:30px;"><strong style="color:black;">{{publicLang.set_DNS_service}}</strong></li>
+    				<li class="js-wizard-nav10 hidden" style="line-height:30px;"><strong style="color:black;">{{publicLang.confirm_submit}}</strong></li>
+    			</ul>
+    			<!--<div style="display:inline;">-->
+        			<!--<span>（</span>-->
+	        		<!--<span class="js-cur-wizard-num" style="color:#337AB7;font-size:22px;">1</span>-->
+	        		<!--<span>/</span>-->
+	        		<!--<span class="js-total-wizard">9</span>-->
+	        		<!--<span>）</span>-->
+	        	<!--</div>-->
+				<ul class="list-inline">
+					<li><img src="css/image/xz.png"></li>
+					<li><img src="css/image/wxz.png"></li>
+					<li><img src="css/image/wxz.png"></li>
+					<li><img src="css/image/wxz.png"></li>
+          <li><img src="css/image/wxz.png"></li>
+					<li><img src="css/image/wxz.png"></li>
+					<li><img src="css/image/wxz.png"></li>
+					<li><img src="css/image/wxz.png"></li>
+					<li><img src="css/image/wxz.png"></li>
+					<li><img src="css/image/wxz.png"></li>
+				</ul>
+        	</div>
+        	<h4 class="modal-title" id="wizardConfModalLabel">&nbsp;</h4>
+    	</div>
+
+      <!-- 集群初始化步骤 -->
+
+    	<div class="modal-body" style="height:300px;overflow:auto;font: 12px/1.5 arial,'\5b8b\4f53',sans-serif;">
+      		<div class="form-horizontal showing wizard1 wizardconf" data-num="1" role="form">
+						<div class="table-responsive js-block">
+							<!--<div style="font-size:18px;padding: 10px 15px;">-->
+								<!--<strong style="color:black;">{{publicLang.before_initialize}}</strong>-->
+								<!--<br>{{publicLang.before_initialize1}}-->
+								<!--<br>{{publicLang.before_initialize2}}-->
+								<!--<br>-->
+								<!--<strong style="color:black;">{{publicLang.before_initialize3}}</strong>-->
+								<!--<br>{{publicLang.before_initialize4}}<br>-->
+								<!--<input id="getnextpasswd" type="text">-->
+							<!--</div>-->
+							<dl style="font-size: 15px;">
+								<dt><strong style="color:black;">{{publicLang.before_initialize}}</strong></dt>
+								<dd class="textInden">{{publicLang.before_initialize1}}
+									<span style="color:#ff791b">{{publicLang.before_initialize11}}</span>
+									{{publicLang.before_initialize12}}
+									<span style="color:#ff791b">{{publicLang.before_initialize13}}</span>
+									{{publicLang.before_initialize14}}
+								</dd>
+								<dd class="textInden">{{publicLang.before_initialize2}}</dd>
+                <dd class="textInden">{{publicLang.before_initialize_license}}</dd>
+								<br>
+								<dt><strong style="color:black;">{{publicLang.before_initialize3}}</strong></dt>
+								<dd class="textInden">{{publicLang.before_initialize4}}
+									<span style="color:#5982db;">{{publicLang.before_initialize41}}</span>
+									{{publicLang.before_initialize42}}
+								</dd>
+								<dd class="textInden"><input id="getnextpasswd" type="text"></dd>
+
+							</dl>
+							</div>
+						</div>
+					<!--</div>-->
+      		<div class="form-horizontal hidden wizard2 wizardconf ntp-wizardconf" data-num="2" role="form">
+      			<div class="form-group" style="text-align:center">
+		            <div class="col-sm-12">
+		            	<h5></h5>
+		            	<div>
+		            		<ul class="js-storagenodeslist" style="padding-left:0;margin-left: -8px;">
+
+		            		</ul>
+		            	</div>
+		            </div>
+
+                    <form class="form-inline fl-lt" style="padding-left: 70px;padding-top: 30px;">
+                        <div class="form-group">
+                            <label for="wizardClockSource">{{clusterLang.custom_ntpser}} : </label>
+                            <input type="text" class="form-control" id="wizardClockSource" value="" placeholder="{{clusterLang.input_custom_ntpser}}">
+                        </div>
+                    </form>
+
+		        </div>
+            </div>
+      		<div class="form-horizontal hidden wizard3 wizardconf storage-wizardconf" data-num="3" role="form">
+      			<div class="form-group" style="text-align:center">
+		            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+		            	<h5></h5>
+		            	<div>
+		            		<ul class="js-storagenodeslist" style="padding-left:0;margin-left: -8px;">
+
+		            		</ul>
+		            	</div>
+		            </div>
+		        </div>
+            </div>
+
+            <div class="form-horizontal hidden wizard4 wizardconf monitor-wizardconf" data-num="4" role="form">
+        			<div class="form-group" style="text-align:center">
+  		            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+  		            	<h5></h5>
+  		            	<div>
+  		            		<ul class="js-storagenodeslist" style="padding-left:0;margin-left: -8px;">
+
+  		            		</ul>
+  		            	</div>
+  		            </div>
+  		        </div>
+            </div>
+
+            <!-- 添加mgr -->
+            <div class="form-horizontal hidden wizard5 wizardconf mgr-wizardconf" data-num="5" role="form">
+        			<div class="form-group" style="text-align:center">
+  		            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+  		            	<h5></h5>
+  		            	<div>
+  		            		<ul class="js-storagenodeslist" style="padding-left:0;margin-left: -8px;">
+
+  		            		</ul>
+  		            	</div>
+  		            </div>
+  		        </div>
+            </div>
+
+            <div class="form-horizontal hidden wizard6 wizardconf disksadd-wizardconf" data-num="6" role="form">
+      			<div class="form-group" style="text-align:center">
+		            <!--<div class="col-sm-12" style="padding-right:15px;padding-left:55px;">-->
+					<div class="col-sm-12" style="padding-right:15px;">
+		            	<div id="addnodedisk" style="font-size:16px;">
+		            		<table class="table table-condensed" style="margin-bottom: 0;">
+				            	<thead style="border-bottom-color: rgb(255, 255, 255) !important;">
+					                <tr>
+					                  <th style="width:50%;">
+					                    <div class="left">
+					                      <span style="position: relative;vertical-align: middle;">
+					                          #
+					                        </span>
+					                    </div>
+					                  </th>
+					                  <th style="width:50%;">
+					                    <span style="float: left;">{{publicLang.select_all}}</span>
+					                    <input type="checkbox" class="js-sel-all" style="float:left;margin-left: 3px;width:16px;height:16px;">
+					                  </th>
+					                </tr>
+				              	</thead>
+				            </table>
+				            <div style="max-height:350px;overflow-y:auto;overflow-x:hidden;margin-left:-2px;">
+				            	<table class="table table-condensed table-hover wizard-disk-body">
+									<tbody>
+
+									</tbody>
+								</table>
+				            </div>
+		            	</div>
+		            </div>
+		        </div>
+            </div>
+            <div class="form-horizontal hidden wizard7 wizardconf mds-wizardconf" data-num="7" role="form">
+      			<div class="form-group" style="text-align:center">
+		            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+		            	<h5></h5>
+		            	<div>
+		            		<ul class="js-storagenodeslist" style="padding-left:0;margin-left:  -8px;">
+
+		            		</ul>
+		            	</div>
+		            </div>
+		        </div>
+            </div>
+            <div class="form-horizontal hidden wizard8 wizardconf nas-wizardconf" data-num="8" role="form">
+	        	<div class="col-sm-1">
+  				</div>
+		        <div class="col-sm-10" style="margin-left:-80px;font-size:16px;">
+			        <table class="table nas-pubip-service">
+						<thead style="border-bottom-color: rgb(255, 255, 255) !important;">
+					        <tr>
+					        	<th style="font-weight: bold;">{{ publicLang.hostname }}</th>
+					        	<th style="font-weight: bold;">{{ publicLang.network_port }}</th>
+					        	<th style="font-weight: bold;">{{ publicLang.public_ip }} / {{publicLang.mask}}</th>
+					        </tr>
+				      	</thead>
+				      	<tbody>
+
+					    </tbody>
+					</table>
+				</div>
+				<div class="col-sm-1">
+  				</div>
+            </div>
+            <div class="form-horizontal hidden wizard9 wizardconf dns-wizardconf" data-num="9" role="form">
+      			<!--<div class="form-group">-->
+		            <!--<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">-->
+		            	<!--<h5></h5>-->
+		            	<!--<div>-->
+		            		<!--<ul class="js-storagenodeslist" style="padding-left:0;margin-left:  -8px;">-->
+		            			<!---->
+		            		<!--</ul>-->
+		            	<!--</div>-->
+		            <!--</div>-->
+		        <!--</div>-->
+		        <div class="form-group">
+		            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+						<div class="col-lg-2 basic-lg-2 inlineblock" style="margin-left:2px;font-size:16px;">{{ publicLang.domain_name }}</div>
+						<div class="col-lg-9 basic-lg-9 inlineblock">
+							<input type="text" class="none-border-input js-get-originname" placeholder="{{ publicLang.input_domain_name }}" style="font-size:16px;width: 300px;">
+						</div>
+		            </div>
+				</div>
+			</div>
+
+          <div class="form-horizontal hidden wizard10 wizardconf submit-wizardconf" data-num="10" role="form">
+            	<div class="submit-title" style="color:red;margin-bottom:10px;font-size:16px;">{{ publicLang.has_selected_now }}：</div>
+            	<div class="all-selected-content">
+					<div class="row" style="border-bottom: 1px solid #e2e2e2;padding-bottom:5px;margin:0 2em;">
+						<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+							<div>
+								<div><strong>>NTP服务器</strong></div>
+								<div class="ntp-node-selected"></div>
+								<div>ntp外部时钟源：</div>
+								<div class="ntp-alock"></div>
+							</div>
+						</div>
+						<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+							<div style="margin-left:50px;">
+								<div><strong>>{{ publicLang.cluster_stroage_node }}</strong></div>
+								<div class="s-node-selected"></div>
+							</div>
+						</div>
+						<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+							<div style="margin-left:60px;">
+								<div><strong>>{{ publicLang.storage_monitor_service }}</strong></div>
+								<div class="s-monitor-service"></div>
+							</div>
+						</div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+							<div style="margin-left:60px;">
+								<div><strong>>{{ publicLang.storage_mgr_service }}</strong></div>
+								<div class="s-mgr-service"></div>
+							</div>
+						</div>
+					</div>
+				    <div class="row" style="border-bottom: 1px solid #e2e2e2;margin-top:5px;padding-bottom: 5px;margin-left:2em;margin-right: 2em;">
+						<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+							<div><strong>>{{ publicLang.metadata_service }}</strong></div>
+							<div class="metadata-service" style="padding-right:30px;margin-left:-5px;margin-top:-5px;float: left"></div>
+						</div>
+						<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+							<div style="margin-left:50px;">
+								<div><strong>>{{ publicLang.nas_getway_service }}</strong></div>
+								<div class="nas-getway-service"></div>
+							</div>
+						</div>
+						<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+							<div style="margin-left:60px;">
+								<div><strong>>{{ publicLang.DNS_service }}</strong></div>
+								<div class="domain-name" style="margin-left:-5px;margin-top:-5px;">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row" style="margin-top:5px;padding-bottom: 5px;margin-left:2em;margin-right: 2em;">
+						<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+							<div><strong>>{{ publicLang.disk_list }}</strong></div>
+							<div class="disk-list" style="padding-right:30px;margin-left:-5px;margin-top:-5px;float: left">
+								<table class="table table-condensed  wizard-disk-body" style="margin-bottom:0;">
+								  <tbody>
+
+								  </tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+            	</div>
+    			<div class="wizard-r-p hidden">
+					<div class="wizard-result">
+						<div>
+							<span>{{ publicLang.cur_completed }}</span>
+							<span class="js-res-count" style="color:red;">0</span>
+							<span style="color:red;">{{ publicLang.per_step }}/</span><span class="js-total-step" style="color:red;"></span>
+							<span class="js-step-meaning"></span>
+						</div>
+					</div>
+    				<div class="progress progress-striped active progress-bar-parent">
+						<div class="progress-bar progress-bar-info js-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+					    	<span>0</span>
+						</div>
+					</div>
+    			</div>
+            </div>
+    	</div>
+		<div class="modal-footer" style="border-top:none;margin-bottom:2rem;margin-right:2rem;">
+			<button type="button" class="btn btn-primary js-submit-all hidden">{{publicLang.ok}}</button>
+			<button type="button" class="btn btn-primary hidden" id="prew-wizard-right">{{publicLang.next_step}}</button>
+			<button type="button" class="btn btn-default hidden" id="prew-wizard-left">{{publicLang.prev_step}}</button>
+			<button type="button" class="btn btn-info js-mds-jump hidden">{{publicLang.jump}}</button>
+      <p id="wizardConfError" style="color: #d92b65; text-align: center; font-size: .8rem; position: absolute; bottom: 0; left: 0; padding: 0 1rem">
+        
+      </p>
+		</div>
+    </div>
+  </div>
+</div>
+
+
+<!--启动DNS-->
+<div class="modal fade" id="startDnsModel" tabindex="-1" role="dialog" aria-labelledby="startDnsModelLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="startDnsModelLabel">{{ clusterLang.start_dns }}</h4>
+      </div>
+      <div class="modal-body">
+      <p>{{ clusterLang.confirm_start_dns }} ？</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--暂停DNS-->
+<div class="modal fade" id="stopDnsModel" tabindex="-1" role="dialog" aria-labelledby="stopDnsModelLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="stopDnsModelLabel">{{ clusterLang.stop_dns }}</h4>
+      </div>
+      <div class="modal-body">
+      <p>{{ clusterLang.confirm_stop_dns }} ？</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--集群关机-->
+<div class="modal fade" id="clusterShutdownModal" tabindex="-1" role="dialog" aria-labelledby="clusterShutdownModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-danger">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="clusterShutdownModalLabel">{{ publicLang.nav_title.shutdown }}</h4>
+      </div>
+      <div class="modal-body flex-modal-body">
+		  <form class="form-horizontal col-sm-12" role="form">
+			  <div class="form-group">
+				  <div class="col-sm-7 control-label left">{{ publicLang.shutdown1 }}</div>
+				  <div class="col-sm-3 control-label left">
+				  </div>
+				  <span class="col-sm-2 control-label step1"></span>
+			  </div>
+			  <div class="form-group">
+				  <div class="col-sm-7 control-label left">{{ publicLang.shutdown2 }}</div>
+				  <div class="col-sm-3 control-label left">
+
+				  </div>
+				  <span class="col-sm-2 control-label step2"></span>
+			  </div>
+			  <div class="form-group">
+				  <div class="col-sm-7 control-label left">{{ publicLang.shutdown3 }}</div>
+				  <div class="col-sm-3 control-label left">
+
+				  </div>
+				  <span class="col-sm-2 control-label step3"></span>
+			  </div>
+			  <div class="form-group">
+				  <div class="col-sm-7 control-label left">{{ publicLang.shutdown4 }}</div>
+				  <div class="col-sm-3 control-label left">
+
+				  </div>
+				  <span class="col-sm-2 control-label step4"></span>
+			  </div>
+			  <div class="form-group">
+				  <div class="col-sm-7 control-label left">{{ publicLang.shutdown5 }}</div>
+				  <div class="col-sm-3 control-label left">
+
+				  </div>
+				  <span class="col-sm-2 control-label step5"></span>
+			  </div>
+			  <div class="form-group">
+				  <div class="col-sm-7 control-label left">{{ publicLang.shutdown6 }}</div>
+				  <div class="col-sm-3 control-label left">
+
+				  </div>
+				  <span class="col-sm-2 control-label step6"></span>
+			  </div>
+		  </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--忽略不可用节点-->
+<div class="modal fade" id="ignoreNodeModal" tabindex="-1" role="dialog" aria-labelledby="ignoreNodeModalLabel" aria-hidden="true" data-backdrop="static">
+	<div class="modal-dialog" style="width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+				<button type="button" class="btn btn-danger">{{publicLang.ok}}</button>
+				<h4 class="modal-title" id="ignoreNodeModalLabel">{{ publicLang.nav_title.shutdown }}</h4>
+			</div>
+			<div class="modal-body flex-modal-body">
+				<form class="form-horizontal col-sm-12" role="form">
+					<div class="form-group">
+						<div class="col-sm-3 control-label left">step</div>
+						<div class="col-sm-8 control-label left ignore-step">1</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-3 control-label left">message</div>
+						<div class="col-sm-8 control-label left ignore-message"></div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--手动关闭服务-->
+<div class="modal fade" id="manualShutdownServiceModal" tabindex="-1" role="dialog" aria-labelledby="manualShutdownServiceModalLabel" aria-hidden="true" data-backdrop="static">
+	<div class="modal-dialog" style="width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">{{publicLang.shutdown9}}</button>
+				<button type="button" class="btn btn-danger" style="width: 80px">{{publicLang.shutdown10}}</button>
+				<h4 class="modal-title" id="manualShutdownServiceModalLabel">{{ publicLang.shutdown8 }}</h4>
+			</div>
+			<div class="modal-body flex-modal-body">
+				<form class="form-horizontal col-sm-12" role="form">
+					<div class="form-group">
+						<div class="col-sm-3 control-label left">step</div>
+						<div class="col-sm-8 control-label left manual-step"></div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-3 control-label left">message</div>
+						<div class="col-sm-8 control-label left manual-message"></div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

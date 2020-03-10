@@ -1,0 +1,664 @@
+{% extends 'two-float-layout.htm' %}
+{% block leftnav%}
+{% include 'storagemgm-left-nav.htm' %}
+
+<div class="bottom-icons-act hidden" data-toggle="tooltip" data-placement="right"
+     title="{{storageLang.create_storagepool}}">
+    <a href="javascript:;" class="js-create-stpool">
+        <span class="glyphicon glyphicon-plus"></span>
+    </a>
+</div>
+{%endblock%}
+{% block rightcontent %}
+<div class="bs-docs-grid" style="padding-bottom:20px;">
+
+</div>
+
+<!--确认复用弹窗-->
+<div class="modal fade" id="confirmToReuse" tabindex="-1" role="dialog" aria-labelledby="confirmToReuseLabel" aria-hidden="true" data-backdrop="static" style="z-index:10000">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="confirmToReuseLabel">{{clusterLang.tips}}</h4>
+      </div>
+      <div class="modal-body">
+        <p style="color: red"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--创建存储池-->
+<div class="modal fade" id="createStoragepoolModal" tabindex="-1" role="dialog"
+     aria-labelledby="createStoragepoolModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" style="width:550px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{
+                    publicLang.cancel }}
+                </button>
+                <button type="button" class="btn btn-primary" aria-hidden="true">{{ publicLang.save }}</button>
+                <h4 class="modal-title" id="createStoragepoolModalLabel">{{ storageLang.create_storagepool }}</h4>
+            </div>
+            <div class="modal-body flex-modal-body">
+                <form class="form-horizontal col-sm-12" role="form">
+                    <div class="form-group">
+                        <label for="storage_pool_type" class="col-sm-4 control-label left">{{ storageLang.pool_type }}</label>
+                        <div class="col-sm-8" style="line-height:25px;">
+                          <select id="storage_pool_type" class="none-border-input" style="width:100%;">
+                              <option value="data" selected="selected">{{ storageLang.normal_pool }}</option>
+                              <option value="tier">{{ storageLang.tier_pool }}</option>
+                          </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="storage_pool_name" class="col-sm-4 control-label left">{{ storageLang.poolname
+                            }}</label>
+                        <div class="col-sm-8" style="line-height:25px;">
+                            <input type="text" class="none-border-input" id="storage_pool_name"
+                                   placeholder="{{ publicLang.only_letters_num }}" style="width:100%;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="data_protect" class="col-sm-4 control-label left">{{
+                            storageLang.data_protection_policy }}</label>
+                        <div class="col-sm-8" style="line-height:25px;">
+                            <select id="data_protect" class="none-border-input" style="width:100%;">
+                                <option value="0">{{storageLang.erasure_code}}</option>
+                                <option value="1" selected="selected">{{storageLang.duplicate}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group hidden" id="erasurecode">
+                        <label class="col-sm-4 control-label left">{{ storageLang.erasure_code }}</label>
+                        <div class="col-sm-4 k-eras-value" style="padding-top:7px;">
+                            <span>k=</span>
+                            <input type="text" class="none-border-input" style="width:50px;" value="2"/>
+                        </div>
+                        <div class="col-sm-4 m-eras-value" style="padding-top:7px;">
+                            <span>m = </span>
+                            <input type="text" class="none-border-input" style="width:50px;" value="1"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="duplicate" class="col-sm-4 control-label left">{{ storageLang.totalData }}</label>
+                        <div class="col-sm-8" style="line-height:25px;">
+                            <select id="duplicate" class="none-border-input" style="width:100%;">
+                                <option value="1">1</option>
+                                <option value="2" selected="selected">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="dgname" class="col-sm-4 control-label left">{{ storageLang.dg_name }}</label>
+                        <div class="col-sm-8" style="line-height:25px;">
+                            <select id="dgname" class="none-border-input" style="width:100%;">
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="failure_domain" class="col-sm-4 control-label left">{{ storageLang.fault_domain }}</label>
+                        <div class="col-sm-8" style="line-height:25px;">
+                            <select id="failure_domain" class="none-border-input" style="width:100%;">
+                                <option value="host" selected="selected">host</option>
+                                <option value="disk">disk</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group application_type_wrapper">
+                        <label for="application_type" class="col-sm-4 control-label left">{{ storageLang.application_type }}</label>
+                        <div class="col-sm-8" style="line-height:25px;">
+                            <select id="application_type" class="none-border-input" style="width:100%;">
+                                <option value="cephfs" selected="selected">{{ storageLang.cephfs }}</option>
+                                <option value="rgw">{{ storageLang.rgw }}</option>
+                                <option value="rbd">{{ storageLang.rbd }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group tier_mode_wrapper hidden">
+                        <label for="storage_tier_mode" class="col-sm-4 control-label left">{{ storageLang.tier_mode }}</label>
+                        <div class="col-sm-8" style="line-height:25px;">
+                          <select id="storage_tier_mode" class="none-border-input" style="width:100%;">
+                              <option value="writeback" selected="selected">{{ storageLang.writeback }}</option>
+                              <option value="readonly">{{ storageLang.readonly }}</option>
+                              <option value="forward">{{ storageLang.forward }}</option>
+                          </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="create-pool-tips">{{storageLang.create_pool_tips}}</div>
+        </div>
+    </div>
+</div>
+
+<!--删除存储池-->
+<div class="modal fade" id="delStoragePoolModal" tabindex="-1" role="dialog" aria-labelledby="delStoragePoolModalLabel"
+     aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+                <button type="button" class="btn btn-danger">{{publicLang.delete}}</button>
+                <h4 class="modal-title" id="delStoragePoolModalLabel">{{storageLang.del_storagepool}}</h4>
+            </div>
+            <div class="modal-body">
+              <p></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 改变存储池故障域 -->
+<div class="modal fade" id="changeFailureDomainModal" tabindex="-1" role="dialog" aria-labelledby="changeFailureDomainModalLabel"
+     aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+                <button type="button" class="btn btn-danger">{{publicLang.confirm}}</button>
+                <h4 class="modal-title" id="changeFailureDomainModalLabel">{{storageLang.change_failure_domain}}</h4>
+            </div>
+            <div class="modal-body">
+              <!-- <p>{{storageLang.data_migration_size}}:XXXXX</p>
+              <p>{{storageLang.data_migration_time}}:XXXX</p> -->
+              <p style="font-size: 1rem">{{storageLang.data_migration_warn}}</p>
+              <p style="color: red; font-size: 1rem">{{storageLang.change_failure_domain_tips}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--添加存储池缓存层-->
+<div class="modal fade" id="addPoolTierModal" tabindex="-1" role="dialog" aria-labelledby="addPoolTierModalLabel"
+     aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+                <button type="button" class="btn btn-primary">{{publicLang.save}}</button>
+                <h4 class="modal-title" id="addPoolTierModalLabel">{{storageLang.add_cache_tier}}</h4>
+            </div>
+            <div class="modal-body flex-modal-body">
+                <form class="form-horizontal col-sm-12" role="form">
+                    <div class="form-group">
+                        <label for="tiername" class="col-sm-4 control-label left">Tier</label>
+                        <div class="col-sm-8" style="line-height:25px;">
+                            <select id="tiername" class="none-border-input" style="width:100%;">
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="tier_mode" class="col-sm-4 control-label left">mode</label>
+                        <div class="col-sm-8" style="line-height:25px;">
+                            <select id="tier_mode" class="none-border-input" style="width:100%;">
+                                <option value="writeback">writeback</option>
+                                <option value="readonly">readonly</option>
+                                <option value="forward">forward</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--删除存储池缓存层-->
+<div class="modal fade" id="removePoolTierModal" tabindex="-1" role="dialog" aria-labelledby="removePoolTierModalLabel"
+     aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+                <button type="button" class="btn btn-primary">{{publicLang.save}}</button>
+                <h4 class="modal-title" id="removePoolTierModalLabel">{{storageLang.remove_cache_tier}}</h4>
+            </div>
+            <div class="modal-body">
+                <p></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--选择磁盘-->
+<div class="modal fade" id="selectDiskModal" tabindex="-1" role="dialog" aria-labelledby="selectDiskModalLabel"
+     aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" style="width:540px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{
+                    publicLang.cancel }}
+                </button>
+                <button type="button" class="btn btn-primary" aria-hidden="true">{{ publicLang.save }}</button>
+                <h4 class="modal-title" id="selectDiskModalLabel">{{ storageLang.select_disk }}</h4>
+            </div>
+            <div class="modal-body flex-modal-body">
+                <form class="form-horizontal col-sm-12" role="form">
+                    <div class="form-group" style="text-align:center">
+                        <div class="col-sm-12">
+                            <div id="addnodedisk">
+                                <table class="table table-condensed">
+                                    <thead>
+                                    <tr>
+                                        <th style="width:16.66%;">
+                                            <div class="left">
+					                      <span style="position: relative;vertical-align: middle;">
+					                          #
+					                        </span>
+                                            </div>
+                                        </th>
+                                        <th style="width:16.66%;padding-left: 16px;">
+                                            <span>{{ storageLang.status }}</span>
+                                        </th>
+                                        <th style="width:16.66%;padding-left: 16px;">
+                                            <span>{{ storageLang.disk_type }}</span>
+                                        </th>
+                                        <th style="width:16.66%;padding-left: 16px;">
+                                            <span>{{ storageLang.storage_avail_capacity }}</span>
+                                        </th>
+                                        <th style="width:16.66%;padding-left: 16px;">
+                                            <span>{{ storageLang.storage_total_capacity }}</span>
+                                        </th>
+                                        <th style="width:16.66%;">
+                                            <span>{{storageLang.select_all}}</span>
+                                            <input type="checkbox" class="js-sel-all">
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                                <div class="disk-body disk-pool-body">
+                                    <table class="table table-condensed table-hover wizard-disk-body">
+                                        <tbody>
+                                        <!-- {% for host in hostInfo %}
+                                        {% if host['other']|length > 0  %}
+                                        <tr class="js-node" data-ip="{{ host['ip'] }}" data-name="{{ host['hostname'] }}">
+                                            <td class="left" style="width:16.66%;">
+                                                <a href="javascript:;" class="js-plus-subdisks" data-ip="{{ host['ip'] }}" data-name="{{ host['hostname'] }}">
+                                                    <span class="glyphicon glyphicon-plus-sign"></span>
+                                                </a>
+                                                <a href="javascript:;" class="js-minus-subdisks hidden" data-ip="{{ host['ip'] }}">
+                                                    <span class="glyphicon glyphicon-minus-sign">
+                                                    </span>
+                                                </a>
+                                                <span title="{{ host['ip'] }}"> {{ host['hostname'] }} </span>
+                                            </td>
+                                            <td style="width:16.66%;">
+                                            </td>
+                                            <td style="width:16.66%;">
+                                            </td>
+                                            <td style="width:16.66%;">
+                                            </td>
+                                            <td style="width:16.66%;">
+                                            </td>
+                                            <td style="width:16.66%;padding-left:28px;">
+                                                <input type="checkbox" class="sub-check-disk"/>
+                                            </td>
+                                        </tr>
+                                        <tr class="subdisks hidden" data-ip="{{ host['ip'] }}" data-host="{{host['hostname']}}">
+                                            <td colspan="6" style="padding:0;">
+                                                <table class="table table-condensed table-hover" style="margin-left:11px;">
+                                                    <tbody>
+                                                        {% for disk in host['other'] %}
+                                                        <tr class="js-disk" data-id="{{ disk['id'] }}">
+                                                            <td class="showleftborder" style="width:16.66%;">
+                                                                <div class="showcenterline" style="width:15px;float:left;"></div>
+                                                                {% if disk['usage'] is empty %}
+                                                                <span>--</span>
+                                                                {% else %}
+                                                                <span class="flex">{{disk['usage']['device']|slice(5, -1)}}</span>
+                                                                {% endif %}
+                                                            </td>
+                                                            <td style="width:16.66%;">
+                                                                {% if disk['status'] == 'up' %}
+                                                                <span style="color:green;">normal</span>
+                                                                {% else %}
+                                                                <span style="color:red;">abnormal</span>
+                                                                {% endif %}
+                                                            </td>
+                                                            <td style="width:16.66%;">
+                                                                {% if disk['disktype'] is empty %}
+                                                                <span>--</span>
+                                                                {% else %}
+                                                                <span>{{disk['disktype']}}</span>
+                                                                {% endif %}
+                                                            </td>
+                                                            <td style="width:16.66%;">
+                                                                {% if disk['usage'] is empty %}
+                                                                <span>--</span>
+                                                                {% else %}
+                                                                <span>{{disk['usage']['availble']}}</span>
+                                                                {% endif %}
+                                                            </td>
+                                                            <td style="width:16.66%;">
+                                                                {% if disk['usage'] is empty %}
+                                                                <span>--</span>
+                                                                {% else %}
+                                                                <span>{{disk['usage']['size']}}</span>
+                                                                {% endif %}
+                                                            </td>
+                                                            <td style="width:16.66%;">
+                                                                <input type="checkbox" class="sub-check-disk">
+                                                            </td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        {%endif%}
+                                        {% endfor %} -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--磁盘组编辑-->
+<div class="modal fade" id="expandCapacityModal" tabindex="-1" role="dialog" aria-labelledby="expandCapacityModalLabel"
+     aria-hidden="true" data-backdrop="static" style="overflow-y:auto">
+    <div class="modal-dialog" style="width:1100px">
+        <div class="modal-content">
+            <div class="modal-header" style="position: relative">
+                <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" style="margin-right: 15px">{{
+                    publicLang.cancel }}
+                </button>
+                <button type="button" class="btn btn-primary" aria-hidden="true">{{ publicLang.save }}</button>
+                <h4 class="modal-title" id="expandCapacityModalLabel" style="margin-left:13px">{{ publicLang.edit }}</h4>
+                <div class="dg_edit_tip">
+                  <p>--&nbsp;{{storageLang.dg_edit_tip}}&nbsp;--</p>
+                </div>
+            </div>
+            <div class="modal-body flex-modal-body">
+                <form class="form-horizontal col-lg-4 col-md-4 expand_capacity" style="border-right:1px solid grey;margin-right: 20px;margin-left: 15px;font-size: 13px;margin-top:10px" role="form">
+                </form>
+                <form class="form-horizontal  col-lg-7 col-md-7 spool-diskinfo-create" role="form" style="margin-left:32px">
+                    <div class="form-group">
+                        <label for="tiername" class="col-sm-4 control-label left" style="margin-bottom: 10px;">〉{{storageLang.diskgroup_name}}</label>
+                        <div class="col-sm-12" style="line-height:25px;padding-left:12px">
+                            <input type="text" class="root-name" style="width:100%;margin-left:4px">
+                            <input type="text" class="root-name-copy" style="width:100%;margin-left:4px">
+                        </div>
+                    </div>
+                    <div class="form-group diskgroup-level">
+                        <label class="col-sm-12 control-label left" style="margin-bottom: 10px;">〉{{storageLang.diskgroup_level}}</label>
+                        <div class="col-sm-2 click-diskgroup-level hidden" expand="1" style="line-height:25px;padding-left:12px">
+                            <input type="text" value="{{storageLang.datacenter}}">
+                            <span class="glyphicon glyphicon-ok-sign hidden" style="margin-top:182px;"></span>
+                        </div>
+                        <div class="col-sm-2 click-diskgroup-level hidden" expand="1" style="line-height:25px;">
+                            <input type="text"  value="{{storageLang.room}}">
+                            <span class="glyphicon glyphicon-ok-sign hidden" style="margin-top:182px;"></span>
+                        </div>
+                        <div class="col-sm-2 click-diskgroup-level hidden" expand="1" style="line-height:25px;">
+                            <input type="text" value="{{storageLang.rack}}">
+                            <span class="glyphicon glyphicon-ok-sign hidden" style="margin-top:182px;"></span>
+                        </div>
+                        <div class="col-sm-2 click-diskgroup-level hidden" expand="1" style="line-height:25px;">
+                            <input type="text" value="{{storageLang.chassis}}">
+                            <span class="glyphicon glyphicon-ok-sign hidden" style="margin-top:182px;"></span>
+                        </div>
+                        <div class="col-sm-2 click-diskgroup-level disabled hidden" expand="1" style="line-height:25px;">
+                            <input type="text" value="{{storageLang.host}}">
+                            <span class="glyphicon glyphicon-ok-sign" style="margin-top:182px;"></span>
+                        </div>
+                        <div class="col-sm-2 click-diskgroup-level disabled hidden" expand="1" style="line-height:25px;">
+                            <input type="text" value="{{storageLang.disk}}">
+                            <span class="glyphicon glyphicon-ok-sign" style="margin-top:182px;"></span>
+                        </div>
+
+                        <!-- 编辑 -->
+
+                        <div class="col-sm-2 click-diskgroup-level-edit" expand="1" style="line-height:25px;padding-left:12px" data-level="datacenter">
+                            <input type="text" value="{{storageLang.datacenter}}">
+                            <span class="glyphicon glyphicon-ok-sign hidden" style="margin-top:182px;"></span>
+                        </div>
+                        <div class="col-sm-2 click-diskgroup-level-edit" expand="1" style="line-height:25px;" data-level="room">
+                            <input type="text"  value="{{storageLang.room}}">
+                            <span class="glyphicon glyphicon-ok-sign hidden" style="margin-top:182px;"></span>
+                        </div>
+                        <div class="col-sm-2 click-diskgroup-level-edit" expand="1" style="line-height:25px;" data-level="rack">
+                            <input type="text" value="{{storageLang.rack}}">
+                            <span class="glyphicon glyphicon-ok-sign hidden" style="margin-top:182px;"></span>
+                        </div>
+                        <div class="col-sm-2 click-diskgroup-level-edit" expand="1" style="line-height:25px;" data-level="chassis">
+                            <input type="text" value="{{storageLang.chassis}}">
+                            <span class="glyphicon glyphicon-ok-sign hidden" style="margin-top:182px;"></span>
+                        </div>
+                        <div class="col-sm-2 click-diskgroup-level-edit disabled" expand="1" style="line-height:25px;" data-level="host">
+                            <input type="text" value="{{storageLang.host}}">
+                            <span class="glyphicon glyphicon-ok-sign" style="margin-top:182px;"></span>
+                        </div>
+                        <div class="col-sm-2 click-diskgroup-level-edit disabled" expand="1" style="line-height:25px;" data-level="disk">
+                            <input type="text" value="{{storageLang.disk}}">
+                            <span class="glyphicon glyphicon-ok-sign" style="margin-top:182px;"></span>
+                        </div>
+
+                    </div>
+                    <div class="form-group create-level">
+                        <label id="level-name" class="col-sm-4 control-label left">〉{{storageLang.create_topology}}</label>
+                        <div class="col-sm-4 clear-wrapper" style="text-align: right;">
+                          <span title="{{publicLang.clear}}" style="color:#3e8ce7" id="clearLevel">{{publicLang.clear}}</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--缩容-->
+<div class="modal fade" id="shrinkCapacityModal" tabindex="-1" role="dialog" aria-labelledby="shrinkCapacityModalLabel"
+     aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" style="width:540px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{
+                    publicLang.cancel }}
+                </button>
+                <button type="button" class="btn btn-primary" aria-hidden="true">{{ publicLang.save }}</button>
+                <h4 class="modal-title" id="shrinkCapacityModalLabel">{{ storageLang.reduce_capacity }}</h4>
+            </div>
+            <div class="modal-body flex-modal-body">
+                <form class="form-horizontal col-sm-12" role="form">
+                    <div class="form-group">
+                        <label for="shrink_dgname" class="col-sm-4 control-label left">{{ storageLang.diskgroup }}</label>
+                        <div class="col-sm-8" style="line-height:25px;">
+                            <input type="text" class="none-border-input disabled" id="shrink_dgname" style="width:100%;margin-left:4px">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="shrink_type" class="col-sm-4 control-label left">type</label>
+                        <div class="col-sm-8" style="padding-top:7px;">
+                            <select id="shrink_type" class="none-border-input" style="width:100%;">
+                                    <option value="datacenter">datacenter</option>
+                                    <option value="room">room</option>
+                                    <option value="rack">rack</option>
+                                    <option value="chassis">chassis</option>
+                                    <option value="host">host</option>
+                                    <option value="disk">disk</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="shrink_name" class="col-sm-4 control-label left">name</label>
+                        <div class="col-sm-8" style="line-height:25px;">
+                            <input type="text" class="none-border-input" id="shrink_name" style="width:100%;margin-left:4px">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--创建存储池DG-->
+<div class="modal fade" id="createDiskGroupModal" tabindex="-1" role="dialog"
+     aria-labelledby="createDiskGroupModalLabel" aria-hidden="true" data-backdrop="static" style="overflow-y: auto;">
+    <div class="modal-dialog" style="width:700px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" style="margin-right:13px">{{
+                    publicLang.cancel }}
+                </button>
+                <button type="button" class="btn btn-primary" aria-hidden="true">{{ publicLang.save }}</button>
+                <h4 class="modal-title" id="createDiskGroupModalLabel" style="margin-left:13px">{{storageLang.create_level}}</h4>
+            </div>
+
+            <div class="modal-body flex-modal-body spool-diskinfo-create" style="font-size: 14px">
+                <form class="form-horizontal col-sm-12" role="form">
+                    <div class="form-group">
+                        <label for="tiername" class="col-sm-4 control-label left" style="color: black; margin-bottom: .5rem;"> 〉{{storageLang.diskgroup_name}}</label>
+                        <div class="col-sm-12" style="line-height:25px;margin-left:-3px">
+                            <input type="text" class="root-name" style="width:100%;margin-left:4px">
+                        </div>
+                    </div>
+                    <div class="form-group diskgroup-level">
+                        <label class="col-sm-11 control-label left" style="color: black; margin-bottom: .5rem;"> 〉{{storageLang.diskgroup_level}}</label>
+                        <div class="col-sm-2 click-diskgroup-level" style="line-height:25px;margin-left:-3px" data-level="datacenter">
+                            <input type="text" value="{{storageLang.datacenter}}">
+                            <span class="glyphicon glyphicon-ok-sign hidden" style="margin-top:182px;"></span>
+                        </div>
+                        <div class="col-sm-2 click-diskgroup-level" style="line-height:25px;" data-level="room">
+                            <input type="text"  value="{{storageLang.room}}">
+                            <span class="glyphicon glyphicon-ok-sign hidden" style="margin-top:182px;"></span>
+                        </div>
+                        <div class="col-sm-2 click-diskgroup-level" style="line-height:25px;" data-level="rack">
+                            <input type="text" value="{{storageLang.rack}}">
+                            <span class="glyphicon glyphicon-ok-sign hidden" style="margin-top:182px;"></span>
+                        </div>
+                        <div class="col-sm-2 click-diskgroup-level" style="line-height:25px;" data-level="chassis">
+                            <input type="text" value="{{storageLang.chassis}}">
+                            <span class="glyphicon glyphicon-ok-sign hidden" style="margin-top:182px;"></span>
+                        </div>
+                        <div class="col-sm-2 click-diskgroup-level disabled" style="line-height:25px;" data-level="host">
+                            <input type="text" value="{{storageLang.host}}">
+                            <span class="glyphicon glyphicon-ok-sign" style="margin-top:182px;"></span>
+                        </div>
+                        <div class="col-sm-2 click-diskgroup-level disabled" style="line-height:25px;" data-level="disk">
+                            <input type="text" value="{{storageLang.disk}}">
+                            <span class="glyphicon glyphicon-ok-sign" style="margin-top:182px;"></span>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group create-level">
+                        <label id="level-name" class="col-sm-4 control-label left" style="color: black; margin-bottom: .5rem;">{{storageLang.create_topology}}</label>
+                        <div class="col-sm-8 clear-wrapper" style="text-align: center;">
+                          <span class="glyphicon glyphicon-refresh" title="{{storageLang.clear_level}}" id="clearLevel"></span>
+                        </div>
+                    </div>
+                    <div class="form-group create-level-host">
+                    <div class="col-sm-12 host" data-level="host" style="line-height:25px;margin-left: 150px;margin-top: -15px">
+                        <a style="float:left;color: #000fff">+{{ storageLang.add_host }}</a>
+                    </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--显示DG列表-->
+<div class="bs-disk-grid" style="display: none;padding-bottom:20px;">
+
+</div>
+
+<!--删除DG-->
+<div class="modal fade" id="delDiskGroupModal" tabindex="-1" role="dialog" aria-labelledby="delDiskGroupModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{{publicLang.cancel}}</button>
+                <button type="button" class="btn btn-primary btn-sm">{{publicLang.delete}}</button>
+                <h4 class="modal-title" id="delDiskGroupModalLabel">{{storageLang.del_diskgroup}}</h4>
+            </div>
+            <div class="modal-body">
+                <p></p>
+                <div class="delete-diskinfo"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--添加主机-->
+<div class="modal fade" id="addHostModal" tabindex="-1" role="dialog" aria-labelledby="addHostModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+                <button type="button" class="btn btn-primary">{{publicLang.add}}</button>
+                <h4 class="modal-title" id="addHostModalLabel">{{ storageLang.add_host }}</h4>
+            </div>
+            <div class="modal-body">
+                <form id="checkNasNode" style="text-align:center;">
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--配额设置-->
+<div class="modal fade" id="setPoolQuotaModal" tabindex="-1" role="dialog" aria-labelledby="setPoolQuotaModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" style="width:550px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{ publicLang.cancel }}</button>
+                <button type="button" class="btn btn-primary" aria-hidden="true">{{ publicLang.save }}</button>
+                <button type="button" class="btn btn-danger" aria-hidden="true">{{ publicLang.delete }}</button>
+                <h4 class="modal-title" id="setPoolQuotaModalLabel">{{ storageLang.allocation_size}}</h4>
+            </div>
+            <div class="modal-body flex-modal-body">
+                <form class="form-horizontal col-sm-12" role="form">
+                    <div class="form-group">
+                        <label for="storage_pool_name" class="col-sm-4 control-label left">{{ storageLang.poolname }}</label>
+                        <div class="col-sm-8" style="line-height:25px;">
+                            <span type="text" disable class="none-border-input disabled" id="pool_quota_name"  style="width:100%;"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pool_quota_value" class="col-sm-4 control-label left">{{ storageLang.allocation_size}}</label>
+                        <div class="col-sm-6" style="line-height:25px;">
+                            <input type="text" class="none-border-input" id="pool_quota_value" style="width:100%;">
+                        </div>
+                        <div class="col-sm-2" style="line-height:25px;">
+                            <select id="pool_quota_unit" class="none-border-input" style="width:100%;">
+                                <option value="TB">TB</option>
+                                <option value="GB" selected="selected">GB</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" style="display: none">
+                        <label for="pool_quota_cached" class="col-sm-4 control-label left">{{ storageLang.caching_layer}}</label>
+                        <div class="col-sm-8" style="line-height:25px;">
+                            <select id="pool_quota_cached" class="none-border-input" style="width:100%;">
+                                <!-- <option value="0">yes</option> -->
+                                <option value="1" selected="selected">no</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block needjs %}
+<script type="text/javascript" src="js/lib/masonry.pkgd.min.js"></script>
+<script type="text/javascript" src="js/pages/storagepool.js"></script>
+
+{% endblock %}

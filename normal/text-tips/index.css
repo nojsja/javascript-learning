@@ -1,0 +1,67 @@
+.father {
+  position: relative;
+  width: 100%;
+  height:500px;
+
+  font-size: 0;
+}
+
+/* ============================================================================
+  child-left
+============================================================================= */
+.child-left {
+  position: relative;
+  display: inline-block;
+
+  box-sizing: border-box;
+  width: 60%;
+  height: 100%;
+  border: solid 1px green;
+  vertical-align: top;
+
+  font-size: 16px;
+}
+
+.child-left-1 {
+  margin-top: 100px;
+  border: solid 1px black;
+}
+
+.child-left-2 {
+  margin-top: 150px;
+  border: solid 1px black;
+}
+
+.child-left-3 {
+  margin-top: 160px;
+  border: solid 1px black;
+}
+
+
+/* ============================================================================
+  child-right
+============================================================================= */
+.child-right {
+  position: relative;
+  display: inline-block;
+
+  box-sizing: border-box;
+  width: 40%;
+  height: 100%;
+  border: solid 1px blue;
+
+  font-size: 16px;
+}
+
+.child-right-1 {
+  position: absolute;
+
+  top: 10px;
+  left: 10px;
+  padding: 5px;
+  border: solid 1px black;
+  border-radius: 5px;
+
+  background-color: black;
+  color: white;
+}

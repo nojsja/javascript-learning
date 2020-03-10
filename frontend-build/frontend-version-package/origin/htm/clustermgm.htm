@@ -1,0 +1,960 @@
+{% extends 'two-float-layout.htm' %}
+{% block leftnav%}
+{% include 'storagemgm-left-nav.htm' %}
+{%endblock%}
+
+{% block rightcontent %}
+
+<style type="text/css">
+  .network_plane_wrapper {
+    text-align: left;
+  }
+  .network_plane_header {
+    font-size: .9rem;
+    padding-left: .5rem;
+    color: #75797d;
+  }
+  .netplane_row_content {
+    border: none;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #75797d;
+    font-size: .9rem;
+  }
+  .network_plane_node {
+    padding-left: .5rem;
+    color: #75797d;
+  }
+  .external_plane_select {
+    border: solid 1px #d9d9d9;
+    width: 80%;
+  }
+
+  .cluster_downtime #downtimeCount {
+
+  }
+
+  .cluster_downtime .downtime_info {
+    position: absolute;
+    right: 1rem;
+    top: 0;
+    width: 1.1rem;
+    height: 1.1rem;
+    display: flex;
+    border-radius: 50%;
+    color: grey;
+    border: solid 1px #e2e2e2;
+    justify-content: center;
+    align-items: center;
+    font-size: .8rem;
+  }
+</style>
+
+<div class="bs-docs-grid" style="padding-bottom:25px;">
+  <div class="row show-grid grid js-masonry">
+    <!--基础服务-->
+      <div class="col-xs-12 col-md-5 col-lg-6  box-shadow grid-item basic-info grid-item-style" >
+          <div class="basic_header">
+              <img src="css/image/basicnode.png">
+              <span>{{ clusterLang.basick_service }}</span>
+              <a class="fl-rt hidden js-add-node" href="javascript:;" title="{{clusterLang.add_main_node}}">
+                  <img src="css/image/plus.png" style="width:43px" class="test">
+              </a>
+          </div>
+      <div class="basic_content_list cluster_content">
+      </div>
+      </div>
+    <!--监控服务-->
+      <div class="col-xs-12 col-md-5 col-lg-6  box-shadow grid-item monitor-service-con grid-item-style">
+          <div class="basic_header">
+              <img src="css/image/monitornode.png">
+              <span>{{ clusterLang.monitor_service }}</span>
+        <a class="fl-rt hidden js-add-monitor" href="javascript:;" title="{{clusterLang.add_monitor}}">
+            <img src="css/image/plus.png" style="width:43px" class="test">
+        </a>
+          </div>
+      <div class="basic_content_list">
+      </div>
+      </div>
+    <!--存储服务-->
+      <div class="col-xs-12 col-md-5 col-lg-6  box-shadow grid-item grid-item-style storage-node-con">
+          <div class="basic_header">
+              <img src="css/image/storagenode.png">
+              <span>{{ clusterLang.storage_node }}</span>
+        <!--<a class="fl-rt disk-info-act-style hidden js-add-storage-node" href="javascript:;" title="{{clusterLang.add_storage_node}}" style="margin-right: 30px;">-->
+          <!--<span class="glyphicon glyphicon-plus" style="font-size:1.7em;"></span>-->
+        <!--</a>-->
+          </div>
+      <div class="basic_content_list">
+      </div>
+      </div>
+    <!--元数据-->
+      <div class="col-xs-12 col-md-5 col-lg-6  box-shadow grid-item metadata-service grid-item-style">
+          <div class="basic_header">
+              <img src="css/image/mds_node.png">
+              <span>{{ clusterLang.metadata_service }}</span>
+        <a class="fl-rt hidden js-add-metadata" href="javascript:;" title="{{clusterLang.add_metadata}}">
+            <img src="css/image/plus.png" style="width:43px" class="test">
+        </a>
+          </div>
+      <div class="basic_content_list">
+      </div>
+      </div>
+      <!--对象存储-->
+      <div class="col-xs-12 col-md-5 col-lg-6  box-shadow grid-item objstorage-service grid-item-style">
+          <div class="basic_header">
+              <img src="css/image/obj_storage.png">
+              <span>{{ storageLang.objstorage }}</span>
+              <!--<a class="fl-rt hidden js-add-obj-storage" href="javascript:;" title="{{clusterLang.add_objectstroage_service}}">-->
+                  <!--<img src="css/image/plus.png" style="width:43px" class="test">-->
+              <!--</a>-->
+          </div>
+          <div class="basic_content_list">
+          </div>
+      </div>
+    <!--域名解析-->
+    <div class="col-xs-12 col-md-5 col-lg-6 box-shadow grid-item grid-item-style2 grid-dns-ser dns-service">
+      <div class="basic_header">
+        <img src="css/image/dnsnode.png" style="height:40px;">
+        <span>{{ clusterLang.domain_name_system }}</span>
+        <a class="fl-rt disk-info-act-style js-add-dns hidden" href="javascript:;" title="{{clusterLang.add_dns}}" style="margin:5px;">
+            <img src="css/image/plus.png" style="width:43px" class="test">
+        </a>
+      </div>
+      <div class="basic_content" style="padding-right: 42px;height: 30px;font-size: 14px;">
+        <div style="height: 8px;"></div>
+        <div class="col-lg-4 basic-lg-6 inlineblock"><p>{{clusterLang.parent_dns_server}}&nbsp;:</p></div>
+        <div class="col-lg-4 basic-lg-6 " id="forwarderdns">
+          <input class="none-border-input" placeholder="{{clusterLang.multi_ip_divide_bycomma}}" style="width: 100%;text-align: left;color: #2086bf;"  value="" />
+        </div>
+      </div>
+      <div class="basic_content" style="padding-right: 42px;">
+        <div style="margin-top:15px;font-size: 14px;">
+          <div class="col-lg-5 basic-lg-5 inlineblock" style="margin-bottom: 10px">{{clusterLang.domain_name_this_cluster}}</div>
+          <div class="col-lg-8 basic-lg-8 inlineblock"></div>
+          <table class="table js-curdns-table" id="monitornodednslist">
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="basic_content" style="padding-right: 42px;">
+        <div style="margin-top:15px;">
+          <div class="col-lg-3 basic-lg-4 inlineblock" style="font-size: 14px;margin-bottom: 10px">{{clusterLang.other_domain}}</div>
+          <div class="col-lg-8 basic-lg-8 inlineblock"></div>
+          <table class="table js-dns-table" id="otherdnslist">
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!--修改ntp服务器-->
+    <div class="col-xs-12 col-md-5 col-lg-6 box-shadow grid-item grid-item-style2 grid-ntp-ser ntp-server">
+      <div class="basic_header">
+        <img src="css/image/permit.png" style="height:40px;">
+        <span>{{ clusterLang.set_ntp_server }}</span>
+        <a href="javascript:;" class="fl-rt disk-info-act-style js-edit-ntpser" title="{{ clusterLang.edit_ntpser }}" style="margin:5px;">
+            <img src="css/image/edit.png" style="width:43px" class="test">
+        </a>
+      </div>
+      <div class="basic_content" style="padding-right: 42px;">
+        <div>
+          <div class="col-lg-4 basic-lg-6" id="ntp_clock_node">{{ clusterLang.custom_ntpser }} : </div>
+          <div class="col-lg-4 basic-lg-6">
+              <table class="table js-ntpclock-table">
+                  <tbody>
+                  </tbody>
+              </table>
+         </div>
+        </div>
+        <div>
+          <div class="col-lg-4 basic-lg-6" style="margin-top: 10px" id="ntp_master_node"><p>{{ clusterLang.ntp_master_nodes }}&nbsp;:</p></div>
+          <div class="col-lg-4 basic-lg-6" style="margin-top: 10px" >
+            <table class="table js-ntp-table">
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-lg-6"><span></span></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 宕机节点数目 -->
+    <div class="col-xs-12 col-md-5 col-lg-6  box-shadow cluster_downtime grid-item">
+
+      <div class="basic_header">
+            <img src="css/image/downtime.png">
+            <span>{{ clusterLang.downtime_count }}</span>
+      </div>
+      <div class="basic_content" style="padding-right: 42px;height: 30px;font-size: 14px;">
+        <div style="height: 8px;"></div>
+        <div class="col-lg-4 basic-lg-6 inlineblock"><p>{{clusterLang.downtime_count}}&nbsp;:</p></div>
+        <div class="col-lg-4 basic-lg-6" style="position: relative;">
+          <span id="downtimeCount">(none)</span>
+          <span class="downtime_info">i</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- mgr管理 -->
+    <div class="col-xs-12 col-md-5 col-lg-6  box-shadow mgr_nodeinfo grid-item">
+
+      <div class="basic_header">
+            <img src="css/image/mgr.png">
+            <span>{{ publicLang.nav_title.mgr }}</span>
+            <span class="c_right c_basic_right fl-rt hidden">
+              <a id="add_mgr" href="javascript:;" title="{{nodeLang.add_mgr}}">
+                <img src="css/image/plus.png" style="width:43px" class="test">
+              </a>
+            </span>
+      </div>
+        <div class="basic_content" style="padding-right:42px;">
+
+          <div class="mgr-mag mgr_status_on">
+            <div class="col-lg-7 basic-lg-6 col-mgr-row left mgr_core inlineblock">
+              <span>{{publicLang.hostname}}</span>
+            </div>
+
+            <div class="col-lg-2 basic-lg-2 col-mgr-row left mgr_status">
+                 <span >{{publicLang.status}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 日志管理 -->
+      <div class="col-xs-12 col-md-5 col-lg-6  box-shadow logs_nodeinfo grid-item">
+
+        <div class="basic_header">
+              <img src="css/image/logs.png">
+              <span>{{ publicLang.nav_title.logs }}</span>
+              <span class="c_right c_basic_right fl-rt hidden">
+                <a id="add_logs" href="javascript:;" title="{{nodeLang.add_logs}}">
+                  <img src="css/image/plus.png" style="width:43px" class="test">
+                </a>
+              </span>
+        </div>
+          <div class="basic_content" style="padding-right:42px;">
+
+            <div class="logs-mag logs_status_on">
+              <div class="col-lg-7 basic-lg-6 col-logs-row left logs_core inlineblock">
+                <span>{{publicLang.hostname}}</span>
+              </div>
+
+              <div class="col-lg-2 basic-lg-2 col-logs-row left logs_status">
+                   <span >{{publicLang.status}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 消息队列服务 -->
+        <div class="col-xs-12 col-md-5 col-lg-6  box-shadow msg_nodeinfo grid-item">
+
+          <div class="basic_header">
+                <img src="css/image/msg.png">
+                <span>{{ publicLang.nav_title.msg }}</span>
+                <span class="c_right c_basic_right fl-rt hidden">
+                  <a id="add_msg" href="javascript:;" title="{{nodeLang.add_msg}}">
+                    <img src="css/image/plus.png" style="width:43px" class="test">
+                  </a>
+                </span>
+          </div>
+            <div class="basic_content" style="padding-right:42px;">
+
+              <div class="msg-mag msg_status_on">
+                <div class="col-lg-7 basic-lg-6 col-msg-row left msg_core inlineblock">
+                  <span>{{publicLang.hostname}}</span>
+                </div>
+
+                <div class="col-lg-2 basic-lg-2 col-msg-row left msg_status">
+                     <span >{{publicLang.status}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+    <!-- 网络平面管理 -->
+    <div class="col-xs-12 col-md-5 col-lg-6  box-shadow network_plane_wrapper grid-item">
+
+      <div class="basic_header">
+            <img src="css/image/tier4.png">
+            <span>{{ clusterLang.network_plane_manage }}</span>
+      </div>
+        <div class="basic_content" style="padding-right:42px;">
+
+          <div class="network_plane">
+            <div class="network_plane_list">
+
+              <!-- <div class="network_plane_item" style="padding: .5rem; border-bottom: solid 1px #e0e0e0;">
+
+                <div style="margin: .5rem 0 .5rem;">
+                  <span style="color: black; font-size: 1rem;">管理平面</span>
+                </div>
+
+                <div class="row network_plane_header" style="font-size: 1rem;  color: #6b6b6b; padding: 0; margin-bottom: 0;">
+                  <div class="col-sm-4" style="padding: 5px 0;">
+                    <span>{{publicLang.hostname}}</span>
+                  </div>
+                  <div class="col-sm-4" style="padding: 5px 0;">
+                    <span >{{publicLang.status}}</span>
+                  </div>
+                  <div class="col-sm-4" style="padding: 5px 0;">
+                    <span >{{publicLang.status}}</span>
+                  </div>
+                </div>
+
+                <div class="row network_plane_node" style="font-size:.9rem; color: #6b6b6b;  maigin: 0; padding: 0;">
+                  <div>
+                    <div class="col-sm-4" style="padding: 5px 0;">
+                      <span>node1</span>
+                    </div>
+                    <div class="col-sm-4" style="padding: 5px 0;">
+                      <span >bond0</span>
+                    </div>
+                    <div class="col-sm-4" style="padding: 5px 0;">
+                      <span >10.0.6.200</span>
+                    </div>
+                  </div>
+                </div>
+              </div> -->
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+
+
+  </div>
+</div>
+
+<!--添加节点到集群-->
+<div class="modal fade" id="addNodeModal" tabindex="-1" role="dialog" aria-labelledby="addNodeModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="addNodeModalLabel">{{clusterLang.add_main_node}}</h4>
+      </div>
+      <div class="modal-body">
+
+      </div>
+    </div>
+  </div>
+</div>
+<!--从集群删除节点-->
+<div class="modal fade" id="delNodeModal" tabindex="-1" role="dialog" aria-labelledby="delNodeModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="delNodeModalLabel">{{clusterLang.del_main_node}}</h4>
+      </div>
+      <div class="modal-body">
+
+      </div>
+    </div>
+  </div>
+</div>
+<!--新建监控服务-->
+<div class="modal fade" id="addMonitorModal" tabindex="-1" role="dialog" aria-labelledby="addMonitorModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="addMonitorModalLabel">{{clusterLang.add_monitor}}</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" role="form">
+          <div class="form-group">
+            <label for="newmons" class="col-sm-3 control-label">{{ clusterLang.hostname }}</label>
+            <div class="col-sm-8">
+              <select class="none-border-input" style="height:30px;width:100%;" id="newmons">
+
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--删除监控服务-->
+<div class="modal fade" id="delMonitorModel" tabindex="-1" role="dialog" aria-labelledby="delMonitorModelLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-danger">{{publicLang.delete}}</button>
+        <h4 class="modal-title" id="delMonitorModelLabel">{{clusterLang.del_monitor_service}}</h4>
+      </div>
+      <div class="modal-body">
+      <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+<!--启动监控服务-->
+<div class="modal fade" id="startMonitorModal" tabindex="-1" role="dialog" aria-labelledby="startMonitorModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="startMonitorModalLabel">{{clusterLang.start_monitor_service}}</h4>
+      </div>
+      <div class="modal-body">
+        <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+<!--暂停监控服务-->
+<div class="modal fade" id="stopMonitorModal" tabindex="-1" role="dialog" aria-labelledby="stopMonitorModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="stopMonitorModalLabel">{{clusterLang.stop_monitor_service}}</h4>
+      </div>
+      <div class="modal-body">
+        <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- mgr -->
+<div class="modal fade" id="addMgrModal" role="dialog" aria-labelledby="addMgrModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-action="cancel">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary" data-action="add">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="addMgrModalLabel">{{clusterLang.add_mgr}}</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-horizontal" role="form">
+              <div class="form-group">
+                <label for="inputHostname" class="col-sm-4 control-label">{{clusterLang.input_hostname}}:</label>
+                <!-- <div class="col-sm-8">
+                  <input class="col-sm-12" id="inputHostname" placeholder="hostname"></input>
+               </div> -->
+               <div class="col-sm-8">
+               <select class="none-border-input" style="height:30px;width:100%;" id="inputHostname">
+
+               </select>
+               </div>
+              </div>
+              <p style="text-align: center; color: red; font-size: .9rem;" class="add-mgr-info hidden"></p>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--mgr服务-->
+<div class="modal fade" id="mgrManageModal" tabindex="-1" role="dialog" aria-labelledby="mgrManageModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="mgrManageModalLabel">{{clusterLang.stop_mgr_service}}</h4>
+      </div>
+      <div class="modal-body">
+        <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- logs -->
+<div class="modal fade" id="addlogsModal" role="dialog" aria-labelledby="addLogsModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-action="cancel">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary" data-action="add">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="addLogsModalLabel">{{clusterLang.add_logs}}</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-horizontal" role="form">
+              <div class="form-group">
+                <label for="inputHostname" class="col-sm-4 control-label">{{clusterLang.input_hostname}}:</label>
+                <!-- <div class="col-sm-8">
+                  <input class="col-sm-12" id="inputHostname" placeholder="hostname"></input>
+               </div> -->
+               <div class="col-sm-8">
+               <select class="none-border-input" style="height:30px;width:100%;" id="inputHostname">
+
+               </select>
+               </div>
+              </div>
+              <p style="text-align: center; color: red; font-size: .9rem;" class="add-logs-info hidden"></p>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="logsManageModal" tabindex="-1" role="dialog" aria-labelledby="logsManageModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="logsManageModalLabel">{{clusterLang.stop_logs_service}}</h4>
+      </div>
+      <div class="modal-body">
+        <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- add network plane -->
+<div class="modal fade" id="addNetworkPlaneModal" role="dialog" aria-labelledby="addNetworkPlaneModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-action="cancel">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary" data-action="add">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="addNetworkPlaneModalLabel">{{clusterLang.add_externel_network_node}}</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-horizontal" role="form">
+
+              <div class="form-group">
+                <label for="inputPlaneIP" class="col-sm-4 control-label">{{clusterLang.netplane_ip}}:</label>
+                <div class="col-sm-8">
+                  <select class="none-border-input" style="height:30px;width:100%;" id="netplaneIP"></select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="inputNetport" class="col-sm-4 control-label">{{clusterLang.input_netport}}:</label>
+                <div class="col-sm-8">
+                  <select class="none-border-input" style="height:30px;width:100%;" id="inputNetport"></select>
+                </div>
+              </div>
+
+              <p style="text-align: center; color: red; font-size: .9rem;" class="add-msg-info hidden"></p>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- msg queue -->
+<div class="modal fade" id="addmsgModal" role="dialog" aria-labelledby="addmsgModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-action="cancel">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary" data-action="add">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="addmsgModalLabel">{{clusterLang.add_msg}}</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-horizontal" role="form">
+              <div class="form-group">
+                <label for="inputHostname" class="col-sm-4 control-label">{{clusterLang.input_hostname}}:</label>
+                <!-- <div class="col-sm-8">
+                  <input class="col-sm-12" id="inputHostname" placeholder="hostname"></input>
+               </div> -->
+               <div class="col-sm-8">
+               <select class="none-border-input" style="height:30px;width:100%;" id="inputHostname">
+
+               </select>
+               </div>
+              </div>
+              <p style="text-align: center; color: red; font-size: .9rem;" class="add-msg-info hidden"></p>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="msgManageModal" tabindex="-1" role="dialog" aria-labelledby="msgManageModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="msgManageModalLabel">{{clusterLang.stop_msg_service}}</h4>
+      </div>
+      <div class="modal-body">
+        <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--添加元数据服务-->
+<div class="modal fade" id="addMetaDataModal" tabindex="-1" role="dialog" aria-labelledby="addMetaDataModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="addMetaDataModalLabel">{{clusterLang.add_metadata}}</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" role="form">
+          <div class="form-group">
+            <label for="newmetadata" class="col-sm-3 control-label">{{ clusterLang.hostname }}</label>
+            <div class="col-sm-8">
+            <select class="none-border-input" style="height:30px;width:100%;" id="newmetadata">
+
+            </select>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--删除元数据服务-->
+<div class="modal fade" id="delMetaDataModel" tabindex="-1" role="dialog" aria-labelledby="delMetaDataModelLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-danger">{{publicLang.delete}}</button>
+        <h4 class="modal-title" id="delMetaDataModelLabel">{{clusterLang.del_meta_service}}</h4>
+      </div>
+      <div class="modal-body">
+      <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+<!--启动元数据服务-->
+<div class="modal fade" id="startMetaDataModal" tabindex="-1" role="dialog" aria-labelledby="startMetaDataModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="startMetaDataModalLabel">{{clusterLang.start_meta_service}}</h4>
+      </div>
+      <div class="modal-body">
+        <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+<!--暂停元数据服务-->
+<div class="modal fade" id="stopMetaDataModal" tabindex="-1" role="dialog" aria-labelledby="stopMetaDataModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="stopMetaDataModalLabel">{{clusterLang.stop_meta_service}}</h4>
+      </div>
+      <div class="modal-body">
+        <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--添加对象存储服务-->
+<div class="modal fade" id="addObjectStorageModal" tabindex="-1" role="dialog" aria-labelledby="addObjectStorageModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+                <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+                <h4 class="modal-title" id="addObjStorageModalLabel">{{clusterLang.add_objectstroage_service}}</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="newobjstorage" class="col-sm-3 control-label">{{ clusterLang.hostname }}</label>
+                        <div class="col-sm-8">
+                            <select class="none-border-input" style="height:30px;width:100%;" id="newobjstorage">
+
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--删除对象存储服务-->
+<div class="modal fade" id="delObjectStorageModel" tabindex="-1" role="dialog" aria-labelledby="delObjectStorageModelLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+                <button type="button" class="btn btn-danger">{{publicLang.delete}}</button>
+                <h4 class="modal-title" id="delObjStorageModelLabel">{{clusterLang.del_objectstroage_service}}</h4>
+            </div>
+            <div class="modal-body">
+                <p></p>
+            </div>
+        </div>
+    </div>
+</div>
+<!--启动对象存储服务-->
+<div class="modal fade" id="startObjectStorageModal" tabindex="-1" role="dialog" aria-labelledby="startObjectStorageModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+                <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+                <h4 class="modal-title" id="startObjStorageModalLabel">{{clusterLang.start_objectstroage_service}}</h4>
+            </div>
+            <div class="modal-body">
+                <p></p>
+            </div>
+        </div>
+    </div>
+</div>
+<!--暂停对象存储服务-->
+<div class="modal fade" id="stopObjectStorageModal" tabindex="-1" role="dialog" aria-labelledby="stopObjectStorageModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+                <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+                <h4 class="modal-title" id="stopObjStorageModalLabel">{{clusterLang.stop_objectstorage_service}}</h4>
+            </div>
+            <div class="modal-body">
+                <p></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--修改域名-->
+<div class="modal fade" id="editDnsModal" tabindex="-1" role="dialog" aria-labelledby="editDnsModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+                <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+                <h4 class="modal-title" id="editDnsModalLabel">{{clusterLang.edit_dns}}</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="new_dns" class="col-sm-4 control-label">{{ clusterLang.domain_name }}</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="none-border-input" style="height:30px;width:100%;" id="new_dns" placeholder="{{ clusterLang.input_domain_name }}">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--修改本集群域名-->
+<div class="modal fade" id="editCurDnsModal" tabindex="-1" role="dialog" aria-labelledby="editCurDnsModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+                <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+                <h4 class="modal-title" id="editCurDnsModalLabel">{{clusterLang.edit_dns}}</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="new_dns" class="col-sm-4 control-label">{{ clusterLang.domain_name }}</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="none-border-input" style="height:30px;width:100%;" id="new_cur_dns" placeholder="{{ clusterLang.input_domain_name }}">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--上级DNS服务器-->
+<div class="modal fade" id="forwardDnsModal" tabindex="-1" role="dialog" aria-labelledby="forwardDnsModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+                <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+                <h4 class="modal-title" id="editDnsModalLabel">{{ clusterLang.forward_dns_server }}</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="curForwardIp" class="col-sm-3 control-label">{{clusterLang.curr_parse}}</label>
+                        <div class="col-sm-8">
+                            <p id="curForwardIp"><span> </span></p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newForwardIp" class="col-sm-3 control-label">{{clusterLang.re_parse}}</label>
+                        <div class="col-sm-8">
+                            <textarea id="newForwardIp" class="form-control col-sm-12" rows="3" placeholder="{{ clusterLang.add_ip }}" style="height:68px;max-height:68px;max-width:100%;"></textarea>
+                            <p class="help-block" style="color:red;">{{clusterLang.multi_ip_divide_bycomma}}</p>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--添加域名-->
+<div class="modal fade" id="addDnsModal" tabindex="-1" role="dialog" aria-labelledby="addDnsModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+                <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+                <h4 class="modal-title" id="addDnsModalLabel">{{clusterLang.add_dns}}</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form" onsubmit="return false;">
+                    <div class="form-group">
+                        <label for="new_domain" class="col-sm-3 control-label">{{ clusterLang.domain_name }}</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="none-border-input" style="height:30px;width:100%;" id="new_domain" placeholder="{{ clusterLang.input_domain_name }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <lable for="addNewIPaddr" class="col-sm-3 control-label">IP</lable>
+                        <div class="col-sm-8">
+                            <textarea class="col-sm-12 text-area-style" id="addNewIPaddr" type="form-control" rows="2"></textarea>
+                            <p class="help-block" style="color:red;">{{clusterLang.multi_ip_divide_bycomma}}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="dnsSelectCluster" class="col-sm-3 control-label">{{clusterLang.act_on}}</label>
+                        <select class="form-control" id="dnsSelectCluster" style="width:60%;margin-left:113px;">
+                            <!-- <option name="1">本集群</option> -->
+                            <option name="2">{{clusterLang.other_cluster}}</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--添加解析IP-->
+<div class="modal fade" id="addIpModal" tabindex="-1" role="dialog" aria-labelledby="addIpModal" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+                <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+                <h4 class="modal-title" id="addIpModalLabel">{{ clusterLang.add_ip }}</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="add_ip" class="col-sm-3 control-label">{{ clusterLang.ip }}</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="none-border-input" style="height:30px;width:100%;" id="add_ip" placeholder="{{ clusterLang.add_ip }}">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--删除一行域名-->
+<div class="modal fade" id="delDnsModal" tabindex="-1" role="dialog" aria-labelledby="delDnsModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+                <button type="button" class="btn btn-danger">{{publicLang.delete}}</button>
+                <h4 class="modal-title" id="delDnsModalLabel">{{clusterLang.del_dns}}</h4>
+            </div>
+            <div class="modal-body">
+                <p></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!--修改NTP服务器-->
+<div class="modal fade" id="editNtpServerModal" tabindex="-1" role="dialog" aria-labelledby="editNtpServerModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary hidden">{{publicLang.ok}}</button>
+        <button type="button" class="btn btn-info" disabled="disabled">{{publicLang.next}}</button>
+        <h4 class="modal-title" id="editNtpServerModalLabel">{{clusterLang.edit_ntpser}}</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" role="form">
+          <div class="form-group">
+            <label for="new_ntpser" class="col-sm-4 control-label">{{ clusterLang.select_master_node }}</label>
+            <div class="col-sm-7" id="new_ntpser">
+
+            </div>
+          </div>
+            <div class="form-group hidden">
+                <label for="custom_ntpser" class="col-sm-3">{{clusterLang.custom_ntpser}}</label>
+                <div class="col-sm-8">
+                <input type="text" id="custom_ntpser" style="width:90%;margin-top: -3px;">
+                    <a class="fl-rt">
+                    <span class="glyphicon glyphicon-plus-sign ntpser_add"></span>
+                    </a>
+                <!--<input type="text" class="form-control" id="custom_ntpser" placeholder="{{clusterLang.input_custom_ntpser}}">-->
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="divider" style="height:1px;background-color:#F5F5F5;"></div>
+                <br/>
+                <p class="col-sm-3">{{ clusterLang.add_ip_list }}</p>
+                <div class="col-sm-8" style="line-height:25px;max-height:150px;overflow-y:auto;margin-top: -3px">
+                    <div class="text-area-style none-border-input">
+
+                    </div>
+                </div>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+{% block needjs %}
+<script type="text/javascript" src="js/lib/masonry.pkgd.min.js"></script>
+<script type="text/javascript" src="js/pages/cluster.js"></script>
+<script type="text/javascript" src="js/pages/cluster_services.js"></script>
+{% endblock %}
+{% block javascript %}
+<script type="text/javascript">
+$(function (ev) {
+    $('.grid').masonry({
+        itemSelector: '.grid-item',
+        columnWidth: '.col-lg-6',
+        percentPosition: true
+    });
+})
+</script>
+{% endblock %}

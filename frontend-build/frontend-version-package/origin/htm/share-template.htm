@@ -1,0 +1,164 @@
+{% extends 'template.htm' %}
+{% block css %}
+<style type="text/css">
+	body {
+		font-size: 62.5%;
+		font-family: Roboto,arial,sans-serif;
+	}
+	.basic_cont_row,
+	.basic_content_list {
+		font-family: Roboto,arial,sans-serif;
+	}
+
+	/*
+    搜索结果的高亮匹配
+    */
+	.highlight {
+		padding: 0;
+		border: 0;
+		color: red;
+		background-color: #fff;
+	}
+
+	.table>thead>tr>th,
+	.table thead {
+		border-bottom:0;
+	}
+	#pro_thead .table>tbody>tr>td, .table>tbody>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+		border:0;
+	}
+	.table {
+		margin: 0;
+	}
+	.table td,
+	.table>thead>tr>th {
+		text-align: center;
+	}
+
+	/*metro.css*/
+	.grid {
+		margin: 0;
+	}
+	/*
+    重写bootstrap
+    */
+	.show-grid{
+		padding:0;
+		border: 0;
+		margin: 0;
+	}
+	.col-lg-6 {
+		width: 48%;
+	}
+	.col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-7, .col-lg-8 {
+		padding: 0 !important;
+	}
+	.show-grid [class^=col-]{
+		padding:30px 0;
+		border: 0;
+		background-color: #fff
+	}
+	.modal {
+		text-align: left;
+	}
+</style>
+{% endblock %}
+{% block body %}
+<div class="dt_center_a">
+	{%block leftnav%}
+	<!--左边导航-->
+	<div class="dt_g_left_bar dt_g_left_bar_on cell usermanage usermanage" style="width:20%;float:left;position:fixed;min-width:222px;">
+		<ul class="v-menu subdown min-size-required box-shadow" style="width:100%;max-width:100%;">
+			<li {% if cursubmenu == 'fileshare' %}class="active"{%endif%}><a href="fileshare"><img style="position: initial;margin:0 0 4px 0;" src="css/image/list.png" class="list_img"><span>{{ fileLang.fold }}</span></a></li>
+			<li {% if cursubmenu == 'cifs' %}class="active"{%endif%}><a href="cifs"><img style="position: initial;margin:0 0 4px 0;" src="css/image/list.png" class="list_img"><span>{{ fileLang.cifs }}</span></a></li>
+			<li {% if cursubmenu == 'nfs' %}class="active"{%endif%}><a href="nfs"><img style="position: initial;margin:0 0 4px 0;" src="css/image/list.png" class="list_img"><span>{{ fileLang.nfs }}</span></a></li>
+			<li {% if cursubmenu == 'afp' %}class="active"{%endif%}><a href="afp"><img style="position: initial;margin:0 0 4px 0;" src="css/image/list.png" class="list_img"><span>{{ fileLang.afp }}</span></a></li>
+			<li {% if cursubmenu == 'ftp' %}class="active"{%endif%}><a href="ftp"><img style="position: initial;margin:0 0 4px 0;" src="css/image/list.png" class="list_img"><span>{{ fileLang.ftp }}</span></a></li>
+			<li {% if cursubmenu == 'webdav' %}class="active"{%endif%}><a href="webdav"><img style="position: initial;margin:0 0 4px 0;" src="css/image/list.png" class="list_img"><span>{{ fileLang.webdav }}</span></a></li>
+		</ul>
+	</div>
+	{%endblock%}
+	{%block rightcontent %}
+	{%endblock%}
+</div>
+<!--右键菜单-->
+<div id="blank-menu">
+	<ul class="dropdown-menu" role="menu" style="border-radius:0;">
+		<li><a action="add-new-dir" href="javascript:;">{{fileLang.new_dir}}</a></li>
+		<li><a action="more-dir-property" href="javascript:;">{{fileLang.property}}</a></li>
+		<li><a action="refresh-cur-dir" href="javascript:;">{{fileLang.refresh}}</a></li>
+		<li><a action="js-paste-recycle-file" href="javascript:;">{{fileLang.paste}}</a></li>
+	</ul>
+</div>
+<div id="dir-right-menu">
+	<ul class="dropdown-menu" role="menu" style="border-radius:0;">
+		<!-- 		<li><a action="js-create-afp" href="javascript:;">{{fileLang.create_afp}}</a></li>
+                <li><a action="js-create-webdav" href="javascript:;">{{fileLang.create_webdav}}</a></li>
+                <li class="divider"></li> -->
+		<li><a action="js-cifs" href="javascript:;">{{fileLang.edit_cifs}}</a></li>
+		<li><a action="js-nfs" href="javascript:;">{{fileLang.edit_nfs}}</a></li>
+		<li><a action="js-afp" href="javascript:;">{{fileLang.edit_afp}}</a></li>
+		<li><a action="js-ftp" href="javascript:;">{{fileLang.edit_ftp}}</a></li>
+		<li><a action="js-webdav" href="javascript:;">{{fileLang.edit_webdav}}</a></li>
+		<li class="divider"></li>
+		<li><a action="js-del-dir" href="javascript:;">{{fileLang.del_dir}}</a></li>
+		<li><a action="js-property" href="javascript:;">{{fileLang.property}}</a></li>
+	</ul>
+</div>
+<div id="file-right-menu">
+	<ul class="dropdown-menu" role="menu" style="border-radius:0;">
+		<li><a action="js-del-file" href="javascript:;">{{fileLang.del_file}}</a></li>
+		<li><a action="js-property" href="javascript:;">{{fileLang.property}}</a></li>
+	</ul>
+</div>
+<div id="recycle-dir-right-menu">
+	<ul class="dropdown-menu" role="menu" style="border-radius:0;">
+		<li><a action="js-del-recycle-dir" href="javascript:;">{{fileLang.del_dir}}</a></li>
+	</ul>
+</div>
+<div id="recycle-file-right-menu">
+	<ul class="dropdown-menu" role="menu" style="border-radius:0;">
+		<li><a action="js-del-recycle-file" href="javascript:;">{{fileLang.del_file}}</a></li>
+		<li><a action="js-copy-recycle-file" href="javascript:;">{{fileLang.copy}}</a></li>
+	</ul>
+</div>
+<div class="tooltip top" role="tooltip">
+	<div class="tooltip-arrow"></div>
+	<div class="tooltip-inner">
+		Some tooltip text!
+	</div>
+</div>
+
+<!-- 回收站里文件夹或文件悬浮详情 -->
+<div id="js-popver-recycle-info" class="triangle-sign popver-left" style="min-width:220px;">
+	<div class="usage-container" style="margin: 10px;">
+		<div class="use-cont">
+			<span>{{ fileLang.creation_time }}：</span>
+			<span class="js-create-time"></span>
+		</div>
+		<div class="use-cont">
+			<span>{{ fileLang.file_name }}：</span>
+			<span class="js-file-name"></span>
+		</div>
+		<div class="use-cont">
+			<span>{{ fileLang.file_size }}：</span>
+			<span class="js-file-size"></span>
+		</div>
+		<div class="use-cont">
+			<span>{{ fileLang.origin_location }}：</span>
+			<span class="js-origin-location"></span>
+		</div>
+		<div class="use-cont">
+			<span>{{ fileLang.delete_time }}：</span>
+			<span class="js-delete-time"></span>
+		</div>
+	</div>
+</div>
+{% include 'file-modal.htm' %}
+
+{% endblock %}
+{% block needjs %}
+<script type="text/javascript" src="js/lib/masonry.pkgd.min.js"></script>
+<script type="text/javascript">
+</script>
+{% endblock %}

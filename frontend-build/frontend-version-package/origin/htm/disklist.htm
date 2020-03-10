@@ -1,0 +1,81 @@
+<div class="row show-grid grid js-masonry">
+  {% for disklist in diskinfo %}
+  {% if disklist['all'] is not empty %}
+	<div class="col-xs-12 col-md-5 col-lg-6  box-shadow grid-item grid-item-style diskmgm-info"  data-hostname="{{disklist['hostname']}}" data-ip="{{disklist['ip']}}">
+		<div class="basic_header">
+			<img src="css/image/info3.png" style="width:42px;">
+			<span>{{disklist['hostname']}}</span>
+      <a class="fl-rt hidden js-add-disk-info" href="javascript:;" title="{{clusterLang.add_new_disk}}">
+        <img src="css/image/plus.png" style="width:43px" class="test">
+      </a>
+  	</div>
+    <div class="basic_content">
+      <div class="basic_content_list">
+        <div class="basic_cont_row">
+          <div class="col-lg-1 basic-lg-1 inlineblock">
+            <span>ID</span>
+          </div>
+          <div class="col-lg-3 basic-lg-2 inlineblock" title="">
+            <span>{{clusterLang.disk_devname}}</span>
+          </div>
+          <div class="col-lg-2 basic-lg-2 inlineblock">
+            <span>{{clusterLang.disk_status}}</span>
+          </div>
+          <div class="col-lg-3 basic-lg-3 inlineblock">
+            <span>{{clusterLang.disk_availble}}</span>
+          </div>
+          <div class="col-lg-2 basic-lg-3 inlineblock">
+            <span>{{clusterLang.disk_totalsize}}</span>
+          </div>
+          <div class="col-lg-1 basic-lg-1 inlineblock">
+          </div>
+        </div>
+        {% for disk in disklist['all'] %}
+        <div class="basic_cont_row js-diskmgm-row" data-devname="{{disk['usage']['device']|slice(5)}}"  data-id="{{disk['id']}}">
+          <div class="col-lg-1 basic-lg-1 inlineblock">
+            <span>{{disk['id']}}</span>
+          </div>
+          <div class="col-lg-3 basic-lg-2 inlineblock js-device-name">
+            {% if disk['usage'] is empty %}
+            <span>--</span>
+            {% else %}
+            <span>{{disk['usage']['device']|slice(5)}}</span>
+            {% endif %}
+          </div>
+          <div class="col-lg-2 basic-lg-2 inlineblock">
+            {% if disk['status'] == 'up' %}
+            <span style="color:green;">{{clusterLang.normal}}</span>
+            {% else %}
+            <span style="color:red;">{{clusterLang.abnormal}}</span>
+            {% endif %}
+          </div>
+          <div class="col-lg-3 basic-lg-3 inlineblock">
+            {% if disk['usage'] is empty %}
+            <span>--</span>
+            {% else %}
+            <span>{{disk['usage']['available'] | sizeFormat('k')}}</span>
+            {% endif %}
+          </div>
+          <div class="col-lg-2 basic-lg-3 inlineblock">
+            {% if disk['usage'] is empty %}
+            <span>--</span>
+            {% else %}
+            <span>{{disk['usage']['size'] | sizeFormat('k')}}</span>
+            {% endif %}
+          </div>
+          <div class="col-lg-1 basic-lg-1 inlineblock diskrow-do" style="height:30px;">
+            <a href="javascript:;" class="js-del-disk-single hidden" title="{{clusterLang.del_disk}}">
+              <span class="glyphicon glyphicon-trash" style="width:13px"></span>
+            </a>
+            <a href="javascript:;" class="js-refresh-disk-single hidden" title="{{clusterLang.refresh_disk}}">
+              <span class="glyphicon glyphicon-refresh" style="width:13px"></span>
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>

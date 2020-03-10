@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+      <meta charset="utf-8">
+    	<meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="">
+      <meta name="author" content="">
+    	<title>{{ publicLang.product["title"] }}</title>
+    </head>
+    <link rel="Shortcut Icon" href="../css/image/favicon.ico">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href='css/datatom.style.css' rel="stylesheet">
+    <style>
+    html,
+    body.loading-page {
+        height: 100%;
+        padding: 0;
+        margin: 0;
+    }
+    body.loading-page div{
+        height: 100%;
+        text-align: center;
+        background-color: #fff;
+    }
+    body.loading-page div i{
+        line-height: 50;
+        font-size: 14px;
+    }
+    .dotting {
+        display: inline-block; min-width: 2px; min-height: 2px;
+        box-shadow: 2px 0 currentColor, 6px 0 currentColor, 10px 0 currentColor; 
+        -webkit-animation: dot 1.5s infinite step-start both;
+        animation: dot 1.5s infinite step-start both;
+        *zoom: expression(this.innerHTML = '...'); /* IE7 */
+    }
+    .dotting:before { content: '...'; } /* IE8 */
+    .dotting::before { content: ''; }
+    :root .dotting { margin-right: 8px; } /* IE9+,FF,CH,OP,SF */
+
+    @-webkit-keyframes dot {
+        25% { box-shadow: none; }
+        50% { box-shadow: 2px 0 currentColor; }
+        75% { box-shadow: 2px 0 currentColor, 6px 0 currentColor; }
+    }
+    @keyframes dot {
+        25% { box-shadow: none; }
+        50% { box-shadow: 2px 0 currentColor; }
+        75% { box-shadow: 2px 0 currentColor, 6px 0 currentColor; }
+    }
+    </style>
+<body class="loading-page" data-url="{{url}}" data-uname="{{uname}}">
+  <div><i>正在加载<span class="dotting"></span></i></div>
+<!-- 需要加载不同的资源js -->
+  <script src="js/lang/{{ langType }}.js"></script>
+  <script src="js/lib/jquery-2.1.4.min.js"></script>
+  <script src="js/lib/bootstrap.min.js"></script>    
+  <script src="js/lib/jquery.cookie.js"></script>
+  <script src="js/common/common.js"></script>
+  <script src="js/pages/public.js"></script>
+  <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        var paramsArr = window.location.href.split('?')[1].split('&'),
+        url = paramsArr[0].split('=')[1],uname = paramsArr[1].split('=')[1],
+        passwd = paramsArr[2].split('=')[1];
+        $.post('login/doLogin?url='+url, {pname: uname,pword:passwd}, function(data, textStatus, xhr) {
+          window.location.href=url;
+        });
+    });
+  </script>
+</body>
+</html>

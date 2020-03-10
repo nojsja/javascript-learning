@@ -1,0 +1,56 @@
+{% extends "template.htm" %}
+{% block needcss %}
+<style type="text/css">
+  .add-sysdb-tips {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    text-align: center;
+    color: #8d8f95;
+  }
+
+  .cover {
+    width: 100%;
+    height: 100%;
+    background: #386571 url('css/image/infinity_logo.png') no-repeat fixed center;
+  }
+
+</style>
+{% endblock %}
+
+{%block topnav %}
+
+{%endblock%}
+
+{% block body %}
+<div class="cover"></div>
+<!--添加sysdb-->
+<div class="modal fade" id="sysdbAddModal" tabindex="-1" role="dialog" aria-labelledby="sysdbAddModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="sysdbAddModalLabel">{{publicLang.add_sysdb_node}}</h4>
+      </div>
+      <div class="modal-body" style="width: 100%; min-height: 10rem; position: relative;">
+        <div class="form-group">
+            <label for="input-ip" class="col-sm-2 control-label">IP：</label>
+            <div class="col-sm-10">
+              <textarea rows="2" cols="20" class="col-sm-12 text-area-style" id="addSysdbNode"></textarea>
+              <p class="help-block" style="color:red;">{{ publicLang.ip_input_tips }}</p>
+            </div>
+        </div>
+
+        <div class="col-sm-12 add-sysdb-tips">
+          <label>{{publicLang.add_sysdb_tips}}</label>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block needjs %}
+<script src="js/pages/sysdbconf.js"></script>
+{% endblock %}

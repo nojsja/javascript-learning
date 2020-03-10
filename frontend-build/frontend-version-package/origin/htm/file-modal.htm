@@ -1,0 +1,752 @@
+<!--新建目录-->
+<div class="modal fade" id="addNewFolderModal" tabindex="-1" role="dialog" aria-labelledby="addNewFolderModalLabel" aria-hidden="true"
+  data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="addNewFolderModalLabel">{{fileLang.new_dir}}</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" role="form"  onsubmit="return false;">
+          <div class="form-group">
+            <label for="newdirname" class="col-sm-3 control-label ellipsis" title="{{ fileLang.new_dir_name }}">{{ fileLang.new_dir_name }}</label>
+            <div class="col-sm-8">
+              <input type="text" class="none-border-input" style="height:30px;width:100%;" id="newdirname" placeholder="{{fileLang.input_dirname}}">
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--属性-->
+<div class="modal fade" id="morePropertyModal" tabindex="-1" role="dialog" aria-labelledby="morePropertyModalLabel" aria-hidden="true"
+  data-backdrop="static">
+  <div class="modal-dialog modal-lg" style="width:600px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="morePropertyModalLabel">{{fileLang.property}}</h4>
+      </div>
+      <div class="modal-body flex-modal-body">
+        <form class="form-horizontal col-lg-12 col-md-12" role="form">
+          <div class="form-group">
+            <label for="dirname" class="col-sm-2 control-label left js-dir-font">{{ fileLang.path }}:</label>
+            <div class="col-sm-9" style="line-height:25px">
+              <input type="text" class="none-border-input disabled" id="dirname" style="width:420px">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="dir-owner" class="col-sm-2 control-label left js-dir-font">{{ fileLang.owners }}:</label>
+            <div class="col-sm-10" style="line-height:25px;">
+              <select class="dt_layout_select" id="dir-owner" style="margin-top: -1px">
+
+              </select>
+              <input id="dir-recursive" type="checkbox" value="checked"><span>{{ fileLang.apply_to_sub_dir }}</span></input>
+              <div class="dir-recursive-makesure hidden" style="padding-left:360px;margin-top:-25px">
+                <span class="dir-recursive-sure js-dir-font" style="color:#02c1ff;font-size: 12px;cursor: pointer">{{publicLang.ok}}</span>
+                <span type="button" style="font-size: 12px" class="">{{publicLang.cancel}}</span>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label" style="margin-left:13px;">
+              <a href="javascript:;" class="js-clear-dir-property"  data-toggle="tooltip" title="{{ fileLang.clear_dir_and_subdir_pro }}">
+                <span>{{fileLang.clear_dir_and_subdir_pro}}</span>
+              </a>
+            </label>
+          </div>
+          <div class="form-group col-sm-12" id="quota">
+            <div class="divider" style="height:1px;background-color:#F5F5F5;"></div>
+            <br/>
+            <p style="font-size: 15px;font-weight: 500;">{{fileLang.dir_quota}} </p>
+            <div class="quota-makesure" style="float: right;margin-top:-24px">
+              <span class="quota-sure quota-font" style="color:#02c1ff;cursor: pointer;font-family: MicrosoftYaHeiUI">{{publicLang.ok}}</span>
+              <span class="quota-del" type="button" style="color:red;cursor: pointer;font-family: MicrosoftYaHeiUI">{{publicLang.delete}}</span>
+            </div>
+            <div class="form-group">
+              <label for="setdir_quota" class="col-sm-2 control-label left js-dir-font" style="min-width:85px;">{{ fileLang.capacity_quota }}:</label>
+              <div class="col-sm-4" style="line-height:25px;" id="setdir_quota">
+                <input type="text" class="share-allocation-size" style="width:30%;border:1px solid #cccccc" placeholder="">
+                <select id="unit1" style="border:1px solid #cccccc">
+                  <option value="K">KB</option>
+                  <option value="M">MB</option>
+                  <option value="G">GB</option>
+                  <option value="T">TB</option>
+                  <option value="P">PB</option>
+                </select>
+                <img style="margin-top: -1px" class="image-arrow" src="css/image/select_folder.png">
+              </div>
+              <label for="quantity_quota" class="col-sm-2 control-label left js-dir-font" style="min-width:85px;">{{ fileLang.quantity_quota }}:</label>
+              <div class="col-sm-4" style="line-height:25px;" id="quantity_quota">
+                <input type="text" class="share-allocation-size" style="width:30%;border:1px solid #cccccc" placeholder="">
+              </div>
+            </div>
+
+          </div>
+          <div class="group-property-body">
+            <table class="table table-condensed" id="pro_thead">
+              <thead>
+                <tr>
+                  <th class="left" style="width:30%;">{{fileLang.users}}</th>
+                  <th style="width:15%;">{{fileLang.read_only}}</th>
+                  <th style="width:15%;">{{fileLang.read_and_write}}</th>
+                  <th style="width:15%;">{{fileLang.noauth}}</th>
+                  <th style="width:25%;">{{fileLang.apply_to_sub_dir}}</th>
+                </tr>
+              </thead>
+            </table>
+            <div style="height:200px;overflow-y:auto;">
+              <table class="table table-condensed table-hover share-property-body">
+                <tbody>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--删除文件-->
+<div class="modal fade" id="delFileModel" tabindex="-1" role="dialog" aria-labelledby="delFileModelLabel" aria-hidden="true"
+  data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.delete}}</button>
+        <h4 class="modal-title" id="delFileModelLabel">{{publicLang.delete}}{{publicLang.file}}</h4>
+      </div>
+      <div class="modal-body">
+        <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--复制回收站文件 -->
+<div id="copyRecycleFileBtn">
+
+</div>
+<!--粘贴回收站文件 -->
+<div class="modal fade" id ="pasteRecycleFileModal" tabindex="-1" role="dialog" aria-labelledby="pasteRecycleFileModal" aria-hidden="true"
+  data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+          <button type="button" class="btn btn-info">{{fileLang.reserve}}</button>
+          <button type="button" class="btn btn-primary">{{fileLang.overwrite}}</button>
+          <h4 class="modal-title">{{fileLang.paste}}</h4>
+        </div>
+        <div class="modal-body">
+          <p style="line-height: 1.5;">{{fileLang.paste_same_file_note}}</p>
+        </div>
+      </div>
+    </div>
+</div>
+<!--CIFS共享-->
+<div class="modal fade" id="cifsShareModal" tabindex="-1" role="dialog" aria-labelledby="cifsShareModalLabel" aria-hidden="true"
+  data-backdrop="static">
+  <div class="modal-dialog modal-lg" style="width:900px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <button type="button" class="btn btn-danger">{{publicLang.delete}}</button>
+        <h4 class="modal-title" id="cifsShareModalLabel">{{fileLang.cifs}}</h4>
+      </div>
+      <div class="modal-body flex-modal-body">
+        <form class="form-horizontal col-lg-5 col-md-5" id="cifs-left-setting" role="form">
+          <div class="form-group">
+            <label for="dirname" class="col-sm-4 control-label left js-dir-font" style="min-width:85px;">
+              <span style="color:#f00;">*&nbsp;</span>{{ fileLang.path }}:
+            </label>
+            <div class="col-sm-8" style="line-height:25px;">
+              <input type="text" class="none-border-input disabled ellipsis" id="dirname" style="  width: 84%;" placeholder="{{fileLang.click_scanmore_add_path}}">
+              <a class="js-get-dirpath fl-rt" style="color: #00c0ff">{{fileLang.scan_more}}</a>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-4 control-label left js-dir-font" style="min-width:85px;">
+              <span style="color:#f00;">*&nbsp;</span>{{ fileLang.share_name }}:
+            </label>
+            <div class="col-sm-8" style="line-height:25px;">
+              <input type="text" id="share_name" class="none-border-input ellipsis share-name" style="width:100%;" placeholder="{{fileLang.input_share_name}}">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="" class="col-sm-4 control-label left js-dir-font" style="min-width:85px;">{{ fileLang.login_way }}:</label>
+            <div class="col-sm-8" style="line-height:25px;">
+              <select id="guestuser" class="none-border-input">
+              <option value="0" class="none-border-input">{{fileLang.non_anonymous_login}}</option>
+              <option value="1" class="none-border-input">{{fileLang.anonymous_login}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group hidden js-guestacl">
+            <label for="" class="col-sm-4 control-label left js-dir-font" style="min-width:85px;">{{ fileLang.anonymous_acl }}:</label>
+            <div class="col-sm-8" style="line-height:25px;">
+              <select id="guestacl" class="none-border-input">
+                <option value="1" class="none-border-input">{{fileLang.read_only}}</option>
+                <option value="2" class="none-border-input">{{fileLang.read_and_write}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="" class="col-sm-4 control-label left js-dir-font" style="min-width:85px;">{{ fileLang.owners }}:</label>
+            <div class="col-sm-8" style="line-height:25px;">
+              <select id="default-owner" class="none-border-input">
+                <option value="0" class="none-border-input">{{fileLang.login_user}}</option>
+                <option value="1" class="none-border-input">{{fileLang.inherit_the_parent_dir}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="" class="col-sm-4 control-label left js-dir-font ellipsis" style="min-width:85px;" title="{{ fileLang.file_permission }}">{{ fileLang.file_permission }}:</label>
+            <div class="col-sm-8" style="line-height:25px;">
+              <select id="default-acl" class="none-border-input">
+                <option value="0777" class="none-border-input">{{fileLang.no_setting}}</option>
+                <option value="1777" class="none-border-input">{{fileLang.owner_delete}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="" class="col-sm-4 control-label left js-dir-font" style="min-width:85px;">{{ fileLang.audit }}</label>
+            <div class="col-sm-8" style="line-height:25px;">
+              <select id="cifs-audit" class="none-border-input">
+                <option value="0" class="none-border-input">{{fileLang.off}}</option>
+                <option value="1" class="none-border-input">{{fileLang.on}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="" class="col-sm-4 control-label left js-dir-font" style="min-width:85px;">{{ fileLang.client_cache }}</label>
+            <div class="col-sm-8" style="line-height:25px;">
+              <select id="cifs-client-cache" class="none-border-input">
+                <option value="0" class="none-border-input">{{fileLang.off}}</option>
+                <option value="1" class="none-border-input">{{fileLang.on}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="" class="col-sm-4 control-label left js-dir-font" style="min-width:85px;">{{ fileLang.recycle_bin }}:</label>
+            <div class="col-sm-8" style="line-height:25px;">
+              <select id="cifsRecycle" class="none-border-input">
+                <option value="off">{{fileLang.off}}</option>
+                <option value="on">{{fileLang.on}}</option>
+              </select>
+            </div>
+          </div>
+          <div id="recycleOpenCont" class="hidden" style="position: relative;">
+            <div class="form-group">
+              <label for="" class="col-sm-4 control-label left js-dir-font ellipsis" style="min-width:85px;" title="{{ fileLang.recycle_dir_name }}">{{ fileLang.recycle_dir_name }}:</label>
+              <div class="col-sm-8" style="line-height:25px;">
+                <input type="text" id="recycleDir" class="none-border-input" style="width: 84%;" value="" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="" class="col-sm-4 control-label left js-dir-font ellipsis" style="min-width:85px;" title="{{ fileLang.recycle_path }}">{{ fileLang.recycle_path }}:</label>
+              <div class="col-sm-8" style="line-height:25px;">
+                <input type="text" id="recyclePath" class="none-border-input disabled ellipsis" style="width: 84%;" value="" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="" class="col-sm-4 control-label left js-dir-font ellipsis" style="min-width: 85px; padding-right: 0;" title="{{ fileLang.same_file_overwrite }}">{{ fileLang.same_file_overwrite }}:</label>
+              <div class="col-sm-8" style="line-height: 25px;">
+                <select id="recycleCover" class="none-border-input">
+                  <option value="yes">{{ fileLang.yes }}</option>
+                  <option value="no">{{ fileLang.no }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="" class="col-sm-4 control-label left js-dir-font" style="min-width:85px;">
+                {{ fileLang.filter }}:
+                <span style="color:#47bdf0; font-size:.8rem; cursor: pointer;" class="glyphicon glyphicon-question-sign recycle-filter-icon"></span>
+                <div class="recycle-filter-tips triangle-left hidden">
+                  <p>{{ fileLang.tips }}：</p>
+                  <p>{{ fileLang.recycle_filter_tips1 }}</p>
+                  <p>{{ fileLang.recycle_filter_tips2 }}</p>
+                  <p>{{ fileLang.recycle_filter_tips3 }}</p>
+                </div>
+              </label>
+              <div class="col-sm-8 recycleFilterFile" style="line-height:25px;">
+                <input type="text" class="none-border-input" style="width: 100%;" placeholder="{{ fileLang.input_file_name_keywords }}">
+                <div style="color:#337ab7; display:none;" class="note">{{ fileLang.recycle_filter_caution }}</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="setRecycleLess" class="col-sm-4 control-label left js-dir-font" style="min-width: 85px;"></label>
+              <div class="col-sm-8" style="line-height: 25px;" id="setRecycleLess">
+                <span>{{ fileLang.less_than }}</span>
+                <input type="text" class="none-border-input ellipsis" style="max-width: 113px;" placeholder="{{ fileLang.size_range }}" title="{{ fileLang.size_range }}">
+                <select id="lessunit" class="none-border-input">
+                  <option value="B">B</option>
+                  <option value="KB">KB</option>
+                  <option value="MB">MB</option>
+                  <option value="GB">GB</option>
+                  <option value="TB">TB</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+                <label for="setRecycleMore" class="col-sm-4 control-label left js-dir-font" style="min-width: 85px;"></label>
+                <div class="col-sm-8" style="line-height: 25px;" id="setRecycleMore">
+                  <span>{{ fileLang.more_than }}</span>
+                  <input type="text" class="none-border-input ellipsis" style="max-width: 113px;" placeholder="{{ fileLang.size_range }}" title="{{ fileLang.size_range }}">
+                  <select id="moreunit" class="none-border-input">
+                    <option value="B">B</option>
+                    <option value="KB">KB</option>
+                    <option value="MB">MB</option>
+                    <option value="GB">GB</option>
+                    <option value="TB">TB</option>
+                  </select>
+                </div>
+              </div>
+          </div>
+          <div class="form-group">
+            <label for="" class="col-sm-4 control-label left js-dir-font" style="min-width:85px;">worm:</label>
+            <div class="col-sm-8" style="line-height:25px;">
+              <select id="cifsWorm" class="none-border-input">
+                <option value="off">{{fileLang.off}}</option>
+                <option value="on">{{fileLang.on}}</option>
+              </select>
+            </div>
+          </div>
+          <div id="wormOpenCont" class="hidden">
+            <div class="form-group">
+              <div class="col-sm-12" style="color: #f00; padding-top: 7px;">{{ fileLang.worm_open_warn }}</div>
+            </div>
+            <div class="form-group">
+              <label for="setWormTime" class="col-sm-4 control-label left js-dir-font ellipsis" style="min-width:85px; padding-left: 10px;" title="{{fileLang.worm_effective_time}}">
+                <span style="color:#f00;">*&nbsp;</span>{{ fileLang.worm_effective_time }}:
+              </label>
+              <div class="col-sm-8" style="line-height:25px;" id="setWormTime">
+                <input type="text" class="none-border-input ellipsis" placeholder="{{ fileLang.input_positive_integer }}" title="{{ fileLang.input_positive_integer }}">
+                <select id="timeunit" class="none-border-input">
+                  <option value="minutes">{{ fileLang.minutes }}</option>
+                  <option value="hours">{{ fileLang.hours }}</option>
+                  <option value="days">{{ fileLang.days }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-11 filter-filetype" style="line-height:25px;">
+              <input type="text" class="none-border-input ellipsis js-filter-filetype" style="width:100%;" placeholder="{{fileLang.input_file_type}}"
+                title="{{fileLang.input_file_type}}">
+              <div class="text-area-filter-filetype none-border-input" style="overflow:auto;max-height: 120px;">
+              </div>
+              <input type="text" class="none-border-input ellipsis js-filter-keywords" style="width:100%;" placeholder="{{fileLang.input_keywords}}"
+                title="{{fileLang.input_keywords}}">
+              <div class="text-area-filter-keywords none-border-input" style="overflow:auto;max-height: 120px;">
+              </div>
+              <span style="color:#337ab7;display: none">{{fileLang.caution}}</span>
+            </div>
+          </div>
+        </form>
+        <div class="col-lg-1 col-md-1"></div>
+        <form class="form-horizontal col-lg-6 col-md-6" id="cifs-usergroup-list" role="form">
+          <div>
+            <table class="table table-condensed" id="pro_thead">
+              <thead>
+                <tr>
+                  <th style="width:40%;">
+                    <div class="hidden">
+                      <span style="position: relative;vertical-align: middle;">
+                          <input class="form-control filter-local js-search" type="text" style="height:28px;">
+                          <i class="glyphicon glyphicon-search allsearch-localbtn"></i>
+                        </span>
+                    </div>
+                  </th>
+                  <th style="width:20%;">
+                    <span>{{fileLang.read_only}}</span>
+                    <input type="checkbox" class="read-only-all">
+                  </th>
+                  <th style="width:20%;">
+                    <span>{{fileLang.read_and_write}}</span>
+                    <input type="checkbox" class="r-and-w-all">
+                  </th>
+                  <th style="width:20%;">
+                    <span>{{ fileLang.super_admin }}</span>
+                    <input type="checkbox" class="super-admin-all disabled">
+                  </th>
+                </tr>
+              </thead>
+            </table>
+            <div class="share-table" style="height:380px;overflow-y:auto;">
+              <table class="table table-condensed table-hover share-users-body">
+                <tbody>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--CIFS监控-->
+<div class="modal fade" id="cifsMonitorModal" tabindex="-1" role="dialog" aria-labelledby="cifsMonitorModalLabel" aria-hidden="true"
+  data-backdrop="static">
+  <div class="modal-dialog modal-lg" style="width:900px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <h4 class="modal-title" id="cifsMonitorModalLabel">{{fileLang.cifs}}</h4>
+      </div>
+      <div class="modal-body flex-modal-body" style="flex-direction: column;justify-content: space-between;align-items: center;">
+        <div class='form-group'>
+          <h4>{{fileLang.total_nodes_num}}：<span id='total-nodes-num'></span>
+            <h4>
+        </div>
+        <div class="col-lg-10  col-md-10 col-sm-10 main">
+        </div>
+        <div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--FTP共享-->
+<div class="modal fade" id="ftpShareModal" tabindex="-1" role="dialog" aria-labelledby="ftpShareModalLabel" aria-hidden="true"
+  data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <button type="button" class="btn btn-danger">{{publicLang.delete}}</button>
+        <h4 class="modal-title" id="ftpShareModalLabel">{{fileLang.ftp}}</h4>
+      </div>
+      <div class="modal-body flex-modal-body">
+        <form class="form-horizontal col-lg-12 col-md-12" role="form">
+          <div class="form-group">
+            <label for="newdirname" class="col-sm-2 control-label js-dir-font">{{ fileLang.path }}:</label>
+            <div class="col-sm-9" style="line-height:25px;">
+              <input type="text" class="none-border-input disabled ellipsis" id="dirname" style="width:250px;" placeholder="{{fileLang.click_scanmore_add_path}}">
+              <a class="js-get-dirpath fl-rt" style="color: #00c0ff">{{fileLang.scan_more}}</a>
+            </div>
+          </div>
+          <div class="js-table-all">
+            <table class="table table-condensed" id="pro_thead">
+              <thead>
+                <tr>
+                  <th style="width:30%;">
+                    <!--<select class="none-border-input share-local-group" style="float: left;">-->
+                    <!--</select>-->
+                    <div class="">
+                      <span style="position: relative;vertical-align: middle;width: 100%;">
+                      <input class="form-control filter-local  js-search" type="text" style="height:28px;" placeholder="{{fileLang.search_users}}">
+                      <i class="glyphicon glyphicon-search allsearch-localbtn"></i>
+                    </span>
+                    </div>
+                  </th>
+                  <th style="width:58%;float:right">
+                    <span>{{fileLang.read_and_write}}</span>
+                    <input type="checkbox" class="r-and-w-all">
+                  </th>
+                </tr>
+            </table>
+            <div class="share-table" style="height:150px;overflow-y:auto;">
+              <table class="table table-condensed table-hover share-users-body">
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--nfs共享-->
+<div class="modal fade" id="nfsShareModal" tabindex="-1" role="dialog" aria-labelledby="nfsShareModalLabel" aria-hidden="true"
+  data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <button type="button" class="btn btn-danger">{{publicLang.delete}}</button>
+        <h4 class="modal-title" id="nfsShareModalLabel">{{fileLang.nfs}}</h4>
+      </div>
+      <div class="modal-body flex-modal-body">
+        <div class="form-horizontal col-lg-12 col-md-12" role="form">
+          <div class="form-group">
+            <label for="newdirname" class="col-sm-2 control-label left js-dir-font">{{ fileLang.path }}:</label>
+            <div class="col-sm-9" style="line-height:25px;">
+              <input type="text" class="none-border-input disabled ellipsis" id="dirname" style="width:200px;" placeholder="{{fileLang.click_scanmore_add_path}}">
+              <a class="js-get-dirpath fl-rt" style="color: #00c0ff">{{fileLang.scan_more}}</a>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="newdirname" class="col-sm-2 control-label left js-dir-font">IP:</label>
+            <div class="col-sm-7" style="line-height:25px;">
+              <input type="text" class="none-border-input ellipsis" id="add_nfs_machine" style="width:100%;" placeholder="{{fileLang.input_machine_ip}}">
+            </div>
+            <div class="col-sm-3" style="line-height:25px;">
+              <form class="nfs-auth-select">
+                <input type="radio" name="auth" value="1" checked/> <span>{{ fileLang.read_only }}</span>
+                <input type="radio" name="auth" value="2" /> <span>{{fileLang.read_and_write}}</span>
+              </form>
+            </div>
+          </div>
+          <div class="divider" style="height:1px;background-color:#F5F5F5;"></div>
+          <br/>
+          <div class="form-group">
+            <p style=" font-size: 15px;font-weight: 500;">{{ fileLang.shared_machine }}</p>
+            <div class="col-sm-12" style="line-height:25px;max-height:150px;overflow-y:auto;">
+              <div class="text-area-style none-border-input">
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--AFP共享-->
+<div class="modal fade" id="afpShareModal" tabindex="-1" role="dialog" aria-labelledby="afpShareModalLabel" aria-hidden="true"
+  data-backdrop="static">
+  <div class="modal-dialog modal-lg" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <button type="button" class="btn btn-danger">{{publicLang.delete}}</button>
+        <h4 class="modal-title" id="afpShareModalLabel">{{fileLang.afp}}</h4>
+      </div>
+      <div class="modal-body flex-modal-body">
+        <form class="form-horizontal col-lg-12 col-md-12" role="form">
+          <div class="form-group">
+            <label for="dirname" class="col-sm-3 control-label left js-dir-font" style="min-width:85px;">{{ fileLang.path }}:</label>
+            <div class="col-sm-9" style="line-height:25px;">
+              <input type="text" class="none-border-input disabled ellipsis" id="dirname" style="width:200px;" placeholder="{{fileLang.click_scanmore_add_path}}">
+              <a class="js-get-dirpath fl-rt" style="color: #00c0ff">{{fileLang.scan_more}}</a>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="share_name" class="col-sm-3 control-label left js-dir-font" style="min-width:85px;">{{ fileLang.share_name }}:</label>
+            <div class="col-sm-8" style="line-height:25px;">
+              <input type="text" class="none-border-input share-name js-afp-share-name" id="share_name" style="width:100%;" placeholder="{{fileLang.input_share_name}}">
+            </div>
+          </div>
+          <div class="js-table-all">
+            <table class="table table-condensed" id="pro_thead">
+              <thead>
+                <tr>
+                  <th style="width:41%;">
+                    <div class="">
+                      <span style="position: relative;vertical-align: middle;width: 100%;">
+                          <input class="form-control filter-local js-search" type="text" style="height:28px;" placeholder="{{fileLang.search_users}}">
+                          <i class="glyphicon glyphicon-search allsearch-localbtn"></i>
+                        </span>
+                    </div>
+                  </th>
+                  <th style="width:14%;">
+                    <span>{{fileLang.read_only}}</span>
+                    <input type="checkbox" class="read-only-all">
+                  </th>
+                  <th style="width:26%;">
+                    <span>{{fileLang.read_and_write}}</span>
+                    <input type="checkbox" class="r-and-w-all">
+                  </th>
+                </tr>
+              </thead>
+            </table>
+            <div class="share-table" style="height:150px;overflow-y:auto;">
+              <table class="table table-condensed table-hover share-users-body">
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--删除目录-->
+<div class="modal fade" id="delDirModel" tabindex="-1" role="dialog" aria-labelledby="delDirModelLabel" aria-hidden="true"
+  data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.delete}}</button>
+        <h4 class="modal-title" id="delDirModelLabel">{{fileLang.del_folder}}</h4>
+      </div>
+      <div class="modal-body">
+        <p></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--WEBDAV共享-->
+<div class="modal fade" id="httpShareModal" tabindex="-1" role="dialog" aria-labelledby="httpShareModalLabel" aria-hidden="true"
+  data-backdrop="static">
+  <div class="modal-dialog modal-lg" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <button type="button" class="btn btn-danger">{{publicLang.delete}}</button>
+        <h4 class="modal-title" id="httpShareModalLabel">{{fileLang.webdav}}</h4>
+      </div>
+      <div class="modal-body flex-modal-body">
+        <form class="form-horizontal col-lg-12 col-md-12" role="form">
+          <div class="form-group">
+            <label for="newdirname" class="col-sm-3 control-label left js-dir-font" style="min-width:85px;">{{ fileLang.path }}:</label>
+            <div class="col-sm-9" style="line-height:25px;">
+              <input type="text" class="none-border-input disabled ellipsis" id="dirname" style="width:200px;" placeholder="{{fileLang.click_scanmore_add_path}}"
+                title="{{fileLang.click_scanmore_add_path}}">
+              <a class="js-get-dirpath fl-rt" style="color: #00c0ff">{{fileLang.scan_more}}</a>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="newdirname" class="col-sm-3 control-label left js-dir-font" style="min-width:85px;">{{ fileLang.share_name }}:</label>
+            <div class="col-sm-9" style="line-height:25px;">
+              <input type="text" class="none-border-input share-name ellipsis js-http-share-name" style="width:100%;" placeholder="{{fileLang.input_share_name}}">
+            </div>
+          </div>
+          <div class="form-group hidden">
+            <label for="newdirname" class="col-sm-3 control-label left js-dir-font ellipsis" style="min-width:85px;" title="{{ fileLang.allocation_size }}">{{ fileLang.allocation_size }}:</label>
+            <div class="col-sm-9" style="line-height:25px;">
+              <input type="text" class="none-border-input share-allocation-size ellipsis" style="width:30%;" placeholder="{{fileLang.input_the_number}}"
+                title="{{fileLang.input_the_number}}">
+              <select id="unit" style="margin-top:4px;border:1px solid #cccccc">
+                <option value="M">MB</option>
+                <option value="G">GB</option>
+                <option value="T">TB</option>
+              </select>
+              <img class="image-arrow" src="css/image/select_folder.png">
+            </div>
+          </div>
+          <div class="js-table-all">
+            <table class="table table-condensed" id="pro_thead">
+              <thead>
+                <tr>
+                  <th style="width:41%;">
+                    <div class="">
+                      <span style="position: relative;vertical-align:middle;width: 100%;">
+                          <!--<select class="none-border-input fl-lt share-local-group" style="width:55%;">-->
+                        <!--</select>-->
+                          <input class="form-control filter-local js-search" type="text" style="height:28px;" placeholder="{{fileLang.search_users}}">
+                          <i class="glyphicon glyphicon-search allsearch-localbtn"></i>
+                        </span>
+                    </div>
+                  </th>
+                  <th style="width:14%;">
+                    <span>{{fileLang.read_only}}</span>
+                    <input type="checkbox" class="read-only-all">
+                  </th>
+                  <th style="width:26%;">
+                    <span>{{fileLang.read_and_write}}</span>
+                    <input type="checkbox" class="r-and-w-all">
+                  </th>
+                </tr>
+              </thead>
+            </table>
+            <div class="share-table" style="height:150px;overflow-y:auto;">
+              <table class="table table-condensed table-hover share-users-body subusers">
+                <tbody>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--创建AFP共享-->
+<div class="modal fade" id="createAfpShareModal" tabindex="-1" role="dialog" aria-labelledby="createAfpShareModalLabel" aria-hidden="true"
+  data-backdrop="static">
+  <div class="modal-dialog modal-lg" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-primary">{{publicLang.ok}}</button>
+        <h4 class="modal-title" id="createAfpShareModalLabel">{{fileLang.create_afp}}</h4>
+      </div>
+      <div class="modal-body flex-modal-body">
+        <form class="form-horizontal col-lg-12 col-md-12" role="form">
+          <div class="form-group">
+            <label for="newdirname" class="col-sm-2 control-label left js-dir-font" style="min-width:85px;">{{ fileLang.path }}:</label>
+            <div class="col-sm-8" style="line-height:25px;">
+              <input type="text" class="none-border-input disabled" id="newdirname" style="width:100%;">
+            </div>
+          </div>
+          <div>
+            <table class="table table-condensed" id="pro_thead">
+              <thead>
+                <tr>
+                  <th style="width:50%;">
+                    <div class="">
+                      <span style="position: relative;vertical-align: middle;">
+                          <input class="form-control filter-local" type="text" style="height:28px;">
+                          <i class="glyphicon glyphicon-search allsearch-localbtn"></i>
+                        </span>
+                    </div>
+                  </th>
+                  <th style="width:25%;">
+                    <span>{{fileLang.read_only}}</span>
+                    <input type="checkbox" class="read-only-all">
+                  </th>
+                  <th style="width:25%;">
+                    <span>{{fileLang.read_and_write}}</span>
+                    <input type="checkbox" class="r-and-w-all">
+                  </th>
+                </tr>
+              </thead>
+            </table>
+            <div class="share-table" style="height:280px;overflow-y:auto;">
+              <table class="table table-condensed table-hover share-users-body">
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--删除共享-->
+<div class="modal fade" id="delShareModel" tabindex="-1" role="dialog" aria-labelledby="delShareModelLabel" aria-hidden="true"
+  data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <button type="button" class="btn btn-danger">{{publicLang.delete}}</button>
+        <h4 class="modal-title" id="delShareModelLabel">{{fileLang.del_share}}</h4>
+      </div>
+      <div class="modal-body">
+        <p></p>
+      </div>
+    </div>
+  </div>
+</div>

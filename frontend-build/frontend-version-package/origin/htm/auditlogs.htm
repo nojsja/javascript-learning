@@ -1,0 +1,120 @@
+{% extends 'two-float-layout.htm' %}
+{% block needcss %}
+<style type="text/css">
+	body {
+		font-size: .875rem;
+		font-family: "Hiragino Sans GB","Microsoft YaHei","微软雅黑",tahoma,arial,simsun,"宋体";
+	}
+</style>
+{% endblock %}
+{% block leftnav%}
+<ul class="v-menu subdown min-size-required box-shadow" style="width:100%;max-width:100%;">
+	<li {% if cursubmenu == 'optlogs' %}class="active"{%endif%}><a href="optlogs">{{ logLang.opr_logs }}</a></li>
+	<li {% if cursubmenu == 'auditlogs' %}class="active"{%endif%}><a href="auditlogs">{{ logLang.audit_logs }}</a></li>
+</ul>
+{%endblock%}
+{% block rightcontent %}
+<!--下载日志-->
+<div class="modal fade" id="downloadModal" tabindex="-1" role="dialog" aria-labelledby="downloadModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        <h4 class="modal-title" id="delShareModelLabel">{{ logLang.download_logs }}</h4>
+      </div>
+      <div class="modal-body">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="dt_g_right_bar_third" style="padding-left:0;">
+    <div class="dt_g_right_subdiv_third">
+
+      <!-- 搜索菜单 -->
+        <div class="box-shadow log_search_wrapper" style="border:0;">
+          <div class="log_date_select">
+            <span>{{logLang.time_line}}：</span>
+            <input type="date" class='dateSelectBegin'/>
+            <span>-</span>
+            <input type="date" class='dateSelectEnd'/>
+          </div>
+
+          <div class="log_keyword_input">
+              <span>{{logLang.keyword}}：</span>
+              <input type="text" placeholder="{{logLang.please_input_keyword}}" />
+          </div>
+
+          <div class="log_submit_button">
+            <input type="button" value="{{logLang.search}}"/>
+          </div>
+
+        </div>
+
+        <div class="margin_bot_format"></div>
+
+        <div class="all_table_list_third">
+            <table class="table table-hover audit-log-table">
+                <thead>
+                    <tr>
+                        <td style="width:20%;">{{ logLang.opt_user }}</td>
+                        <td style="width:20%;">{{ logLang.opt_time }}</td>
+                        <td style="width:15%;">{{ logLang.user_op }}</td>
+                        <td style="width:15%;">{{ logLang.op_target }}</td>
+                        <td style="width:17%;">{{ logLang.share_name }}</td>
+                        <td style="width:13%;">{{ logLang.client_ip }}</td>
+                    </tr>
+                </thead>
+                <tbody id="js-audit-log-table">
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="margin_bot_format"></div>
+
+
+        <div class="dt_system_bar_third box-shadow" style="border:0;">
+            <div class="left_nav_system">
+                <img src="css/image/info.png" style="width:25px;padding-bottom:6px;padding-right:6px;">
+                <span style="line-height: 30px;font-size:18px;color:#337AB7;">{{ logLang.optlogs_detail }}</span>
+                <a id="downloadLogs" title="{{ logLang.download_logs }}" href="javascript:void(0);" style="height:100%;margin-left:8px;">
+                  <span class="glyphicon glyphicon-download-alt"></span>
+                </a>
+            </div>
+
+            <!-- <nav class="navbar-right" style="margin-right:0;"> 
+                <ul class="pagination fl-lt" id="js-audit-pagination">
+
+                </ul>
+                <div style="display:inline;margin-right: 0px;font-size: 1em;"> -->
+                    <!-- <span class="form-group" style="position: relative;vertical-align: middle;">
+                        <input id="js-filter-audit" placeholder="{{ logLang.input_keyword_to_search }}" type="text" class="form-control filter-audit" style="border-radius:25px;">
+                        <i id="js-allsearch-audit" class="glyphicon glyphicon-search allsearch-auditbtn"></i>
+                    </span> -->
+                    <!-- <div class="page-jump-wrapper hidden" style="display: inline-block; padding-top: 5px;">
+                      <input type="text" class="page-jump-input"/>
+                      <span class="page-jump-button" style="margin-top: 5px;">{{logLang.jump}}&nbsp;>></span>
+                    </div>
+                </div>
+            </nav> -->
+            <nav class="navbar_right_second">
+                <div class="navbar_system_middle">
+                    <!-- 分页菜单 -->
+                    <div id="pagination_logs" class="js-pagination" style="text-align:center;"></div>
+                </div>
+                <div>
+                    <div class="page-jump-wrapper hidden" style="padding-top: 4px;">
+                        <input type="text" class="page-jump-input" />
+                        <span class="page-jump-button">{{logLang.jump}}&nbsp;>></span>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block needjs %}
+    <script src="js/lib/twbsPagination/jquery.twbsPagination.min.js"></script>
+    <script src="js/pages/auditlogs.js"></script>
+{% endblock %}

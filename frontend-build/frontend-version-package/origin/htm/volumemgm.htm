@@ -1,0 +1,241 @@
+{% extends 'two-float-layout.htm' %}
+{% block leftnav%}
+{% include 'storagemgm-left-nav.htm' %}
+<div class="bottom-icons-act" data-toggle="tooltip" data-placement="right" title="{{ storageLang.create_volume }}">
+	<a href="javascript:;" class="js-create-volume">
+		<span class="glyphicon glyphicon-plus"></span>
+	</a>
+</div>
+{%endblock%}
+{% block rightcontent %}
+<div class="bs-docs-grid">
+    <!-- 列举出卷详细信息及其下面的快照-->
+</div>
+
+<!--创建卷-->
+<div class="modal fade" id="createVolumeModal" tabindex="-1" role="dialog" aria-labelledby="createVolumeModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{ publicLang.cancel }}</button>
+		<button type="button" class="btn btn-primary" aria-hidden="true">{{ publicLang.save }}</button>
+        <h4 class="modal-title" id="createVolumeModalLabel">{{ storageLang.create_volume }}</h4>
+      </div>
+      <div class="modal-body flex-modal-body">
+		 <form class="form-horizontal col-sm-12" role="form">
+		 	<div class="form-group">
+				<label for="new_volume_name" class="col-sm-4 control-label left">{{ storageLang.volume_name }}</label>
+				<div class="col-sm-8">
+					<input type="text" class="none-border-input" id="new_volume_name" style="width:100%;float:left;height:30px;" placeholder="{{ publicLang.only_letters_num }}">
+				</div>
+			</div>
+      <div class="form-group hidden meta_pool">
+				<label for="metastorage_pool" class="col-sm-4 control-label left">{{ storageLang.meta_storage_pool }}</label>
+				<div class="col-sm-8" style="padding-top:7px;">
+					<select id="metastorage_pool" class="none-border-input" style="width:100%;">
+
+					</select>
+				</div>
+			</div>
+		 	<div class="form-group">
+				<label for="datastorage_pool" class="col-sm-4 control-label left">{{ storageLang.data_storage_pool }}</label>
+				<div class="col-sm-8" style="padding-top:7px;">
+					<select id="datastorage_pool" class="none-border-input" style="width:100%;">
+
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="" class="col-sm-4 control-label left">{{ storageLang.storage_avail_capacity }}</label>
+				<div class="col-sm-8">
+					<input type="text" class="none-border-input" id="v_size" onKeyUp="" placeholder="{{ storageLang.input_lg_zero_int_number }}" style="width:70%;float:left;height:30px;">
+					<select class="none-border-input" id="v_size_unit" style="margin-left:10%;width:20%;height:30px;">
+						<option value="M">M</option>
+						<option value="G">G</option>
+						<option value="T">T</option>
+					</select>
+				</div>
+			</div>
+		</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--编辑卷-->
+<div class="modal fade" id="editVolumeModal" tabindex="-1" role="dialog" aria-labelledby="editVolumeModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{ publicLang.cancel }}</button>
+		<button type="button" class="btn btn-primary" aria-hidden="true">{{ publicLang.save }}</button>
+        <h4 class="modal-title" id="editVolumeModalLabel">{{ storageLang.edit_volume }}</h4>
+      </div>
+      <div class="modal-body flex-modal-body">
+		 <form class="form-horizontal col-sm-12" role="form">
+		 	<div class="form-group">
+				<label class="col-sm-3 control-label left">{{ storageLang.poolname }}</label>
+				<div class="col-sm-8">
+					<input type="text" class="none-border-input js-volume-belongpool" style="width:100%;float:left;height:30px;" disabled="disabled">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label left">{{ storageLang.volume_name }}</label>
+				<div class="col-sm-8">
+					<input type="text" class="none-border-input js-volume-nowname" style="width:100%;float:left;height:30px;" disabled="disabled">
+				</div>
+			</div>
+		 	<div class="form-group">
+				<label for="new-volumename" class="col-sm-3 control-label left">{{ storageLang.new_volume_name }}</label>
+				<div class="col-sm-8">
+					<input type="text" class="none-border-input" id="new-volumename" style="width:100%;float:left;height:30px;" placeholder="{{ storageLang.input_volume_name }}">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="v_new_size" class="col-sm-3 control-label left">{{ storageLang.size }}</label>
+				<div class="col-sm-8">
+					<input type="text" class="none-border-input" id="v_new_size" onKeyUp="" placeholder="{{ storageLang.input_lg_zero_int_number }}" style="width:70%;float:left;height:30px;">
+					<select class="none-border-input" id="v_new_size_unit" style="margin-left:10%;width:20%;height:30px;">
+						<option value="M">M</option>
+						<option value="G">G</option>
+						<option value="T">T</option>
+					</select>
+				</div>
+			</div>
+		</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--删除卷-->
+<div class="modal fade" id="delVolumeModal" tabindex="-1" role="dialog" aria-labelledby="delVolumeModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+    	<div class="modal-header">
+        	<button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        	<button type="button" class="btn btn-danger">{{publicLang.delete}}</button>
+        	<h4 class="modal-title" id="delVolumeModalLabel">{{storageLang.del_volume}}</h4>
+      	</div>
+      	<div class="modal-body">
+      		<p></p>
+      	</div>
+    </div>
+  </div>
+</div>
+
+<!--创建快照-->
+<div class="modal fade" id="createSnapshotModal" tabindex="-1" role="dialog" aria-labelledby="createSnapshotModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{ publicLang.cancel }}</button>
+		<button type="button" class="btn btn-primary" aria-hidden="true">{{ publicLang.save }}</button>
+        <h4 class="modal-title" id="createSnapshotModalLabel">{{ storageLang.create_snapshot }}</h4>
+      </div>
+      <div class="modal-body flex-modal-body">
+		<form class="form-horizontal col-sm-12" role="form">
+			<div class="form-group">
+				<label for="" class="col-sm-4 control-label left">{{ storageLang.poolname }}</label>
+				<div class="col-sm-8" style="padding-top:7px;">
+					<span class="js-poolname"></span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="" class="col-sm-4 control-label left">{{ storageLang.volume_name }}</label>
+				<div class="col-sm-8" style="padding-top:7px;">
+					<span class="js-volname"></span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="" class="col-sm-4 control-label left">{{ storageLang.snapshotname }}</label>
+				<div class="col-sm-8">
+					<input type="text" class="none-border-input col-sm-8" id="new_snapshot_name" style="width:100%;float:left;height:30px;" placeholder="{{ publicLang.only_letters_num }}">
+				</div>
+			</div>
+		</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--删除快照-->
+<div class="modal fade" id="delSnapshotModal" tabindex="-1" role="dialog" aria-labelledby="delSnapshotModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:400px;">
+    <div class="modal-content">
+    	<div class="modal-header">
+        	<button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+        	<button type="button" class="btn btn-danger">{{publicLang.delete}}</button>
+        	<h4 class="modal-title" id="delSnapshotModalLabel">{{storageLang.del_snapshot}}</h4>
+      	</div>
+      	<div class="modal-body">
+      		<p></p>
+      	</div>
+    </div>
+  </div>
+</div>
+
+<!--创建克隆-->
+<div class="modal fade" id="createCloneModal" tabindex="-1" role="dialog" aria-labelledby="createCloneModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{ publicLang.cancel }}</button>
+		<button type="button" class="btn btn-primary" aria-hidden="true">{{ publicLang.save }}</button>
+        <h4 class="modal-title" id="createCloneModalLabel">{{ storageLang.create_clone }}</h4>
+      </div>
+      <div class="modal-body flex-modal-body">
+		<form class="form-horizontal col-sm-12" role="form">
+			<div class="form-group">
+				<label for="" class="col-sm-4 control-label left">{{ storageLang.poolname }}</label>
+				<div class="col-sm-8" style="padding-top: 7px;">
+					<span class="js-poolname"></span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="" class="col-sm-4 control-label left">{{ storageLang.volume_name }}</label>
+				<div class="col-sm-8" style="padding-top: 7px;">
+					<span class="js-volname"></span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="" class="col-sm-4 control-label left">{{ storageLang.snapshotname }}</label>
+				<div class="col-sm-8" style="padding-top: 7px;">
+					<span class="js-snapshot"></span>
+				</div>
+			</div>
+      <div class="form-group dest_meta hidden">
+        <label for="dest_data_pool" class="col-sm-4 control-label left">{{ storageLang.dest_metaname }}</label>
+        <div class="col-sm-8" style="padding-top:7px;">
+          <select id="dest_meta_pool" class="none-border-input" style="width:100%;">
+
+          </select>
+        </div>
+      </div>
+			<div class="form-group">
+				<label for="dest_storage_pool" class="col-sm-4 control-label left">{{ storageLang.dest_datapool }}</label>
+				<div class="col-sm-8" style="padding-top:7px;">
+					<select id="dest_storage_pool" class="none-border-input" style="width:100%;">
+
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="dest_volume_name" class="col-sm-4 control-label left">{{ storageLang.dest_volume_name }}</label>
+				<div class="col-sm-8" style="padding-top:7px;">
+					<input style="font-size: .8rem; line-height: 1.2rem" type="text" class="none-border-input col-sm-8 ellipsis" id="dest_volume_name" placeholder="{{ publicLang.only_letters_num }}" title="{{ publicLang.only_letters_num }}">
+				</div>
+			</div>
+		</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block needjs %}
+<script type="text/javascript" src="js/lib/masonry.pkgd.min.js"></script>
+<script type="text/javascript" src="js/pages/volume.js"></script>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{
+  # 使用 AirBnb 编码规范
+  "extends": "eslint-config-airbnb",
+  # 支持 ES7
+  "parser": "babel-eslint",
+  "rules": {
+    # 允许在 JS 文件中使用 JSX
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    # 允许类的非静态方法不使用 `this`；
+    "class-methods-use-this": 0,
+    # 允许引用未在 package.json 中写入依赖的包
+    "import/no-extraneous-dependencies": 0,
+    # 允许引用指定的而路径不存在的包
+    "import/no-unresolved": [2, { ignore: ['NavigatorNavigationBar'] }]
+  },
+}

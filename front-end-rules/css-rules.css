@@ -1,0 +1,39 @@
+/* ============================================================================
+  组件块
+  ============================================================================= */
+
+/* 子组件块
+  ============================================================================= */
+.sub-selector {
+  /* positioning */
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+
+  /* box model */
+  display: block;
+  width: 100px;
+  height: 100px;
+  padding: 5px;
+  border: solid 1px red;
+  border-radius: 2px;
+  margin: 4px;
+  float: left;
+  overflow: hidden;
+
+  /* typographic | font */
+  font: normal 13px "Helvetica Neue", sans-serif;
+  line-height: 3px;
+  text-align: center;
+
+  /* visual */
+  background-color: red;
+  color: #fff;
+  opacity: 100%;
+
+  /* other */
+  cursor: pointer;
+}

@@ -1,0 +1,185 @@
+{% extends 'share-template.htm' %}
+{%block rightcontent %}
+<div class="dt_g_right_bar">
+	<div class="dt_g_right_subdiv_second">
+		<div class="bs-docs-grid" style="padding-bottom:20px;">
+			<div class="row show-grid grid js-masonry">
+				<!-- cifs共享 -->
+				{% for cifs in cifsList %}
+				<div class="col-xs-12 col-md-5 col-lg-6  box-shadow grid-item grid-item-style cifs-share share-grid" data-name="{{cifs['name']}}" data-path="{{cifs['path']}}">
+					<div class="basic_content">
+						<div class="share_header">
+							<img src="css/image/folder1.png" style="width:40px;margin-top:-12px;" >
+							<span class="ellipsis" title="{{ cifs['name'] }}">{{cifs['name']}}</span>
+							<a class="fl-rt js-delete-share hidden js-delete-cifs-share" href="javascript:;" title="{{fileLang.del_the_share}}" style="margin-right: 0px;">
+								<img src="css/image/delete.png" style="width:40px;margin-top:-12px;" >
+							</a>
+							<a class="fl-rt js-edit-share hidden js-edit-cifs-share" href="javascript:;" title="{{fileLang.edit_this_share}}" style="margin-right: 22px;">
+								<img src="css/image/edit.png" style="width:40px;margin-top:-12px;" class="test">
+							</a>
+							<a class="fl-rt js-monitor-share hidden js-monitor-cifs-share" href="javascript:;" title="{{fileLang.view_share_session}}" style="margin-right: 22px;">
+								<img src="css/image/monitor.png" style="width:40px;margin-top:-12px;" class="test">
+							</a>
+						</div>
+						<div class="basic_cont_row">
+							<div class="col-lg-3 basic-lg-3 fl-lt c_left">{{fileLang.path}}：</div>
+							<div class="col-lg-8 basic-lg-8 fl-lt basic_cont_right" style="margin-left:-27px;">{{cifs['path']}}</div>
+						</div>
+						<div class="basic_cont_row">
+							<div class="col-lg-3 basic-lg-3 fl-lt c_left">{{fileLang.owners}}：</div>
+							<div class="col-lg-8 basic-lg-8 fl-lt basic_cont_right" style="margin-left:-27px;">{% if cifs['defaultowner'] != 1 %}<span>{{fileLang.login_user}}</span>{%else%}<span>{{fileLang.inherit_the_parent_dir}}</span>{%endif%}</div>
+						</div>
+						<div class="basic_cont_row">
+							<div class="col-lg-3 basic-lg-3 fl-lt c_left">{{fileLang.file_attr}}：</div>
+							<div class="col-lg-8 basic-lg-8 fl-lt basic_cont_right" style="margin-left:-27px;">{%if cifs['defaultacl'] == "0777"%}<span>{{fileLang.no_setting}}</span>{% elseif cifs['defaultacl'] == "1777" %}<span>{{fileLang.owner_delete}}</span>{% else %}{{fileLang.unknown}}{%endif%}</div>
+						</div>
+						<div class="basic_cont_row">
+							<div class="col-lg-3 basic-lg-3 fl-lt c_left">{{fileLang.filter_rule}}：</div>
+							<div class="col-lg-8 basic-lg-8 fl-lt basic_cont_right" style="margin-left:-27px;">{{cifs['filter']}}</div>
+						</div>
+						<div class="basic_cont_row">
+							<div class="col-lg-3 basic-lg-3 fl-lt c_left">{{fileLang.audit}}：</div>
+							<div class="col-lg-8 basic-lg-8 fl-lt basic_cont_right" style="margin-left:-27px;">
+								{% if cifs['audit'] == 1 %}
+								{{ fileLang.on }}
+								{% elseif cifs['audit'] == 0 %}
+								{{ fileLang.off }}
+								{%endif%}
+							</div>
+						</div>
+						<div class="basic_cont_row">
+							<div class="col-lg-3 basic-lg-3 fl-lt c_left">{{fileLang.client_cache}}：</div>
+							<div class="col-lg-8 basic-lg-8 fl-lt basic_cont_right" style="margin-left:-5px;">
+								{% if cifs['oplocks'] == 1 %}
+								{{ fileLang.on }}
+								{% elseif cifs['oplocks'] == 0 %}
+								{{ fileLang.off }}
+								{%endif%}
+							</div>
+						</div>
+						<div class="basic_cont_row">
+							<div class="col-lg-3 basic-lg-3 fl-lt c_left">{{fileLang.recycle_bin}}：</div>
+							<div class="col-lg-8 basic-lg-8 fl-lt basic_cont_right" style="margin-left:-5px;">
+								{% if cifs['recycle']['status'] == 'on' %}
+								{{ fileLang.on }}
+								{% elseif cifs['recycle']['status'] == 'off' %}
+								{{ fileLang.off }}
+								{% endif %}
+							</div>
+						</div>
+						{% if cifs['recycle']['status'] == 'on' %}
+						<div class="basic_cont_row">
+							<div class="col-lg-5 basic-lg-5 fl-lt c_left">{{ fileLang.recycle_path }}：</div>
+							<div class="col-lg-7 basic-lg-7 fl-lt" style="margin-left:-47px;">
+								{{cifs['recycle']['path']}}
+							</div>
+						</div>
+						<div class="basic_cont_row">
+							<div class="col-lg-8 basic-lg-8 fl-lt c_left">{{ fileLang.same_file_overwrite }}：</div>
+							<div class="col-lg-3 basic-lg-3 fl-lt" style="margin-left:-5px;">
+								{% if cifs['recycle']['version'] == 1 %}
+								{{ fileLang.no }}
+								{% elseif cifs['recycle']['version'] == 0 %}
+								{{ fileLang.yes }}
+								{% endif %}
+							</div>
+						</div>
+						{% if cifs['recycle']['filefilter'] %}
+						<div class="basic_cont_row">
+							<div class="col-lg-5 basic-lg-5 fl-lt c_left">{{ fileLang.recycle_filter }}：</div>
+							<div class="col-lg-7 basic-lg-7 fl-lt" style="margin-left:-27px;">
+								{{cifs['recycle']['filefilter']|join(',')}}
+							</div>
+						</div>
+						{% endif %}
+						{% if cifs['recycle']['minsize'] %}
+						<div class="basic_cont_row">
+							<div class="col-lg-8 basic-lg-8 fl-lt c_left">{{ fileLang.recy_filter_less }}：</div>
+							<div class="col-lg-3 basic-lg-3 fl-lt" style="margin-left:-27px;">
+								{{ cifs['recycle']['minsize']|sizeFormat('bytes') }}
+							</div>
+						</div>
+						{% endif %}
+						{% if cifs['recycle']['maxsize'] %}
+						<div class="basic_cont_row">
+							<div class="col-lg-8 basic-lg-8 fl-lt c_left">{{ fileLang.recy_filter_more }}：</div>
+							<div class="col-lg-3 basic-lg-3 fl-lt" style="margin-left:-27px;">
+								{{ cifs['recycle']['maxsize']|sizeFormat('bytes') }}
+							</div>
+						</div>
+						{% endif %}
+						{% endif %}
+						<div class="basic_cont_row">
+							<div class="col-lg-3 basic-lg-3 fl-lt c_left">worm：</div>
+							<div class="col-lg-8 basic-lg-8 fl-lt basic_cont_right" style="margin-left:-27px;">
+								{% if cifs['worm']['status'] == 'on' %}
+								{{ fileLang.on }}
+								{% elseif cifs['worm']['status'] == 'off' %}
+								{{ fileLang.off }}
+								{% endif %}
+							</div>
+						</div>
+						{% if cifs['worm']['status'] == 'on' %}
+						<div class="basic_cont_row">
+							<div class="col-lg-5 basic-lg-5 fl-lt c_left">{{ fileLang.worm_effective_time }}：</div>
+							<div class="col-lg-7 basic-lg-7 fl-lt" style="margin-left:0px;">
+								{{ cifs['worm']['graceperiod']|periodFormat() }}
+							</div>
+						</div>
+						{% endif %}
+						<div class="divider" style="height:1px;background-color:#F5F5F5;"></div>
+						<div class="basic_cont_row">
+							<span class="js-count-group" style="color:#2cbbf4"></span><span class="share-i share_font_color">{{fileLang.per_user_group}},</span>
+							<span class="js-count-user" style="color:#2cbbf4"></span><span class="share-i share_font_color">{{fileLang.per_user_own_this}}</span>
+						</div>
+						<div class="basic_content_list">
+							{%for user in cifs['ulist'] %}
+							<div class="share-row {% if user['isgroup'] == 1 %}js-group-share{%elseif user['i[sgroup'] == 0%}js-user-share{%endif%}">
+								{% if user['isgroup'] == 1 %}
+								<span>{{fileLang.user_group}}</span>
+								<span>{{user['user']}}</span>
+								{%elseif user['isgroup'] == 0%}
+								<span>{{fileLang.user}}</span>
+								<span>{{user['user']}}</span>
+								{%endif%}
+								{% if user['auth'] == 0 %}
+								<span>&nbsp;&nbsp;[{{fileLang.noauth}}]</span>
+								{%elseif user['auth'] == 1%}
+								<span>&nbsp;&nbsp;[{{fileLang.read_only}}]</span>
+								{%elseif user['auth'] == 2%}
+								<span>&nbsp;&nbsp;[{{fileLang.read_and_write}}]</span>
+								{%endif%}
+							</div>
+							{% endfor %}
+							{% if cifs['admin users'] %}
+							<div class="share-row js-admin-share" data-count="{{cifs['admin users']|length}}">
+								<span>{{fileLang.super_admin}}：</span>
+								<span>{{cifs['admin users']|join(',')}}</span>
+							</div>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+</div>
+<div class="bottom-icons-act" data-toggle="tooltip" title="{{fileLang.create_cifs}}">
+	<a href="javascript:;" id="create-cifs-share">
+		<span class="glyphicon glyphicon-plus"></span>
+	</a>
+</div>
+{%endblock%}
+{% block javascript %}
+<script type="text/javascript" src="js/pages/file.js"></script>
+<script type="text/javascript">
+	$(function (ev) {
+		$('.grid').masonry({
+			itemSelector: '.grid-item',
+			columnWidth: '.col-lg-6',
+			percentPosition: true
+		});
+	})
+</script>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% if adminres['count'] < 11 %}
+<div class="all_table_list" style="height:auto;">
+{% else %}
+<div class="all_table_list">
+{% endif %}
+	<div class="user-mag" style="font-weight: bold;background-color:#fafafa;">
+		<div class="pic-user col-lg-1">
+		</div>
+		<div class="name-user col-lg-2 orderby_name_sort" style="cursor:pointer;">
+			{{ userLang.username }}
+			<a class="orderby_name_asc" title="{{publicLang.ASC}}">
+				<span class="glyphicon glyphicon-triangle-top"></span>
+			</a>
+			<a class="orderby_name_desc" title="{{publicLang.DESC}}" style="display:none;">
+				<span class="glyphicon glyphicon-triangle-bottom"></span>
+			</a>
+		</div>
+		<div class="permit-user col-lg-2">{{ userLang.user_role }}</div>
+		<div class="email-user col-lg-3">{{ userLang.user_email }}</div>
+		<div class="createDate-user col-lg-2 orderby_createtime_sort" style="cursor:pointer;">{{ userLang.create_time }}
+			<a class="orderby_createtime_asc" title="{{publicLang.ASC}}">
+				<span class="glyphicon glyphicon-triangle-top"></span>
+			</a>
+			<a class="orderby_createtime_desc" title="{{publicLang.DESC}}" style="display:none;">
+				<span class="glyphicon glyphicon-triangle-bottom"></span>
+			</a>
+		</div>
+		<div class="other-action col-lg-2"></div>
+	</div>
+	<div class="magtable_list_parent">
+		{% if adminres['count'] < 11 %} 
+		<div class="magtable_list well-sm bgwhite" style="overflow:hidden;">
+		{% else %}
+		<div class="magtable_list well-sm bgwhite">
+		{% endif %}
+			{% for user in  adminres['result']%}
+			<div class="user-mag js-user" data-userid="{{user['userid']}}" data-username="{{user['username']}}"  data-nickname="{{user['nickname']}}" data-groupid="{{user['groupid']}}" data-role="{{user['role']}}">
+				<div class="pic-user col-lg-1">
+					<img src="css/image/user-mag.png" width="28px" height="28px" alt=" {{ user['username'] }}{{ userLang.personal_photo }}" title="{{ user['username'] }}">
+					<input type="checkbox" class="mg-user-checked">
+				</div>
+				<div class="name-user col-lg-2 ellipsis">
+					<span id="username-create" title="{{ user['username'] }}"> {{ user['username'] }}</span>
+				</div>
+				<div class="permit-user col-lg-2">
+					{% if user['role'] == 2 %}
+					{{publicLang.admin}}
+					{% elseif user['role'] == 1 %}
+					{{ publicLang.auit_admin }}
+					{% endif %}
+				</div>
+				<div class="email-user col-lg-3 ellipsis" title="{{ user['email'] }}">{{ user["email"] }}</div>
+				<div class="createDate-user col-lg-2"> {{ user["formatedctime"] }}</div>
+				<div class="other-action col-lg-2">
+					<div class="user-hidden-icons">
+						<span class="glyphicon glyphicon-pencil" id="b_modi_adminuser" title="{{ userLang.edit_user }}"></span>
+						<span class="glyphicon glyphicon-trash"  id="b_del_adminuser" title="{{ userLang.del_user }}"></span>
+						<span class="glyphicon glyphicon-th" id="b_reset_adminuser" data-toggle="modal" data-target="#resetAdminPwdModal" title="{{ userLang.pwd_reset }}"></span>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>

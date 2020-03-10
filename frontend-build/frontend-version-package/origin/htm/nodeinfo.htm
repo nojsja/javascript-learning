@@ -1,0 +1,638 @@
+{% extends "template.htm" %}
+{% block css %}
+<link rel="stylesheet" href="css/masonry-docs.css" media="screen">
+{% endblock %}
+{% block needcss%}
+<style type="text/css">
+	/*
+	重写metro的样式，只针对当前页面有效
+	*/
+	.v-menu li a {
+		min-width: 13.5rem;
+		float: left;
+  		padding-left: 24px;
+	}
+	.v-menu li::after {
+		content: ' ';
+	}
+	.v-menu li::after:active {
+		background-color: #2DBCE6;
+	}
+	.v-menu li::after:hover {
+		background-color: #2DBCE6;
+	}
+	.v-menu li::after:visited {
+		background-color: #2DBCE6;
+	}
+	.d-menu li a {
+	  min-width: 13.5rem;
+	}
+	li.sub-menu {
+	  border-bottom: 1px solid #f5f5f5;
+	}
+	.row{
+		margin: 0;
+	}
+  /*
+  masonry
+  */
+  .form-horizontal .form-group {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  body {
+		font-size: 62.5%;
+		text-align:center;
+	}
+	.v-menu {
+		overflow: auto;
+		overflow-x: hidden;
+		height: auto;
+		width: 100%;
+		max-width: 100%;
+	}
+	.v-menu>li, .v-menu li>a {
+		width: 100%;
+	}
+	/*
+	重写bootstrap
+	*/
+	.show-grid{
+		padding:0;
+		border: 0;
+		margin: 0;
+	}
+	.col-lg-6 {
+		width: 48%;
+	}
+	.col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-7, .col-lg-8,.col-lg-10,.col-lg-12 {
+		padding: 0 !important;
+	}
+	.show-grid [class^=col-]{
+		padding:30px 0;
+		border: 0;
+		background-color: #fff
+	}
+	.modal {
+		text-align: left;
+	}
+	/*
+	重写ma
+	*/
+	.grid-item {
+		height: auto;
+	}
+	.grid {
+		background-color: #f4f9fa!important;
+	    border-radius: 0px;
+	}
+	.grid-item {
+		  border-radius: 0px!important;
+	}
+	.pink {background-color: #2dbce6!important; }
+	/*smart弹出框*/
+	.popover {
+		background-color: #fff;
+		border: 0;
+		border-radius: 0;
+	}
+	.popover-title {
+		background-color: #2d2d2d;
+		border-bottom: 0;
+		border-radius: 0;
+	}
+	.table>thead>tr>th,
+	.table thead {
+		border-bottom:0;
+	}
+	.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+		border:0;
+	}
+	.well {
+		border:0;
+		background-color: #2d2d2d;
+	}
+	.table-smart>tbody>tr>td{
+		color:white;
+	}
+	.table-smart>thead>tr>th{
+		color:white;
+	}
+</style>
+{% endblock %}
+{%block body%}
+<div class="dt_center_a" style="padding-top:0px;">
+	<!--右边导航-->
+	<nav class="fixed_nav_left">
+		<div class="node-nav-sub-left" style="display: inline-block;height:100%;width:100%;">
+			<div class="node-nav-second" style="box-shadow: 0 1px 4px #e7e9ec;border-bottom:0;width:100%;">
+				<span>{{nodeLang.all_node}}</span>
+			</div>
+			<ul class="v-menu box-shadow">
+				{% if nodeList|length > 0 %}
+				    {% for node in nodeList %}
+              {% if node['ip'] != '' %}
+  				    {% if curhost == '' %}
+  					    {% if node['ip'] == nodeList[0]['ip'] %}
+    					    <li class="sub-menu active" data-ip="{{node['ip']}}">
+    					    	<a href="javascript:;" style="float:left;">
+    					    		<span class="glyphicon glyphicon-hdd"></span>
+    					    		<span>{{node['ip']}}</span>
+    					    	</a>
+    						  </li>
+  					   {%else%}
+    						<li class="sub-menu" data-ip="{{node['ip']}}">
+    					    	<a href="javascript:;" style="float:left;">
+    					    		<span class="glyphicon glyphicon-hdd"></span>
+    					    		<span>{{node['ip']}}</span>
+    					    	</a>
+    						</li>
+  						{%endif%}
+  			      {% else %}
+    						<li class="sub-menu {%if curhost==node['ip'] %}active{%endif%}" data-ip="{{node['ip']}}">
+    					    	<a href="javascript:;" style="float:left;">
+    					    		<span class="glyphicon glyphicon-hdd"></span>
+    					    		<span>{{node['ip']}}</span>
+    					    	</a>
+    						</li>
+  			    {%endif%}
+            {%endif%}
+
+					{%endfor%}
+				{%endif%}
+			     <!-- <li>
+				    <a href="javascript:;" id="add_node" title="{{nodeLang.add_node}}" style="padding-right:15px;color:#596AE2;" data-toggle="modal" data-target="#addNodeModal">
+						<img src="css/image/add.png" style="width:15px;height: 15px;margin-top:-8px;"/>
+			          <span>{{nodeLang.add_node}}</span>
+			        </a>
+			    </li> -->
+			</ul>
+		</div>
+	</nav>
+	<div class="dt_center_a_second">
+		<!--左边部分-->
+		<!-- <div class="dt_g_left_bar dt_g_left_bar_on cell usermanage cell usermanage" style="width:24%;min-width: 160px;max-width: 370px;">
+		</div> -->
+		<!--右边部分-->
+		<div class="dt_g_right_bar_second">
+				<!--管理用户-->
+			<div class="dt_g_right_subdiv_second">
+				<div class="bs-docs-grid">
+				    <div class="row show-grid grid js-masonry">
+				      <!-- 基本信息 -->
+				    	<div class="col-xs-12 col-md-5 col-lg-6 box-shadow grid-item  basic_nodeinfo">
+				      		<div class="basic_header">
+				      			<img src="css/image/basic_info.png" style="width:43px;margin-bottom:10px;">
+				      			<span>{{ nodeLang.basic_info_node }}</span>
+								<!--<span class="c_right c_basic_right fl-rt nodeinfo-do hidden" style="font-size: 1.4em;">-->
+									<!--<a href="javascript:;" id="resetNode" title="{{nodeLang.reset_node}}" data-toggle="modal" data-target="#nodeResetModal">-->
+										<!--<img src="css/image/reset_node.png" style="width:43px" class="test">-->
+									<!--</a>-->
+                                <!--</span>-->
+				      		</div>
+				      		<div class="basic_content basicinfo_content" style="height:200px;">
+				      			<div class="basic_cont_row machine_name_row">
+				      				<div class="col-lg-2 c_left basic_name basic-lg-2 machine_name">
+				      					<span>{{nodeLang.machine_name}}</span>
+				      				</div>
+				      				<div class="col-lg-7 machine_name_value">
+				      					<!--<input type="text" style="width:100%;" value="" placeholder="{{nodeLang.add_machine_name}}"/>-->
+										<span></span>
+				      				</div>
+				      				<!-- <div class="col-lg-1 remove_mach_value hidden">
+				      					<a href="javascript:;" title="{{nodeLang.remove_field_name}}">
+				      						<span class="glyphicon glyphicon-remove"></span>
+				      					</a>
+				      				</div> -->
+				      			</div>
+				      			<div class="basic_cont_row">
+				      				<div class="col-lg-2 c_left basic_name basic-lg-2 cpu_name">
+				      					<span>{{nodeLang.CPU}}</span>
+				      				</div>
+				      				<div class="col-lg-8 basic_name_value cpu_name_value">
+				      					<span>&nbsp;</span>
+				      				</div>
+				      			</div>
+				      			<div class="basic_cont_row">
+				      				<div class="col-lg-2 c_left basic_name basic-lg-2 ram_name">
+				      					<span>{{nodeLang.RAM}}</span>
+				      				</div>
+				      				<div class="col-lg-8 basic_name_value ram_name_value">
+				      					<span>&nbsp;</span>
+				      				</div>
+				      			</div>
+				      			<div class="basic_cont_row">
+				      				<div class="col-lg-2 c_left basic_name basic-lg-2 system_disk">
+				      					<span class="c_left">{{nodeLang.system_disk}}</span>
+				      				</div>
+				      				<div class="col-lg-8 basic_name_value system_disk_value">
+				      					<span>&nbsp;</span>
+				      				</div>
+				      			</div>
+				      			<div class="basic_cont_row">
+				      				<div class="col-lg-2 c_left basic_name basic-lg-2 system_space">
+				      					<span class="c_left">{{nodeLang.system_space}}</span>
+				      				</div>
+				      				<div class="col-lg-8 basic_name_value system_space_value">
+				      					<div>{{nodeLang.system_space_used}}<span class="system_space_used"></span>,{{nodeLang.system_space_total}}<span class="system_space_total"></span>,{{nodeLang.utilization_rate}}<span class="utilization_rate"></span></div>
+				      				</div>
+				      			</div>
+				      		</div>
+				    	</div>
+				      <!-- 关机与启动 -->
+				      	<!-- <div class="col-xs-12 col-md-5 col-lg-6 grid-item box-shadow off_on_nodeinfo">
+							<div class="basic_header">
+				      			<img src="css/image/poweroff_restart.png" style="width:43px;margin-bottom:10px;">
+				      			<span>{{ nodeLang.off_and_on }}</span>
+                                <span class="c_right c_basic_right fl-rt nodeinfo-do hidden">
+				      				<a href="javascript:;" title="{{nodeLang.reboot}}" data-toggle="modal" data-target="#rebootModal" >
+										<img src="css/image/restart.png" style="width:43px" class="test">
+                                    </a>
+				      				<a href="javascript:;" title="{{nodeLang.shut}}" data-toggle="modal" data-target="#shutdownModal" >
+										<img src="css/image/power_off.png" style="width:43px" class="test">
+                                    </a>
+			      				</span>
+				      		</div>
+				      		<div class="basic_content off_on_contrnt">
+				      			<div class="basic_cont_row">
+				      				<div class="col-lg-2 c_left basic_name basic-lg-2">
+				      					<span>{{nodeLang.start_time}}</span>
+				      				</div>
+				      				<div class="col-lg-8 basic_name_value">
+				      					<span class="start_time">&nbsp;</span>
+				      				</div>
+				      			</div>
+				      			<div class="basic_cont_row">
+				      				<div class="col-lg-2 c_left basic_name basic-lg-2">
+				      					<span class="c_left">{{nodeLang.run_time}}</span>
+				      				</div>
+				      				<div class="col-lg-8 basic_name_value">
+				      					<span class="runtime">&nbsp;</span>
+				      				</div>
+				      			</div>
+				      		</div>
+				      	</div> -->
+
+				      	<!--网络设置-->
+						<div class="col-xs-12 col-md-5 col-lg-6  box-shadow grid-item network_nodeinfo">
+							<div class="basic_header">
+								<img src="css/image/net_set.png" style="width:43px;margin-bottom:10px;">
+								<span>{{ nodeLang.network_info_node }}</span>
+                <span class="c_right c_basic_right fl-rt nodeinfo-do hidden" style="width:auto;">
+                  <a href="javascript:;" id="bind_nic" title="{{nodeLang.bind}}" data-toggle="modal" data-target="#setBindModal" style="display:inline;">
+										<img src="css/image/bind.png" width="43px;" class="test">
+									</a>
+                  <a href="javascript:;" id="cancel_bind_nic"  title="{{nodeLang.unbind}}" data-toggle="modal" data-target="#cancelBindModal" style="display:inline;">
+										<img src="css/image/unbind.png" width="43px;" class="test">
+									</a>
+                </span>
+							</div>
+							<div class="basic_content js-netlist">
+
+							</div>
+						</div>
+				      	<!--<div class="col-xs-12 col-md-5 col-lg-6  box-shadow grid-item network_nodeinfo">-->
+				      		<!--<div class="basic_header">-->
+				      			<!--<img src="css/image/net2.png" style="width:40px;">-->
+				      			<!--<span>{{ nodeLang.network_info_node }}</span>-->
+                                <!--<span class="c_right c_basic_right fl-rt nodeinfo-do hidden" style="font-size: 1.4em;">-->
+                                    <!--<a href="javascript:;" id="bind_nic" title="{{nodeLang.bind}}" data-toggle="modal" data-target="#setBindModal" style="display:inline;">-->
+                                        <!--<span class="glyphicon glyphicon-plus-sign"></span>-->
+                                    <!--</a>-->
+                                    <!--<a href="javascript:;" id="cancel_bind_nic"  title="{{nodeLang.unbind}}" data-toggle="modal" data-target="#cancelBindModal" style="display:inline;">-->
+                                        <!--<span class="glyphicon glyphicon-minus-sign"></span>-->
+                                    <!--</a>-->
+                                <!--</span>-->
+				      		<!--</div>-->
+				      		<!--<div class="basic_content js-netlist">-->
+					      		<!---->
+				      		<!--</div>-->
+				      	<!--</div>	-->
+
+						<!-- 磁盘 -->
+						<div class="col-xs-12 col-md-5 col-lg-6  box-shadow disk_nodeinfo grid-item ">
+							<div class="basic_header">
+								<img src="css/image/disk2.png">
+								<span>{{ nodeLang.disk_info_node }}</span>
+									<span class="c_right c_basic_right fl-rt hidden">
+				      				<a href="javascript:;" title="{{nodeLang.refresh}}" data-toggle="modal" data-target="#refreshDiskCacheModal">
+										<img src="css/image/format.png" style="width:43px" class="test">
+									</a>
+				      				<a href="javascript:;" title="{{nodeLang.clean_disk_info_cache}}" data-toggle="modal" data-target="#cleanDiskCacheModal">
+										<img src="css/image/delete.png" style="width:43px" class="test">
+									</a>
+			      				</span>
+							</div>
+							<div class="basic_content ">
+								<div class="basic_content_list">
+									<div class="disk-mag">
+										<div class="col-lg-3 basic-lg-3 ellipsis left name-disk">
+											<span>{{nodeLang.disk_name}}</span>
+										</div>
+										<div class="col-lg-3 basic-lg-3 capacity-disk" style="cursor:pointer;">
+											<span>{{nodeLang.capacity}}</span>
+										</div>
+										<div class="col-lg-3 basic-lg-3 smart-disk" style="">
+											<span>{{nodeLang.smart}}</span>
+										</div>
+										<div class="col-lg-3 other-act-part">
+										</div>
+									</div>
+								</div>
+								<div class="basic_content_list disk-content">
+								</div>
+							</div>
+						</div>
+
+				      	<!-- 分区 -->
+						<div class="col-xs-12 col-md-5 col-lg-6  box-shadow grid-item partition_nodeinfo" >
+				      		<div class="basic_header">
+				      			<img src="css/image/part2.png">
+				      			<span>{{ nodeLang.partition_info_node }}</span>
+				      			<!-- <span style="font-size: 1.3em;margin-left: 30px;color: #2DBCE6;">已选分区数</span> -->
+								 <span class="c_right c_basic_right fl-rt nodeinfo-do" style="font-size: 1.4em;">
+									 <!--<a id="delMultiPart" href="javascript:;" title="{{nodeLang.Multi_delete_part}}" class="hidden">
+										 <span class="glyphicon glyphicon-trash"></span>
+									 </a>-->
+									 <!--<a id="formatMulti" href="javascript:;" title="{{nodeLang.Multi_format_part}}" class="hidden">
+										 <span class="glyphicon glyphicon-repeat"></span>
+									 </a>-->
+									 <!--<a id="umountMulti" href="javascript:;" title="{{nodeLang.Multi_uninstall}}" class="hidden">
+										 <span class="glyphicon glyphicon-remove-circle"></span>
+									 </a>-->
+									 <!--<a id="addNewPart" href="javascript:;" class="hidden" title="{{nodeLang.new_partition}}" data-toggle="modal" data-target="#addPartModel">
+										 <span class="glyphicon glyphicon-plus-sign"></span>
+									 </a>-->
+			      				</span>
+
+				      		</div>
+							<!--分区格式化进度栏-->
+							<!--{% for node in nodeList %}
+								<div name="{{node['ip']}}" class="hidden js-progress-info">
+									<span>格式化进度:</span>
+									<div class="progress">
+										<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 60%;min-width:8%;">
+											0%
+										</div>
+									</div>
+								</div>
+							{% endfor %}-->
+				      		<div class="basic_content ">
+					      		<div class="basic_content_list">
+						      		<div class="part-mag">
+										<!--<div class="col-lg-1 pic-part is-select-all">-->
+											<!--<a href="javascript:;">-->
+												<!--<input type="checkbox"/>-->
+											<!--</a>-->
+						      			<!--</div>-->
+										<div class="col-lg-3 basic-lg-3 path-part left" style="">
+											<span>{{nodeLang.path}}</span>
+										</div>
+										<div class="col-lg-3 basic-lg-3 usage-part left" style="cursor:pointer;">
+											<span>{{nodeLang.utilization_rate}}</span>
+										</div>
+										<div class="col-lg-5 basic-lg-5 left mount-part" style="cursor:pointer;">
+											<span>{{nodeLang.mount_point}}</span>
+										</div>
+										<div class="col-lg-1 other-act-part left">
+										</div>
+						      		</div>
+						      	</div>
+					      		<div class="basic_content_list part-content">
+					      		</div>
+				      		</div>
+				      	</div>
+
+						<!-- 时间设置 -->
+						<div class="col-xs-12 col-md-5 col-lg-6  box-shadow clock_nodeinfo grid-item ">
+							<div class="basic_header">
+								<img src="css/image/clock_set.png" style="width:43px;margin-bottom:10px;">
+								<span>{{ nodeLang.clock_info_node }}</span>
+								    <span class="c_right c_basic_right fl-rt nodeinfo-do hidden" style="width:auto;">
+                                    <a href="javascript:;" data-toggle="modal" data-target="#nodeClockInfoModal" title="{{nodeLang.node_clock_info_and_option}}" style="display:inline;">
+										<img src="css/image/setting.png" width="43px;" class="test">
+									</a>
+                                </span>
+							</div>
+							<div class="basic_content">
+								<div class="basic_cont_row ntp_name_row">
+									<div class="col-lg-2 c_left basic_name basic-lg-2">
+										<span class="c_left">{{nodeLang.clock_character}}</span>
+									</div>
+									<div class="col-lg-8 ntp_name_value">
+										<span></span>
+									</div>
+								</div>
+								<div class="basic_cont_row">
+									<div class="col-lg-2 c_left basic_name basic-lg-2">
+										<span class="c_left">{{nodeLang.system_time}}</span>
+									</div>
+									<div class="col-lg-8 basic_name_value" title="{{nodeLang.time_setting}}">
+										<input class="none-border-input" style="cursor:pointer" readonly="true" id="js-sys-time">
+									</div>
+								</div>
+								<div class="basic_cont_row">
+									<div class="col-lg-2 c_left basic_name basic-lg-2">
+										<span class="c_left">{{nodeLang.city}}</span>
+									</div>
+									<div class="col-lg-8 basic_name_value">
+										<select class="none-border-input" id="mac_city" style="height:30px;width:100%;margin-left: -4px;" title="{{nodeLang.select_city}}">
+
+										</select>
+									</div>
+								</div>
+								<div class="basic_cont_row">
+									<div class="col-lg-2 c_left basic_name basic-lg-2">
+										<span class="c_left">{{nodeLang.time_zone}}</span>
+									</div>
+									<div class="col-lg-8 basic_name_value timezone_clock">
+										<span></span>
+									</div>
+								</div>
+								<div class="basic_cont_row js-daylight-row hidden">
+									<div class="col-lg-2 c_left basic_name basic-lg-2">
+										<span class="c_left">{{nodeLang.summer_season}}</span>
+									</div>
+									<div class="col-lg-8 basic_name_value daylight_clock">
+										<span></span>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- 服务列表 -->
+						<div class="col-xs-12 col-md-5 col-lg-6 box-shadow servlist_nodeinfo grid-item">
+							<div class="basic_header">
+								<img src="css/image/disk2.png" style="width:40px;">
+								<span>{{nodeLang.service_list}}</span>
+							</div>
+							<div class="basic_content" style="padding-right:42px;font-size:1.4em;">
+								<table id="nodeServiceTable" class="table table-hover non-bold-thead">
+									<thead>
+									<th>{{nodeLang.service}}</th>
+									<th>{{nodeLang.preset}}</th>
+									<th>{{nodeLang.state}}</th>
+									<th style="width:10%"></th>
+									</thead>
+									<tbody>
+
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+				    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--SMART详细信息-->
+<div id="smart" class="popover box-shadow js-popver-smart"  style="z-index:10000;width:500px;max-width:500px;  background-color: #2d2d2d;">
+	<!--<div class="arrow" style="top: 50%;"></div>-->
+	<h3 class="popover-title" style="font-weight: bold;margin: 9px 14px;">S.M.A.R.T.信息</h3>
+	<div class="popover-content">
+		<div class="dt_dtable_head well well-sm"  style="padding: 0px;">
+			<table class="table table-smart" style="margin-bottom: 18px;padding: 0px;">
+				<thead>
+
+				</thead>
+			</table>
+		</div>
+		<div class="dt_dtable_body well well-sm" style="max-height:300px;overflow:auto;padding: 0px;">
+			<table class="table main table-smart table-condensed">
+				<tbody>
+
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<!--分区扩展信息-->
+<div id="js-popver-usage" style="width:150px;">
+    <div class="arrow" style="top: 50%;">
+    </div>
+    <div class="usage-container">
+        <div class="use-content">
+            <span>{{nodeLang.system_space_used}}：</span>
+            <span class="js-used-part"></span>
+        </div>
+        <div class="use-content">
+            <span>{{nodeLang.system_space_total}}：</span>
+            <span class="js-used-total"></span>
+        </div>
+        <div class="use-content">
+            <span>{{nodeLang.status}}：</span>
+            <span class="js-used-status"></span>
+        </div>
+        <div class="use-content">
+            <span>{{nodeLang.file_system}}：</span>
+            <span class="js-used-type"></span>
+        </div>
+    </div>
+</div>
+
+<!--磁盘扩展信息-->
+<div id="js-popver-disk" class="ellipsis" style="width:200px;">
+    <div class="arrow" style="top: 50%;">
+    </div>
+    <div class="usage-container">
+        <div class="use-content">
+            <span>{{nodeLang.serial_number}}：</span>
+            <span class="js-disk-serial"></span>
+        </div>
+        <div class="use-content">
+            <span>{{nodeLang.device_path}}：</span>
+            <span class="js-disk-devicepath"></span>
+        </div>
+        <div class="use-content">
+            <span>{{nodeLang.box}}：</span>
+            <span class="js-disk-box"></span>
+        </div>
+        <div class="use-content">
+            <span>{{nodeLang.sloat}}：</span>
+            <span class="js-disk-sloat"></span>
+        </div>
+        <div class="use-content">
+            <span>{{nodeLang.interface}}：</span>
+            <span class="js-disk-interface"></span>
+        </div>
+        <div class="use-content">
+            <span>{{nodeLang.disk_type}}：</span>
+            <span class="js-disk-type"></span>
+        </div>
+    </div>
+</div>
+
+<!--网络扩展信息-->
+<div id="js-popver-ntw" style="width:200px;">
+    <div class="arrow" style="top: 50%;">
+    </div>
+    <div class="usage-container">
+        <div class="use-content">
+            <span>{{nodeLang.gateway}}：</span>
+            <span class="js-ntw-gateway"></span>
+        </div>
+        <div class="use-content">
+            <span>{{nodeLang.mac_adress}}：</span>
+            <span class="js-ntw-mac"></span>
+        </div>
+        <div class="use-content">
+            <span>{{nodeLang.bondmode}}：</span>
+            <span class="js-ntw-bondmode"></span>
+        </div>
+        <div class="use-content">
+            <span>{{nodeLang.cur_speed}}：</span>
+            <span class="js-ntw-cur-speed"></span>
+        </div>
+		<div class="use-content">
+			<span>{{nodeLang.max_speed}}：</span>
+			<span class="js-ntw-max-speed"></span>
+        </div>
+        <div class="use-content">
+            <span>{{nodeLang.link_stutas}}：</span>
+            <span class="js-ntw-link"></span>
+        </div>
+    </div>
+</div>
+
+<!-- 许可证管理显示注册码 -->
+<div id="js-popver-liccode" style="width:220px;">
+    <div class="arrow" style="top: 50%;">
+    </div>
+    <div class="usage-container">
+        <div class="use-content" style="height:auto;">
+            <span>{{nodeLang.registration_code}}</span>
+            <span class="js-permit-liccode" style="display: flex;"></span>
+        </div>
+        <div class="use-content" style="height:auto;">
+            <span>{{nodeLang.activation_time}}</span>
+            <span class="js-active-time" style="display: flex;"></span>
+        </div>
+    </div>
+</div>
+
+{% include 'node-modal.htm' %}
+
+{%endblock%}
+{% block needjs %}
+<script type="text/javascript" src="js/lib/masonry.pkgd.min.js"></script>
+<script type="text/javascript" src="js/lib/datepicker/WdatePicker.js"></script>
+<script src="js/pages/nodeinfo.js"></script>
+<script src="js/pages/disk.js"></script>
+<script src="js/pages/part.js"></script>
+<script src="js/pages/network.js"></script>
+<script src="js/pages/permit.js"></script>
+
+{% endblock %}
+{% block javascript %}
+<script type="text/javascript">
+$('.grid').masonry({
+  itemSelector: '.grid-item',
+  columnWidth: '.col-lg-6',
+  percentPosition: true
+})
+</script>
+{% endblock %}

@@ -1,0 +1,278 @@
+{% extends 'two-float-layout.htm' %} {% block leftnav%} {% include 'storagemgm-left-nav.htm' %}
+{%endblock%} {% block rightcontent %}
+<!--<div class="bs-docs-grid">
+    列举出卷详细信息及其下面的快照-->
+<!--</div>-->
+
+<div class="bs-docs-grid">
+	<div class="row show-grid grid js-masonry" style="padding-left: 2%;">
+		<div class="col-xs-12 col-md-12 col-lg-12 box-shadow licenseCont" style="min-height: 520px;">
+			<div class="basic_header clearfix" style="display: flex; justify-content: space-between">
+				<!--<img src="css/image/basicnode.png">-->
+        <span style="width: 50%; display: flex; align-items: center">
+          <a style="color:#3dbcf3; font-size: 1.3rem;"><span class="glyphicon glyphicon-list-alt"></span></a>
+          <span style="font-size: 1.1rem">{{ licenseLang.license_list }}</span>
+        </span>
+
+        <span style="width: 50%">
+          <a class="fl-rt hidden js-add-node" href="javascript:;" title="{{clusterLang.add_main_node}}">
+            <img src="css/image/plus.png" style="width:43px" class="test">
+          </a>
+          <span class="pull-right" style="height: 48px;">
+            <!-- <a href="javascript:;" class="js-init-license hidden" style="" title="{{licenseLang.init_license}}">
+              <img src="css/image/mdata_change.png" class="test">
+            </a> -->
+            <a href="javascript:;" class="js-create-license hidden" style="" title="{{licenseLang.add_license}}">
+              <img src="css/image/plus.png" class="test">
+            </a>
+          </span>
+        </span>
+
+			</div>
+			<div class="basic_content_list">
+				<table class="table" style="width: 95%; margin: 0 auto; position: relative; left: 1%;">
+					<thead>
+						<tr style="font-size: .8rem">
+							<th>{{licenseLang.authorization_code}}</th>
+              <th style='text-align: center'>{{licenseLang.authorization_type}}</th>
+              <th style='text-align: center'>{{licenseLang.description}}</th>
+							<th style='text-align: center'>{{licenseLang.authorization_term_total}}</th>
+							<th style='text-align: center'>{{licenseLang.authorization_specifications}}</th>
+							<th style='text-align: center'>{{licenseLang.authorization_node}}</th>
+							<th style='text-align: center'>{{licenseLang.node_added}}</th>
+							<th style='text-align: center'>{{licenseLang.activated_node}}</th>
+							<th style='text-align: center'>{{licenseLang.delete}}</th>
+							<th style='text-align: center'>{{licenseLang.activation}}</th>
+						</tr>
+					</thead>
+					<tbody id="licenseList">
+
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--添加授权码-->
+<div class="modal fade" id="createLicenseModal" tabindex="-1" role="dialog" aria-labelledby="createLicenseModalLabel" aria-hidden="true"
+ data-backdrop="static">
+	<div class="modal-dialog" style="width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{ publicLang.cancel }}</button>
+				<button type="button" class="btn btn-primary" aria-hidden="true">{{ licenseLang.confirm }}</button>
+				<h4 class="modal-title" id="createLicenseModalLabel">{{ licenseLang.create_license }}</h4>
+			</div>
+			<div class="modal-body flex-modal-body">
+				<form class="form-horizontal col-sm-12" role="form">
+					<div class="form-group" style="display: flex; justify-content: space-between; align-items: center">
+						<label for="new_license_name">{{licenseLang.authorization_code}}</label>
+						<input type="text" id="new_license_name" style="width:75%;height:25px;" placeholder="{{ publicLang.only_letters_num }}">
+						<a href="javascript:;" class="js-license-parse">
+						<span class="glyphicon glyphicon-plus-sign"></span>
+						</a>
+					</div>
+					<div class="form-group hidden">
+						<table class="table">
+							<thead>
+								<th>{{licenseLang.authorization_code}}</th>
+								<th>{{licenseLang.authorization_type}}</th>
+								<th>{{licenseLang.authorization_specifications}}</th>
+								<th>{{licenseLang.number_of_licenses}}</th>
+								<th></th>
+							</thead>
+							<tbody id="parseTable">
+
+							</tbody>
+						</table>
+					</div>
+					<div class="form-group allNodesList hidden lisenceCheckbox" style="border-top: solid 1px #e1e3e4; padding: 1rem 0rem .5rem">
+						<label for="license_node">{{licenseLang.authorization_node}}</label>
+						<input type="checkbox" class="check_all_nodes" style="margin-left: 1rem"/>
+						<label>{{licenseLang.select_all}}</label>
+						<br/>
+					</div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<!--删除授权码-->
+<div class="modal fade" id="delLicenseModal" tabindex="-1" role="dialog" aria-labelledby="delLicenseModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="btn btn-default" data-dismiss="modal">{{publicLang.cancel}}</button>
+				<button type="button" class="btn btn-danger">{{licenseLang.confirm}}</button>
+				<h4 class="modal-title" id="delLicenseModalLabel">{{licenseLang.delete_license}}</h4>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<p>{{licenseLang.deleting}}：</p>
+					<p><span class="license">{{licenseLang.authorization_code}}：</span><span>xxxxxxxxxxxxxxx</span></p>
+					<p><span class="licenseType">{{licenseLang.authorization_type}}：</span><span>xxxxxxxxxxxxxxx</span></p>
+					<p><strong>{{licenseLang.ensure}}</strong></p>
+					<!-- <input type="text" style="width: 100%;" name="sureToDel" /> -->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--激活授权码-->
+<div class="modal fade" id="activeLicenseModal" tabindex="-1" role="dialog" aria-labelledby="activeLicenseModalLabel" aria-hidden="true"
+ data-backdrop="static">
+	<div class="modal-dialog" style="min-width:650px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{ publicLang.cancel }}</button>
+				<h4 class="modal-title" id="activeLicenseModalLabel">{{ licenseLang.activeLicese }}</h4>
+			</div>
+			<div class="modal-body flex-modal-body">
+				<form class="form-horizontal col-sm-12" role="form">
+					<div class="form-group">
+						<ul class="nav nav-tabs">
+							<li class="active"><a class="manActive" href="#manualActive">{{licenseLang.manual_activation}}</a></li>
+							<li><a class="auActive" href="#autoActive">{{licenseLang.automatic_activation}}</a></li>
+						</ul>
+						<div id="manualActive">
+							<span style="margin-left:10px; margin-top: 15px; display: inline-block;">{{licenseLang.activated}}：</span>
+							<span id="active-ratio"><!-- 3/4 --></span>
+							<a href="#" class="glyphicon glyphicon-question-sign actcode_active" data-container="body" data-toggle="popover" data-content="{{licenseLang.tipsa}}<a href='http://itbasic.datatom.com/license/activation' target='_blank'>http://lic.datatom.com/</a>,{{licenseLang.tipsb}}" data-trigger="focus">
+			              			</a>
+							<br/>
+							<span style="margin-left:10px; margin-top: 10px; display: inline-block;" >{{licenseLang.authorization_code}}：</span>
+							<span id="license-code" class="license-p">xxxxxxxxxxxxxxx</span>
+							<table class="table" style="margin-top: 10px;">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>{{licenseLang.node}}</th>
+										<th>{{licenseLang.machine_code}}</th>
+										<th><!-- 激活码 --></th>
+										<th>{{licenseLang.activation}}</th>
+									</tr>
+								</thead>
+								<tbody>
+
+								</tbody>
+							</table>
+						</div>
+						<div id="autoActive" class="hidden">
+							<a class="js-active-all-nodes" style="margin-left:10px; margin-top: 10px; display: inline-block;">{{licenseLang.activate_all}}</a>
+              <a class="js-active-all-nodes-disable hidden" style="margin-left:10px; margin-top: 10px; display: inline-block; color: grey">{{licenseLang.activate_all}}</a>
+							<table class="table" style="margin-top: 10px;">
+
+							</table>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--添加节点详情-->
+<div class="modal fade" id="nodesDetailModal" tabindex="-1" role="dialog" aria-labelledby="nodesDetailModalLabel" aria-hidden="true">
+	<div class="modal-dialog" style="width:500px;">
+		<div class="modal-content">
+			<div class="modal-header" style="display: flex; justify-content: space-between">
+				<span class="modal-title" id="nodesDetailModalLabel"  style="font-size: 1rem">{{licenseLang.added}}:
+          <span id="addednodes"  style="font-size: 1rem"></span>
+        </span>
+				<span class="modify-nodes-detail" ><span class="glyphicon glyphicon-pencil"></span></span>
+				<span class="close-modify hidden" ><a class='js-remove-node hidden'><span class='glyphicon glyphicon-remove'></a></span></span>
+			</div>
+			<div class="modal-body flex-modal-body">
+				<form class="form-horizontal col-sm-12" role="form">
+					<div class="form-group">
+						<table class="table">
+							<thead>
+								<tr>
+									<th>{{licenseLang.node}}</th>
+									<th>{{licenseLang.machine_code}}</th>
+                  <th>{{licenseLang.add_time}}</th>
+									<th>{{licenseLang.status}}</th>
+								</tr>
+							</thead>
+							<tbody id="nodesDetail">
+
+							</tbody>
+						</table>
+					</div>
+
+          <div class="nav-tabs hidden" style="margin-bottom: .5rem"></div>
+
+					<div class="form-group check-nodes lisenceCheckbox hidden" style="padding-left: 9px;">
+						<input type="checkbox" id="select-all"/>
+						<label>{{licenseLang.select_all}}</label>
+						<a class="add-nodes" style="margin-left: 390px;">
+						     <span class="glyphicon glyphicon-plus-sign"></span>
+							</a>
+						<br/>
+					</div>
+				</form>
+			</div>
+      <div style="color: red; text-align:center; font-size: .9rem">
+        {{licenseLang.edit_node_tips}}
+      </div>
+		</div>
+	</div>
+</div>
+
+<!--已激活节点-->
+<div class="modal fade" id="activedNodesModal" tabindex="-1" role="dialog" aria-labelledby="activedNodesModalLabel" aria-hidden="true">
+	<div class="modal-dialog" style="width:600px;">
+		<div class="modal-content">
+
+      <div class="modal-header">
+				<span class="modal-title" style="font-size: 1rem">{{licenseLang.active_condition}}: </span>
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{ publicLang.cancel }}</button>
+			</div>
+
+			<div class="modal-body flex-modal-body">
+				<form class="form-horizontal col-sm-12" role="form">
+					<div class="form-group">
+						<label>{{licenseLang.activated}}：</label><span class="node-actived"><!-- 3节点 --></span>
+						<table class="table" style="background-color: #fafafa">
+							<thead>
+								<tr>
+									<th>{{licenseLang.node}}</th>
+									<th>{{licenseLang.machine_code}}</th>
+                  <th>{{licenseLang.Activation_time}}</th>
+									<th style="text-align: center">{{licenseLang.Activation_time_left}}</th>
+								</tr>
+							</thead>
+							<tbody id="actived-nodes">
+
+							</tbody>
+						</table>
+					</div>
+					<div class="form-group">
+						<label>{{licenseLang.inactivated}}：</label><span class="node-inactivated"><!-- 3节点 --></span>
+						<table class="table" style="background-color: #fafafa">
+							<thead>
+								<tr>
+									<th>{{licenseLang.node}}</th>
+									<th>{{licenseLang.machine_code}}</th>
+									<th style="text-align: center">{{licenseLang.Activation_time}}</th>
+								</tr>
+							</thead>
+							<tbody id="unactived-nodes">
+
+							</tbody>
+						</table>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %} {% block needjs %}
+<script type="text/javascript" src="js/pages/license.js"></script>
+<script type="text/javascript" src="js/lib/clipboard.min.js"></script>
+{% endblock %}

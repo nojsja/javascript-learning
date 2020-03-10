@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>data-binding-method-set</title>
+</head>
+<body>
+    <!-- q-value声明模板指令 -->
+    <input q-value="value" type="text" id="input">
+    <div q-text="value" id="el"></div>
+    
+    <script>
+        
+        /**
+        原理分析：
+        保存所有DOM节点对象，创建指令执行模板和共有的数据源依赖，每次更新
+        源依赖后，遍历扫描每个节点，根据特定标志('q-')在当前dom上下文调用
+        模板指令函数，同时在每个DOM元素缓存指令。
+        这种解决办法没有diff算法(数据变化比较算法)，数据更新后需要手动出发dom树
+        扫描。
+        */
+        var elems = [document.getElementById('el'), document.getElementById('input')];
+
+        // 维护的数据依赖
+        var data = {
+            value: 'hello!'
+        };
+        
+        // 模拟模板指令
+        var command = {
+            text: function(str){
+                this.innerHTML = str;
+            },
+            value: function(str){
+                this.setAttribute('value', str);
+            }
+        };
+
+        // 扫描节点
+        var scan = function(){        
+            // 扫描带指令的节点属性
+            for(var i = 0, len = elems.length; i < len; i++){
+                var elem = elems[i];
+                elem.command = [];
+                for(var j = 0, len1 = elem.attributes.length; j < len1; j++){
+                    var attr = elem.attributes[j];
+                    if(attr.nodeName.indexOf('q-') >= 0){
+                        // 调用属性指令，这里可以使用数据改变检测
+                        command[attr.nodeName.slice(2)].call(elem, data[attr.nodeValue]);
+                        elem.command.push(attr.nodeName.slice(2));
+                    }
+                }
+            }
+        }
+
+        // 设置数据后扫描
+        function mvSet(key, value){
+            data[key] = value;
+            scan();
+        }
+        // 数据绑定监听
+        elems[1].addEventListener('keyup', function(e){
+            mvSet('value', e.target.value);
+        }, false);
+
+        scan();
+
+        // 改变数据更新视图
+        setTimeout(function(){
+            mvSet('value', 'fuck');
+        },1000)
+
+    </script>
+    
+    
+</body>
+</html>

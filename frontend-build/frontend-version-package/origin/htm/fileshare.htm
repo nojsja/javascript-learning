@@ -1,0 +1,54 @@
+{% extends 'share-template.htm' %}
+{%block needcss%}
+<style type="text/css">
+	body {
+		overflow: hidden;
+	}
+</style>
+{%endblock%}
+{%block rightcontent %}
+	<div class="dt_g_right_bar">	
+		<div class="dt_system_bar_third">
+			<div class="dt_system_bar">
+		        <nav class="navvar-left" style="margin-left:10px;">
+		          <div class="navbar-mount hidden" id="gotoParentDir" style="float:left;">
+		          <a href="javascript:;">{{fileLang.goto_parent_dir}}</a>
+		          <span class="dt_separator">|</span>
+		          </div>
+		        </nav>
+				<nav class="navbar-left" style="margin-left:10px;width: 180px">
+					<div style="float:left;width:450px;">
+            			<a id="gotoMount" href="javascript:;">
+							<span style="float:left;margin-right:10px">{{fileLang.goto_mount}}:</span>
+            			</a>
+						<span>
+							<ul class="js-dirpath" style="list-style:none;height:30px;margin:0px;"> 
+							</ul>
+						</span>
+					</div>
+				</nav>
+				<nav class="navbar-right" style="margin-right:0;">
+					<ul id="js-audit-pagination" class="pagination fl-rt">
+
+					</ul>
+					<div class="search-byfile">
+						<span class="form-group" style="position: relative;vertical-align: middle;">
+					        <input class="form-control filter-local" id="textSearchPath" type="text">
+					        <i class="glyphicon glyphicon-search allsearch-localbtn"></i>
+					  </span>
+					</div>
+				</nav>
+			</div>
+		</div>
+		<div class="margin_bot_format"></div>
+		<div class="all_table_list_third" style="box-shadow: 0 0 0;">
+		</div>
+	</div>
+{%endblock%}
+{% block needjs %}
+<script src="js/lib/twbsPagination/jquery.twbsPagination.min.js"></script>
+<script type="text/javascript" src="js/lib/bootstrap-contextmenu.js"></script>
+<script type="text/javascript" src="js/pages/file.js"></script>
+<script type="text/javascript">
+</script>
+{% endblock %}

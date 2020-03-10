@@ -1,0 +1,21 @@
+.water-fall-container {
+      width: 100%;
+      position: relative;
+
+      .water-fall-item {
+        position: absolute;
+        box-sizing: border-box;
+
+        transition: .3s;
+
+        &:hover {
+          transform: scale(1.15);
+        }
+
+        img {
+          width: 100%;
+          height: auto;
+        }
+
+      }
+}
