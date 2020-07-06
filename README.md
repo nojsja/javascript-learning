@@ -81,31 +81,29 @@
 #### > markdown <
 >自己编写的文档  
 
-> [简书博客地址 => ](https://www.jianshu.com/u/d5c8b784c1d0)
+> [博客地址 => ](https://nojsjaosc.gitee.io/blogs/)
 
-* [简单实现一个Javascript动画处理类](./markdown/简单实现一个Javascript动画处理类.md)
+* [基于Electron的windows平台smb客户端开发记录](https://nojsjaosc.gitee.io/blogs/2020/07/17/%E5%9F%BA%E4%BA%8Ewindows%E7%9A%84smb%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/)
 
-* [基于aws-s3兼容存储服务存储桶多文件分片上传的Javascript实现](./markdown/基于aws-s3兼容存储服务存储桶多文件分片上传的Javascript实现.md)
+* [基于s3对象存储多文件分片上传的Javascript实现(二)](https://nojsjaosc.gitee.io/blogs/2020/03/26/%E5%9F%BA%E4%BA%8Es3%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E5%A4%9A%E6%96%87%E4%BB%B6%E5%88%86%E7%89%87%E4%B8%8A%E4%BC%A0%E7%9A%84Javascript%E5%AE%9E%E7%8E%B0-%E4%BA%8C/)
 
-* [Electron+Mobx+React开发记录(一)](./markdown/Electron+Mobx+React开发记录(一).md)
+* [echarts图表-树形图开发记录](https://nojsjaosc.gitee.io/blogs/2020/03/22/echarts%E5%9B%BE%E8%A1%A8-%E6%A0%91%E5%BD%A2%E5%9B%BE%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/)
 
-* [Electron+Mobx+React开发记录(二)](./markdown/Electron+Mobx+React开发记录(二).md)
+* [基于s3对象存储多文件分片上传的Javascript实现(一)](https://nojsjaosc.gitee.io/blogs/2020/03/07/%E5%9F%BA%E4%BA%8Es3%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E5%A4%9A%E6%96%87%E4%BB%B6%E5%88%86%E7%89%87%E4%B8%8A%E4%BC%A0%E7%9A%84Javascript%E5%AE%9E%E7%8E%B0-%E4%B8%80/)
 
-* [Linux Mint18.3 日常软件安装配置](./markdown/linux-mint-configure.md)
+* [Electron+Mobx+React开发记录](https://nojsjaosc.gitee.io/blogs/2019/10/14/Electron-Mobx-React%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95-%E4%B8%80/)
 
-* [sass开发规范](./markdown/sass开发规范.md)
+* [使用ES5手动实现ES6中的Promise API](https://nojsjaosc.gitee.io/blogs/2018/10/31/%E4%BD%BF%E7%94%A8ES5%E5%AE%9E%E7%8E%B0ES6%E4%B8%AD%E7%9A%84Promise/)
 
-* [Ubuntu18.04踩坑记录](./markdown/Ubuntu18.04踩坑记录.md)
+* [Ubuntu18.04踩坑记录](https://nojsjaosc.gitee.io/blogs/2018/04/04/Ubuntu18-04%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/)
 
-* [原生Js实现瀑布流效果](./markdown/water-fall-layout.md)
+* [原生Js实现瀑布流效果](https://nojsjaosc.gitee.io/blogs/2018/04/01/water-fall-layout/)
 
-* [使用ES5手动实现ES6中的Promise API](./markdown/使用ES5实现ES6中的Promise.md)
+* [用Javascript实现一个可自定义样式的tootips组件.md](https://nojsjaosc.gitee.io/blogs/2018/11/06/%E7%94%A8Javascript%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E5%8F%AF%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A0%B7%E5%BC%8F%E7%9A%84tootips%E7%BB%84%E4%BB%B6/)
 
-* [用Javascript实现一个可自定义样式的tootips组件.md](./markdown/用Javascript实现一个可自定义样式的tootips组件.md)
+* [联想y7000安装ubuntu18.04显卡驱动解决方案](https://nojsjaosc.gitee.io/blogs/2019/09/29/%E8%81%94%E6%83%B3y7000%E5%AE%89%E8%A3%85ubuntu18-04%E6%98%BE%E5%8D%A1%E9%A9%B1%E5%8A%A8%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/)
 
-* [联想y7000安装ubuntu18.04显卡驱动解决方案](./markdown/联想y7000安装ubuntu18.04显卡驱动解决方案.md)
-
-* [Docker运行容器化的Tim和wechat](./markdown/Docker运行容器化的Tim和wechat.md)
+* [Docker运行容器化的Tim和wechat](https://nojsjaosc.gitee.io/blogs/2018/11/06/Docker%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8%E5%8C%96%E7%9A%84Tim%E5%92%8Cwechat/)
 
 #### > js-animation  <
 
