@@ -7,11 +7,6 @@ import { objectStorageApi } from 'app/utils/api';
 import { arrayRemove, formatSizeStr, mapMimeType } from 'app/utils/utils';
 
 import openNotification from 'app/utils/openNotification';
-**
-* @name: FileUpload
-* @description: 文件分片上传，支持上传记录和断点恢复
-*/
-
 
 /*
   操作流程说明：
@@ -122,8 +117,6 @@ class ObjectFragmentUpload {
 
   multiTaskCount = 6
 
-  fileStorageMap = new WeakMap()
-
   @observable taskType = {
     uninitial: [], // 未初始化的已注册文件
     pending: [], // 准备态
@@ -156,13 +149,17 @@ class ObjectFragmentUpload {
    * @param  {[String]}   _params.bucket [bucket name]
    * @param  {[String]}   _params.object [object name]
    */
-  initRequest = (file, params, startUpload) => {
-    const storageObject = this.fileStorageMap.get(file);
+  initRequest = (storageObject) => {
     // 初次进行状态转换
-    const index = this.taskType[storageObject.state].indexOf(file);
+    const index = this.taskType[storageObject.state].indexOf(storageObject);
     this.taskType[storageObject.state].splice(index, 1);
     storageObject.state = 'uploading';
-    this.taskType.uploading.push(file);
+    this.taskType.uploading.push(storageObject);
+    const params = {
+      bucket: storageObject.region,
+      object: storageObject.name,
+      prefix: storageObject.prefix,
+    };
 
     if (storageObject.size <= storageObject.blockSize) { // 单文件
       storageObject.creationTime = (new Date().toTimeString()).split(' ')[0];
@@ -180,15 +177,15 @@ class ObjectFragmentUpload {
       'solve'
     ).then((data) => {
       if (data.code !== 200) {
-        this.markError(file);
+        this.markError(storageObject);
         this.startTasks(params.bucket);
         openNotification('error', null, (data.result.data ? data.result.data.Code : this.lang.lang.uploadError));
         return { err: true, init: false };
       }
-      this.updateUploadId(file, data.result.InitiateMultipartUploadResult.UploadId, 'uploading');
+      this.updateUploadId(storageObject, data.result.InitiateMultipartUploadResult.UploadId, 'uploading');
       return { err: false, init: true };
     }, () => {
-      this.updateUploadId(file, null, 'error');
+      this.updateUploadId(storageObject, null, 'error');
       console.log(`${params.bucket} ${params.object} init error!`);
     });
   }
@@ -438,19 +435,20 @@ class ObjectFragmentUpload {
    * 标记错误
    */
   @action
-  markError = (file) => {
-    console.log('error', file);
-    const fileObject = this.fileStorageMap.get(file);
+  markError = (storageObject) => {
+    console.log('error', storageObject);
+    const fileObject = storageObject;
     if (!fileObject) return;
 
     const status = fileObject.state;
-    let index = this.taskType[status].indexOf(file);
+    let index = this.taskType[status].indexOf(storageObject);
     if (index === -1) return;
 
     this.taskType[status].splice(index, 1);
     fileObject.state = 'error';
-    this.taskType.error.push(file);
-    index = this.taskType.series.indexOf(file);
+    fileObject.speed = '';
+    this.taskType.error.push(storageObject);
+    index = this.taskType.series.indexOf(storageObject);
     if (index !== -1) {
       this.taskType.series.splice(index, 1);
     }
@@ -478,18 +476,17 @@ class ObjectFragmentUpload {
    * @param {[Object]} state [文件初始化状态]
    */
   @action
-  updateUploadId = (file, uploadId, state) => {
-    const storageObject = this.fileStorageMap.get(file);
+  updateUploadId = (storageObject, uploadId, state) => {
     storageObject.uploadId = uploadId;
     storageObject.initialized = state === 'uploading';
     storageObject.state = state;
     storageObject.creationTime = (new Date().toTimeString()).split(' ')[0];
 
     if (state === 'error') {
-      const index = this.taskType.uploading.indexOf(file);
-      this.taskType.uninitial.push(file);
+      const index = this.taskType.uploading.indexOf(storageObject);
+      this.taskType.uninitial.push(storageObject);
       this.taskType.uploading.splice(index, 1);
-      this.taskType[state].push(file);
+      this.taskType[state].push(storageObject);
     }
   };
 
@@ -499,16 +496,16 @@ class ObjectFragmentUpload {
    * @param {[String]} bucket [桶名]
    */
   @action
-  complete = (file, bucket) => {
-    const index = this.taskType.uploading.indexOf(file);
+  complete = (storageObject) => {
+    const index = this.taskType.uploading.indexOf(storageObject);
     this.taskType.uploading.splice(index, 1);
-    this.taskType.break.push(file);
-    const storageObject = this.fileStorageMap.get(file);
+    this.taskType.break.push(storageObject);
     storageObject.completionTime = (new Date().toTimeString()).split(' ')[0];
     storageObject.state = 'break';
+    storageObject.speed = '';
     storageObject.index = storageObject.total;
 
-    this.startTasks(bucket);
+    this.startTasks(storageObject.region);
   };
 
   /**
@@ -563,38 +560,43 @@ class ObjectFragmentUpload {
    * @param  {[String]}   _params.uploadId [upload id]
    */
   @action
-  upload = (file, _params) => {
-    const storageObject = this.fileStorageMap.get(file);
+  upload = (storageObject) => {
+    let params = {
+      bucket: storageObject.region,
+      object: storageObject.name,
+      prefix: storageObject.prefix,
+      uploadId: storageObject.uploadId,
+    };
     let single = false; // 不分片
     /* 异常状态退出 */
     if (!this.isValidUploadingTask(storageObject)) return;
 
     if (storageObject.state === 'pending') {
-      this.taskType.pending.splice(this.taskType.pending.indexOf(file), 1);
-      this.taskType.uploading.push(file);
+      this.taskType.pending.splice(this.taskType.pending.indexOf(storageObject), 1);
+      this.taskType.uploading.push(storageObject);
       storageObject.state = 'uploading';
     }
 
-
     const num = storageObject.index;
 
-    if (num === 0 && file.size <= storageObject.blockSize) {
+    if (num === 0 && storageObject.size <= storageObject.blockSize) {
       // 不用分片的情况
       single = true;
     } else if (num === storageObject.total) {
       // 所有分片都已经发出
       return;
     }
-    const nextSize = Math.min((num + 1) * storageObject.blockSize, file.size);
-    const fileData = file.slice(num * storageObject.blockSize, nextSize);
-    const params = Object.assign(_params, {
+    const nextSize = Math.min((num + 1) * storageObject.blockSize, storageObject.size);
+    const fileData = storageObject.file.slice(num * storageObject.blockSize, nextSize);
+    params = Object.assign(params, {
       partNumber: num + 1,
     });
     storageObject.activePoint = new Date();
+
     this.uploadRequest({ params, data: fileData, single }).then((rsp) => {
       if (rsp.code !== 200) {
         openNotification('error', null, (rsp.result.data ? rsp.result.data.Code : this.lang.lang.uploadError));
-        this.markError(file);
+        this.markError(storageObject);
         this.startTasks(params.bucket);
         return;
       }
@@ -608,7 +610,7 @@ class ObjectFragmentUpload {
       if (completed) {
         (single ?
           () => {
-            this.complete(file, params.bucket);
+            this.complete(storageObject, params.bucket);
           } :
           (partEtags) => {
             this.completeRequest({
@@ -617,19 +619,13 @@ class ObjectFragmentUpload {
               object: params.object,
               prefix: params.prefix,
               partEtags,
-            }, file);
+            }, storageObject);
           })(etags);
       } else {
-        this.upload(file, {
-          bucket: params.bucket,
-          object: params.object,
-          uploadId: params.uploadId,
-          partNumber: params.partNumber,
-          prefix: params.prefix,
-        });
+        this.upload(storageObject);
       }
     }).catch((error) => {
-      this.markError(file);
+      this.markError(storageObject);
       this.startTasks(params.bucket);
       console.log(`${params.bucket}_${params.object} upload error: ${error}`);
     });
@@ -646,19 +642,19 @@ class ObjectFragmentUpload {
    */
   @action
   uploadPause = ({
-    file, all, select, region, id,
+    all, select, region, id,
   }) => {
-    const updateObjectPause = (object, tFile) => {
+    const updateObjectPause = (object) => {
       if (!this.isValidUploadingTask(object)) return;
       if (object.state !== 'uninitial') {
-        const index = this.taskType[object.state].indexOf(tFile);
+        const index = this.taskType[object.state].indexOf(object);
         this.taskType[object.state].splice(index, 1);
       }
-      const index = this.taskType.series.indexOf(tFile);
+      const index = this.taskType.series.indexOf(object);
       if (index !== -1) {
         this.taskType.series.splice(index, 1);
       }
-      this.taskType.pause.push(tFile);
+      this.taskType.pause.push(object);
       object.state = 'pause';
     };
     // single
@@ -666,16 +662,16 @@ class ObjectFragmentUpload {
       // const tFile = this.getSymbolFile(this.getSymbol(file));
       // const storageObject = this.fileStorageMap.get(tFile);
       const storageObject = this.getStorageObjectByID(id, region);
-      updateObjectPause(storageObject, storageObject.file);
+      updateObjectPause(storageObject);
     // selected / all
     } else {
       if (!this.fileStorage.get(region)) return;
       this.fileStorage.get(region).forEach((object) => {
         if (select && this.selectedKeys.includes(object.id)) {
-          updateObjectPause(object, object.file);
+          updateObjectPause(object);
         }
         if (!select) {
-          updateObjectPause(object, object.file);
+          updateObjectPause(object);
         }
       });
       if (select) {
@@ -698,30 +694,30 @@ class ObjectFragmentUpload {
    */
   @action
   uploadContinue = ({
-    file, all, select, region, id,
+    all, select, region, id,
   }) => {
-    const updateObjectContinue = (object, tFile) => {
+    const updateObjectContinue = (object) => {
       if (object.state !== 'pause') return;
-      const index = this.taskType.pause.indexOf(tFile);
+      const index = this.taskType.pause.indexOf(object);
       this.taskType.pause.splice(index, 1);
       object.state = 'pending';
-      this.taskType.pending.push(tFile);
-      this.taskType.series.push(tFile);
+      this.taskType.pending.push(object);
+      this.taskType.series.push(object);
       this.startTasks(region);
     };
     if (!all && !select) {
       // const tFile = this.getSymbolFile(this.getSymbol(file));
       // const storageObject = this.fileStorageMap.get(tFile);
       const storageObject = this.getStorageObjectByID(id, region);
-      updateObjectContinue(storageObject, storageObject.file);
+      updateObjectContinue(storageObject);
     } else {
       if (!this.fileStorage.get(region)) return;
       this.fileStorage.get(region).forEach((object) => {
         if (select && this.selectedKeys.includes(object.id)) {
-          updateObjectContinue(object, object.file);
+          updateObjectContinue(object);
         }
         if (!select) {
-          updateObjectContinue(object, object.file);
+          updateObjectContinue(object);
         }
       });
       if (select) {
@@ -746,49 +742,47 @@ class ObjectFragmentUpload {
    */
   @action
   uploadTerm = ({
-    file, all, select, region, id,
+    all, select, region, id,
   }) => {
-    const termInitialized = (bucket, tFile) => {
-      arrayRemove(this.fileStorage.get(bucket), this.fileStorageMap.get(tFile));
-      arrayRemove(this.files, tFile);
-      arrayRemove(this.taskType.uninitial, tFile);
-      arrayRemove(this.taskType.pending, tFile);
-      arrayRemove(this.taskType.uploading, tFile);
-      arrayRemove(this.taskType.break, tFile);
-      arrayRemove(this.taskType.error, tFile);
-      arrayRemove(this.taskType.pause, tFile);
-      arrayRemove(this.taskType.series, tFile);
+    const termInitialized = (object) => {
+      this.fileStorage.set(object.region, this.fileStorage.get(object.region).filter(obj => obj.id !== object.id));
+      // arrayRemove(this.fileStorage.get(bucket), this.fileStorageMap.get(tFile));
+      arrayRemove(this.files, object);
+      arrayRemove(this.taskType.uninitial, object);
+      arrayRemove(this.taskType.pending, object);
+      arrayRemove(this.taskType.uploading, object);
+      arrayRemove(this.taskType.break, object);
+      arrayRemove(this.taskType.error, object);
+      arrayRemove(this.taskType.pause, object);
+      arrayRemove(this.taskType.series, object);
     };
 
-    const checkInitialized = (object, tFile) => {
+    const checkInitialized = (object) => {
       if (object.initialized && (object.index !== object.total)) {
         this.termRequest({
           bucket: region,
           object: object.name,
           uploadId: object.uploadId,
-          file: tFile,
+          file: object.file,
         }, () => {
-          termInitialized(region, tFile);
+          termInitialized(object);
         });
       } else {
-        termInitialized(region, tFile);
+        termInitialized(object);
       }
     };
 
     if (!all && !select) {
-      // const tFile = this.getSymbolFile(this.getSymbol(file));
-      // const storageObject = this.fileStorageMap.get(tFile);
       const storageObject = this.getStorageObjectByID(id, region);
-      checkInitialized(storageObject, storageObject.file);
-      // checkInitialized(storageObject, tFile);
+      checkInitialized(storageObject);
     } else {
       if (!this.fileStorage.get(region)) return;
       this.fileStorage.get(region).forEach((object) => {
         if (select && this.selectedKeys.includes(object.id)) {
-          checkInitialized(object, object.file);
+          checkInitialized(object);
         }
         if (!select) {
-          checkInitialized(object, object.file);
+          checkInitialized(object);
         }
       });
       if (select) {
@@ -807,32 +801,32 @@ class ObjectFragmentUpload {
    */
   @action
   uploadRestore = ({
-    file, all, select, region, reset, id,
+    all, select, region, reset, id,
   }) => {
-    const updateObjectRestore = (object, tFile) => {
+    const updateObjectRestore = (object) => {
       if (object.state !== 'error') return;
       if (reset) {
         object.index = 0;
         object.partEtags = [];
       }
-      this.taskType.error.splice(this.taskType.error.indexOf(tFile), 1);
+      this.taskType.error.splice(this.taskType.error.indexOf(object), 1);
       object.state = 'pending';
-      this.taskType.pending.push(tFile);
+      this.taskType.pending.push(object);
     };
     if (!all && !select) {
       // const tFile = this.getSymbolFile(this.getSymbol(file));
       // const storageObject = this.fileStorageMap.get(tFile);
       const storageObject = this.getStorageObjectByID(id, region);
-      updateObjectRestore(storageObject, storageObject.file);
+      updateObjectRestore(storageObject);
       // updateObjectRestore(storageObject, tFile);
     } else {
       if (!this.fileStorage.get(region)) return;
       this.fileStorage.get(region).forEach((object) => {
         if (select && this.selectedKeys.includes(object.id)) {
-          updateObjectRestore(object, object.file);
+          updateObjectRestore(object);
         }
         if (!select) {
-          updateObjectRestore(object, object.file);
+          updateObjectRestore(object);
         }
       });
       if (select) {
@@ -859,9 +853,8 @@ class ObjectFragmentUpload {
         && (storageObject[i].state === 'pending'
         || storageObject[i].state === 'uninitial')
       ) {
-        const { file } = storageObject[i];
-        if (!this.taskType.series.includes(file)) {
-          this.taskType.series.push(file);
+        if (!this.taskType.series.includes(storageObject[i])) {
+          this.taskType.series.push(storageObject[i]);
         }
       }
     }
@@ -881,8 +874,7 @@ class ObjectFragmentUpload {
     const taskSeries = [];
     for (let i = 0; i < (maxLength) && this.taskType.series[i]; i += 1) {
       // const file = this.taskType.series.shift();
-      const file = this.taskType.series[i];
-      const storageObject = this.fileStorageMap.get(file);
+      const storageObject = this.taskType.series[i];
       if (storageObject.state === 'uploading') continue; // 上传中
       if (storageObject.state === 'pause') continue;
       taskSeries.push(storageObject);
@@ -890,33 +882,16 @@ class ObjectFragmentUpload {
 
     let index;
     taskSeries.forEach((storageObject) => {
-      index = this.taskType.series.indexOf(storageObject.file);
+      index = this.taskType.series.indexOf(storageObject);
       index !== -1 && this.taskType.series.splice(index, 1);
-      if (this.taskType.uninitial.includes(storageObject.file)) {
-        this.initRequest(
-          storageObject.file,
-          {
-            bucket: region,
-            object: storageObject.name,
-            prefix: storageObject.prefix,
-          }
-        ).then(({ err, init }) => {
+      if (this.taskType.uninitial.includes(storageObject)) {
+        this.initRequest(storageObject).then(({ err, init }) => {
           if (!err && init) {
-            this.upload(storageObject.file, {
-              bucket: region,
-              object: storageObject.name,
-              prefix: storageObject.prefix,
-              uploadId: storageObject.uploadId,
-            });
+            this.upload(storageObject);
           }
         });
       } else {
-        this.upload(storageObject.file, {
-          bucket: region,
-          object: storageObject.name,
-          prefix: storageObject.prefix,
-          uploadId: storageObject.uploadId,
-        });
+        this.upload(storageObject);
       }
     });
   }
@@ -954,15 +929,15 @@ class ObjectFragmentUpload {
         speed: '0 MB/S',
         id: encodeURIComponent(new Date() + file.name + file.type + file.size),
       };
-      this.taskType.uninitial.push(file);
-      this.taskType.series.push(file);
       const obj = observable(fileObj);
+      this.taskType.uninitial.push(obj);
+      this.taskType.series.push(obj);
       if (!this.fileStorage.get(region)) {
         this.fileStorage.set(region, [obj]);
       } else {
         this.fileStorage.get(region).push(obj);
       }
-      this.fileStorageMap.set(file, obj);
+      // this.fileStorageMap.set(file, obj);
     });
     this.loading = false;
   }
