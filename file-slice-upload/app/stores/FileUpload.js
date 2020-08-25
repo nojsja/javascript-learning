@@ -846,16 +846,21 @@ class ObjectFragmentUpload {
   refreshTasks = (region) => {
     // 统计空闲任务
     const storageObject = this.fileStorage.get(region);
+
     if (!storageObject) return;
+
+    if (this.taskType.series.length >= this.multiTaskCount) return;
+
     for (let i = 0; i < storageObject.length; i += 1) {
+      if (this.taskType.series.length === this.multiTaskCount) break;
       if (
         storageObject[i].index !== storageObject[i].total
-        && (storageObject[i].state === 'pending'
-        || storageObject[i].state === 'uninitial')
+        &&
+        (storageObject[i].state === 'pending' || storageObject[i].state === 'uninitial')
+        &&
+        !this.taskType.series.includes(storageObject[i])
       ) {
-        if (!this.taskType.series.includes(storageObject[i])) {
-          this.taskType.series.push(storageObject[i]);
-        }
+        this.taskType.series.push(storageObject[i]);
       }
     }
   }
