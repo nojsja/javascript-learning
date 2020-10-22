@@ -14,8 +14,8 @@
         display: inline-block;
         padding: 5px 10px;
         font-size: 1.2rem;
-        color: #145fde;
-        border: solid 1px #145fde;
+        color: #5a8ee9;
+        border: solid 1px #5a8ee9;
         border-radius: 5px;
         transition: all .3s;
         cursor: pointer;
@@ -24,7 +24,7 @@
 
       .tooltips-wrapper > span:hover {
         color: white;
-        background-color: #145fde;
+        background-color: #5a8ee9;
       }
     </style>
     <link rel="stylesheet" href="./tootips.css">
@@ -39,10 +39,9 @@
     </div>
   </body>
 
-  <script type="text/javascript" src="../../libs/jquery-2.1.4.min.js"></script>
   <script type="text/javascript" src="./tootips.nojsja.js"></script>
   <script type="text/javascript">
-    Tootips.init($('#t1'), {
+    Tootips.init(('#t1'), {
       trigger: 'mouseover',
       type: 'html',
       value: '<h3>header</h3><p>body</p>',
@@ -51,33 +50,29 @@
         'font-size': '1rem',
         'color': 'red',
         'min-width': '5rem',
-        'border': 'solid 1px grey',
         'padding': '5px 10px',
         'border-radius': '5px',
         'background-color': 'white',
       },
-      css: 'triangle-bottom',
     });
 
-    Tootips.init($('#t2'), {
+    Tootips.init(('#t2'), {
       trigger: 'mouseover',
       type: 'text',
-      context: $('#context'),
+      context: ('#context'),
       value: 'text tootips test, text tootips test, text tootips test',
       direction: 'bottom',
       style: {
         'font-size': '1rem',
         'color': 'blue',
         'min-width': '5rem',
-        'border': 'solid 1px grey',
         'padding': '5px 10px',
         'border-radius': '5px',
         'background-color': 'white',
       },
-      css: 'triangle-top',
     });
 
-    Tootips.init($('#t3'), {
+    Tootips.init(('#t3'), {
       trigger: 'mouseover',
       type: 'html',
       value: '<img src="./head.jpg" style="width: 5rem; height: 5rem;"/>',
@@ -86,15 +81,13 @@
         'font-size': '1rem',
         'color': 'red',
         'min-width': '5rem',
-        'border': 'solid 1px grey',
         'padding': '5px 10px',
         'border-radius': '5px',
         'background-color': 'white',
       },
-      css: 'triangle-right',
     });
 
-    Tootips.init($('#t4'), {
+    Tootips.init(('#t4'), {
       trigger: ['mouseover', 'click'],
       type: 'html',
       value: '<h3>header</h3><p>body</p>',
@@ -103,12 +96,10 @@
         'font-size': '1rem',
         'color': 'red',
         'min-width': '5rem',
-        'border': 'solid 1px grey',
         'padding': '5px 10px',
         'border-radius': '5px',
         'background-color': 'white',
       },
-      css: 'triangle-left',
     });
   </script>
 </html>

@@ -5,7 +5,7 @@
 
 /*
   Example:
-  Tootips.init($('#tootipsTest'), {
+  Tootips.init(('#tootipsTest'), {
     trigger: 'mouseover' | 'click',
     context: '' | element,
     type: 'html' | 'text',
@@ -21,184 +21,310 @@
  */
 
  var Tootips = (function () {
+   
+  var utils = {
+    actions: {
+      // [symbol]: [Timer]
+    },
+    element: {
+     jsonWrapper: function(target) {
+       var jsonParseRule = /^\{"([\w\W])+\}$/;
+       if (jsonParseRule.test(target)) return JSON.parse(target);
+       return (typeof target === 'object' && target !== null) ?
+         JSON.stringify(target) :
+         target;
+     },
+     elementWrapper: function($element) {
+       return (typeof $element === 'object') ? $element : document.querySelector($element);
+     },
+     setAttr: function($element, key, value) {
+       $element = this.elementWrapper($element);
+       (key) && $element.setAttribute(key, this.jsonWrapper(value));
+       return this;
+     },
+     setCss: function($element, styleKey, styleValue, important) {
+       $element = this.elementWrapper($element);
+       $element.style.setProperty(styleKey, styleValue, important === 'important' ? important : undefined);
+       return this;
+     },
+     getAttr: function($element, key) {
+       $element = this.elementWrapper($element);
+       return (key) ? this.jsonWrapper($element.getAttribute(key)) : undefined;
+     },
+     setData: function($element, key, value) {
+       $element = this.elementWrapper($element);
+       (key) && this.setAttr($element, 'data-' + key, value);
+       return this;
+     },
+     getData: function($element, key) {
+       $element = this.elementWrapper($element);
+       return key ? this.getAttr($element, 'data-' + key) : undefined;
+     },
+     addClass: function($element, className) {
+       $element = this.elementWrapper($element);
+       var classes = $element.className.split(' ');
+       if (!classes.includes(className)) {
+         classes.push(className);
+         $element.className = classes.join(' ');
+       }
+       return this;
+     },
+     removeClass: function($element, className) {
+       $element = this.elementWrapper($element);
+       var classes = $element.className.split(' ');
+       var index = classes.indexOf(className);
+       if (index !== -1) {
+         classes.splice(index, 1);
+         $element.className = classes.join(' ');
+       }
+       return this;
+     },
+     empty: function($element) {
+       $element = this.elementWrapper($element);
+       $element.innerHTML = '';
+     },
+     html: function($element, htmlStr) {
+       $element = this.elementWrapper($element);
+       $element.innerHTML = htmlStr;
+     }
+    },
+   /* 根据宿主元素第一次计算横坐标和纵坐标 */
+   renderX1: function (r, d) {
+     if (d === 'top' || d === 'bottom')
+       return (r.x + r.width / 2 + 'px');
+     if (d === 'left')
+       return (r.x - 6 + 'px');
+     if (d === 'right')
+       return (r.x + r.width + 6 + 'px');
+     if (d === 'bottomleft' || d === 'topleft')
+       return (r.x + 'px');
+     if (d === 'bottomright' || d === 'topright')
+       return (r.x + r.width + 'px');
+   },
+   renderY1: function (r, d) {
+     if (d === 'top')
+       return (r.y - 6 + 'px');
+     if (d === 'left' || d === 'right')
+       return (r.y + r.height / 2 + 'px');
+     if (d === 'bottom')
+       return (r.y + r.height + 6 + 'px');
+     if (d === 'bottomleft' || d === 'bottomright')
+       return (r.y + r.height + 'px');
+     if (d === 'topleft' || d === 'topright')
+       return (r.y + 'px');
+   },
+   /* 根据生成的tootips元素宽高第二次计算横坐标和纵坐标 */
+   renderX2: function (r, d) {
+     if (d === 'top' || d === 'bottom')
+       return (r.x - r.width / 2 + 'px');
+     if (d === 'left' || d === 'bottomleft' || d === 'topleft')
+       return (r.x - r.width + 'px');
+     if (d === 'right')
+       return (r.x + 'px');
+     if (d === 'bottomright' || d === 'topright')
+      return (r.x + r.widht + 'px');
+   },
+   renderY2: renderY = function (r, d) {
+     if (d === 'top' || d === 'topleft' || d === 'topright')
+       return (r.y - r.height + 'px');
+     if (d === 'left' || d === 'right')
+       return (r.y - r.height / 2 + 'px');
+     if (d === 'bottom' || d === 'bottomleft' || d === 'bottomright')
+       return (r.y + 'px');
+   },
+   /* 使用函数去抖防止调用混乱 */
+   actionDebounce: function(symbol, action, params) {
+     var that = this;
+     var timer = setTimeout(function() {
+       action(params);
+       clearTimeout(timer);
+       delete that.actions[symbol];
+     }, 300);
+ 
+     if (!that.actions[symbol]) {
+       that.actions[symbol] = timer;
+     } else {
+       clearTimeout(that.actions[symbol]);
+       that.actions[symbol] = timer;
+     }
+   }
+ }
+ 
 
   /**
-   * [renderPage 构造html]
+   * [renderContainer 构造html]
    * @param  {[Object]} options   [自定义参数]
    * @param  {[String]} type   [渲染类型 -> text | html]
    * @param  {[String]} target   [渲染字符串]
    */
-  function renderPage($selector) {
-    var type = $selector.data('tootip-type'),
-       options = $selector.data('tootip-options'),
-       target = $selector.data('tootip-target');
-    // 提取属性
-    var randomKey = String(Math.random() + Math.random()).split('.').pop();
-    var $wrapper = $('<div></div>');
-    var cssStyle = options.style || {};
-    var styleSheet = options.css || '';
-    var direction = options.direction || 'top';
-    var rect = $selector[0].getBoundingClientRect();
+  function renderContainer($selector, tootipKey) {
+   var type = utils.element.getData($selector, 'tootip-type'),
+      options = utils.element.getData($selector, 'tootip-options'),
+      trigger = utils.element.getData($selector, 'tootip-trigger'),
+      target = utils.element.getData($selector, 'tootip-target');
 
-    // 根据宿主元素第一次计算横坐标和纵坐标
-    var renderX = function (r, d) {
-      if (d === 'top' || d === 'bottom')
-        return (r.x + r.width / 2 + 'px');
-      if (d === 'left')
-        return (r.x - 6 + 'px');
-      if (d === 'right')
-        return (r.x + r.width + 6 + 'px');
-    };
-
-    var renderY = function (r, d) {
-      if (d === 'top')
-        return (r.y - 6 + 'px');
-      if (d === 'left' || d === 'right')
-        return (r.y + r.height / 2 + 'px');
-      if (d === 'bottom')
-        return (r.y + r.height + 6 + 'px');
-    };
-
-    $wrapper
-     .css('position', 'fixed')
-     .css('left', renderX(rect, direction))
-     .css('top', renderY(rect, direction))
-     .attr('tootip-key', randomKey)
-     .addClass(styleSheet);
-    $selector.attr('tootip-key', randomKey);
-
-    Object.keys(cssStyle).forEach(function (attr) {
-      $wrapper.css(attr, cssStyle[attr]);
-    });
-
-    $wrapper.append(type === 'html' ? $(target) : $('<span>' + target +'</span>'));
-
-    return $wrapper;
-  };
-
-  /**
-   * [renderHtml 使用html字符串进行初始化]
-   * @param  {[$Object]} $selector [一个页面元素]
-   * @param  {[String]} htmlstr   [html字符串]
-   * @param  {[Object]} options   [自定义参数]
-   */
-  function init(_$selector, _options) {
-
-    var $selector = (typeof _$selector === 'object') ? _$selector : $(_$selector),
-       trigger = _options['trigger'] ? _options['trigger'] : 'mouseover', // click | hover
-       $context = _options['context'],
-       key = $selector.attr('tootip-key');
-    _options.value && $selector.data('tootip-target', _options.value);
-    _options.type && $selector.data('tootip-type', _options.type);
-    (!key) && $selector.data('tootip-options', _options);
-    (!key) && $selector.css('cursor', 'pointer');
-
-    (!key) && eventListen($selector, trigger, $context);
-  }
-
-  /**
-    * [trigger 手动触发元素的显示和隐藏]
-    * @param  {[$Object]} $selector [一个页面元素]
-    */
-   function trigger($selector) {
-     if (!$selector.data('isActivated')) {
-       showTootips($selector);
-     }else {
-       hideTooTips($selector);
-     }
+   // 提取属性
+   var randomKey = '_' + Math.random().toString(36).substr(2);
+   var $wrapper = tootipKey ? utils.element.elementWrapper('div[tootip-key='+tootipKey+']') : document.createElement('div');
+   var cssStyle = options.style || {};
+   var styleSheet = options.css || '';
+   var direction = options.direction || 'top';
+   var triangleArray = ['top', 'left', 'right','bottom'];
+   var triangleClass = 'triangle-' +
+     triangleArray[triangleArray.length - 1 - triangleArray.indexOf(direction)];
+   var shadowClassMap = {
+     top: 'tootip-shadow-top-right',
+     bottom: 'tootip-shadow-bottom-right',
+     left: 'tootip-shadow-top-left',
+     right: 'tootip-shadow-top-right',
    }
+   var rect = $selector.getBoundingClientRect();
+
+   utils.element.setCss($wrapper, 'border', 'solid 1px rgb(212, 212, 212)')
+    .setCss($wrapper, 'position', 'fixed')
+    .setCss($wrapper, 'left', utils.renderX1(rect, direction))
+    .setCss($wrapper, 'top', utils.renderY1(rect, direction))
+    .setAttr($wrapper, 'tootip-key', tootipKey || randomKey)
+    .addClass($wrapper, triangleClass + ' abnormal-tips-container ' + shadowClassMap[direction] + ' ' + styleSheet);
+    utils.element.setAttr($selector, 'tootip-key', tootipKey || randomKey);
+
+   // 第一次创建dom结构
+   if (!tootipKey && trigger === 'mouseover') {
+     $wrapper.onmouseout = function () {
+       utils.actionDebounce(randomKey, hideTooTips, $selector);
+     };
+     $wrapper.onmouseover = function () {
+       utils.actionDebounce(randomKey, showTootips, $selector);
+     };
+   }
+
+   Object.keys(cssStyle).forEach(function (attr) {
+     utils.element.setCss($wrapper, attr, cssStyle[attr]);
+   });
+
+   utils.element.html($wrapper, type === 'html' ? target : ('<span>' + target +'</span>'));
+
+   return $wrapper;
+ };
+
+
+ /**
+  * [showTootips 操作页面属性显示一个元素]
+  * @param  {[$Object]} $selector [一个页面元素]
+  * @param  {[String]} tootipKey [可能已经生成过一次tooptips组件了]
+  */
+ function showTootips($selector) {
+   if (utils.element.getData($selector, 'isActivated')) return;
+   var tootipKey = utils.element.getAttr($selector, 'tootip-key');
+   var $dom = renderContainer($selector, tootipKey);
+   if (!tootipKey) {
+     document.body.appendChild($dom);
+   } else {
+    utils.element.removeClass($dom, 'hidden');
+   }
+   utils.element.setData($selector, 'isActivated', true);
+
+   var options = utils.element.getData($selector, 'tootip-options');
+   var rect = $dom.getBoundingClientRect();
+
+   utils.element
+     .setCss($dom, 'top', utils.renderY2(rect, options.direction))
+     .setCss($dom, 'left', utils.renderX2(rect, options.direction));
+ };
+
+ /**
+  * [hideTooTips 操作页面属性隐藏一个元素]
+  * @param  {[$Object]} $selector [一个页面元素]
+  */
+ function hideTooTips($selector) {
+   var key = utils.element.getAttr($selector, 'tootip-key');
+   var $element = utils.element.elementWrapper('div[tootip-key='+key+']');
+   utils.element.addClass($element, 'hidden');
+   utils.element.setData($selector, 'isActivated', '');
+ };
+
+
+ /**
+  * [eventListen 进行事件监听]
+  * @param  {[$Object]} $selector [一个页面元素]
+  * @param  {[String]} trigger [触发事件监听类型]
+  */
+ function eventListen($selector, _trigger, $context) {
+
+   var trigger = (_trigger instanceof Array) ? _trigger : [_trigger];
+
+   // click事件监听
+   if(trigger.includes('click')) {
+     ($context || $selector)
+       .onclick = function () {
+         if (!utils.element.getData($selector, 'isActivated')) {
+           utils.actionDebounce(utils.element.getAttr($selector, 'tootip-key'), showTootips, $selector);
+         } else {
+           utils.actionDebounce(utils.element.getAttr($selector, 'tootip-key'), hideTooTips, $selector);
+         }
+       };
+   } 
+
+   // 鼠标事件监听
+   if(trigger.includes('mouseover')) {
+     ($context || $selector)
+       .onmouseout = function () {
+         utils.actionDebounce(utils.element.getAttr($selector, 'tootip-key'), hideTooTips, $selector);
+       };
+     ($context || $selector)
+       .onmouseover = function () {
+         utils.actionDebounce(utils.element.getAttr($selector, 'tootip-key'), showTootips, $selector);
+       };
+   }
+ }
+
+ /**
+  * [renderHtml 使用html字符串进行初始化]
+  * @param  {[$Object]} $selector [一个页面元素]
+  * @param  {[String]} htmlstr   [html字符串]
+  * @param  {[Object]} options   [自定义参数]
+  */
+ function init(_$selector, _options) {
+
+   var $selector = utils.element.elementWrapper(_$selector),
+      trigger = _options['trigger'] ? _options['trigger'] : 'mouseover', // click | hover
+      $context = utils.element.elementWrapper(_options['context']),
+      key = utils.element.getAttr($selector, 'tootip-key');
+   
+   utils.element.setData($selector, 'tootip-target', _options.value)
+     .setData($selector, 'tootip-type', _options.type)
+     .setData($selector, 'tootip-options', _options)
+     .setData($selector, 'tootip-trigger', _options.trigger)
+     .setCss($selector, 'cursor', 'pointer');
+
+  (!key) && eventListen($selector, trigger, $context);
+ }
+
+ return {
+   init: init,
 
    /**
-    * [getStatus 获取某个元素的状态]
-    * @param  {[$Object]} $selector [一个页面元素]
-    */
-   function getStatus($selector) {
-
-     console.log($selector);
-     var status = {
-       isActivated: $selector.data('isActivated') ? true : false,
-       isInited: $selector.attr('tootip-key') ? true : false,
-       key: $selector.attr('tootip-key') || null,
-     };
-     return status;
-   }
-
-  /**
-   * [showTootips 操作页面属性显示一个元素]
+   * [trigger 手动触发元素的显示和隐藏]
    * @param  {[$Object]} $selector [一个页面元素]
    */
-  function showTootips($selector) {
-    var $dom = renderPage($selector);
-    $('body').append($dom[0]);
-    $selector.data('isActivated', true);
+   trigger: function($selector) {
+    if (!utils.element.getData($selector, 'isActivated')) {
+      showTootips($selector, utils.element.getAttr($selector, 'tootip-key'));
+    }else {
+      hideTooTips($selector);
+    }
+  },
 
-    // 根据生成的tootips元素第二次计算横坐标和纵坐标
-    var options = $selector.data('tootip-options');
-    var rect = $dom[0].getBoundingClientRect();
-
-    var renderX = function (r, d) {
-      if (d === 'top' || d === 'bottom')
-        return (r.x - r.width / 2 + 'px');
-      if (d === 'left')
-        return (r.x - r.width + 'px');
-      if (d === 'right')
-        return (r.x + 'px');
+  /**
+  * [getStatus 获取某个元素的状态]
+  * @param  {[$Object]} $selector [一个页面元素]
+  */
+   status: function ($selector) {
+    return {
+      isActivated: utils.element.getData($selector, 'isActivated') ? true : false,
+      isInited: utils.element.getAttr($selector, 'tootip-key') ? true : false,
+      key: utils.element.getAttr($selector, 'tootip-key') || null,
     };
-
-    var renderY = function (r, d) {
-      if (d === 'top')
-        return (r.y - r.height + 'px');
-      if (d === 'left' || d === 'right')
-        return (r.y - r.height / 2 + 'px');
-      if (d === 'bottom')
-        return (r.y + 'px');
-    };
-
-    $dom.css('top', renderY(rect, options.direction));
-    $dom.css('left', renderX(rect, options.direction));
-  };
-
-  /**
-   * [hideTooTips 操作页面属性隐藏一个元素]
-   * @param  {[$Object]} $selector [一个页面元素]
-   */
-  function hideTooTips($selector) {
-    var key = $selector.attr('tootip-key');
-    $('div[tootip-key='+key+']').remove();
-    $selector.data('isActivated', '');
-  };
-
-
-  /**
-   * [eventListen 进行事件监听]
-   * @param  {[$Object]} $selector [一个页面元素]
-   * @param  {[String]} trigger [触发事件监听类型]
-   */
-  function eventListen($selector, _trigger, $context) {
-
-    var trigger = (_trigger instanceof Array) ? _trigger : [_trigger];
-
-    // click事件监听
-    (trigger.includes('click')) &&  ($context || $selector).on('click', function () {
-      if (!$selector.data('isActivated')) {
-        showTootips($selector);
-      }else {
-        hideTooTips($selector);
-      }
-    });
-
-    // 鼠标事件监听
-    (trigger.includes('mouseover')) &&
-       ($context || $selector).on('mouseout', function () {
-         hideTooTips($selector);
-       }).on('mouseover', function () {
-         showTootips($selector);
-    });
-  }
-
-  return {
-    init: init,
-    trigger: trigger,
-    status: getStatus,
-  }
+  },
+ }
 })();
