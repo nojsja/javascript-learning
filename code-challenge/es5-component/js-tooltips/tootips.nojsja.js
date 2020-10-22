@@ -124,7 +124,7 @@
      if (d === 'bottomright' || d === 'topright')
       return (r.x + r.widht + 'px');
    },
-   renderY2: renderY = function (r, d) {
+   renderY2: function (r, d) {
      if (d === 'top' || d === 'topleft' || d === 'topright')
        return (r.y - r.height + 'px');
      if (d === 'left' || d === 'right')
