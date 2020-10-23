@@ -31,7 +31,7 @@
   </head>
   <body>
     <div class="tootips-wrapper">
-      <span id="t1">顶部tooltips</span>
+      <span id="t1">顶部tooltips(点击)</span>
       <span id="context" style="color: red">context</span>
       <span id="t2" style="color: red">底部tooltips</span>
       <span id="t3">左边tooltips</span>
@@ -41,10 +41,15 @@
 
   <script type="text/javascript" src="./tootips.nojsja.js"></script>
   <script type="text/javascript">
+    /* click触发方式下tootip组件自动定位 */
+    window.addEventListener('resize', function() {
+      Tootips.resize('#t1');
+    });
+
     Tootips.init(('#t1'), {
-      trigger: 'mouseover',
+      trigger: 'click',
       type: 'html',
-      value: '<h3>header</h3><p>body</p>',
+      value: '<h3>header</h3><p><input type="text"></p>',
       direction: 'top',
       style: {
         'font-size': '1rem',
