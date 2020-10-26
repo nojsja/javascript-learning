@@ -18,6 +18,11 @@
 
 /* *************** 解法1 *************** */
 
+/* -------------------------------------------------------
+  动态规划：
+  状态转移方程：dp[max] = max(dp[n], dp[max])
+------------------------------------------------------- */
+
 /**
  * @param {string} s
  * @return {number}
@@ -60,13 +65,9 @@ var longestValidParentheses = function(s) {
         item.push(item[item.length - 1] + 1);
         done = false;
       }
+      maxLength = Math.max(item.length, maxLength);
     });
-  }
-
-  matchArray.find(function(item) {
-    if (item.length > maxLength) maxLength = item.length;
-    return false;
-  });
+ }
 
   return maxLength;
 };
@@ -76,7 +77,7 @@ var longestValidParentheses = function(s) {
  * @param {string} s
  * @return {number}
  */
-longestValidParentheses = function(s) {
+longestValidParentheses2 = function(s) {
   var indexArray = [-1]; //动态存储左括号索引值-1，
   var maxLength = 0;
   var stack = []; // 栈存储已经遍历的左括号索引
@@ -105,10 +106,10 @@ longestValidParentheses = function(s) {
 };
 
 // console.log(longestValidParentheses(')()())'));
-console.log(longestValidParentheses('()(())'));
+// console.log(longestValidParentheses('()(())'));
 // console.log(longestValidParentheses("(()())"));
 // console.log(longestValidParentheses(")()())()()("))
-// console.log(longestValidParentheses(")(((((()())()()))()(()))("));
+console.log(longestValidParentheses(")(((((()())()()))()(()))("));
 // console.log(longestValidParentheses(")(((())))))("));
 // console.log(longestValidParentheses(")(())))(())())"))
 
