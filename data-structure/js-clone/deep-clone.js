@@ -1,70 +1,80 @@
-/* -----------------------------------------------------------------------------
-  js浅复制: 应用类型只复制第一层有信用，常规类型直接复制值
-  数据类型：object - array - boolean - number - date - function - string - null/undefined
------------------------------------------------------------------------------ */
+/**
+* deep clone
+* @param  {[type]} parent object 需要进行克隆的对象
+* @return {[type]}        深克隆后的对象
+*/
 
-/* ------------------- 深复制 ------------------- */
-var deepClone =  (function () {
-
-  // key step
-  function step(data) {
-    var nData;
-
-    if ( Object.prototype.toString.call(data) === '[object Array]') {
-      arrayClone(nData = [], data);
-    } else if (Object.prototype.toString.call(data) === '[object Object]') {
-      objectClone(nData = {}, data);
-    } else {
-      nData = normalClone(data);
-    }
-
-    return nData;
-  }
-
-  // get reg condition
-  function getRegExp(re) {
+function deepClone(parent) {
+  // 维护两个储存循环引用的数组
+  const parents = [];
+  const children = [];
+  
+  const getRegExp = re => {
     var flags = '';
     if (re.global) flags += 'g';
     if (re.ignoreCase) flags += 'i';
     if (re.multiline) flags += 'm';
     return flags;
   };
-
-  // array clone
-  function arrayClone(base, target) {
-    for (var i = 0; i < target.length; i++) {
-      base[i] = step(target[i]);
+  
+  const isType = (obj, type) => {
+    if (typeof obj !== 'object') return false;
+    const typeString = Object.prototype.toString.call(obj);
+    let flag;
+    switch (type) {
+      case 'Array':
+        flag = typeString === '[object Array]';
+        break;
+      case 'Date':
+        flag = typeString === '[object Date]';
+        break;
+      case 'RegExp':
+        flag = typeString === '[object RegExp]';
+        break;
+      default:
+        flag = false;
     }
+    return flag;
   };
 
-  // object clone
-  function objectClone(base, target) {
-    var keys = Object.keys(target);
-    for (var i = 0; i < keys.length; i++) {
-      base[ keys[i] ] = step(target[ keys[i] ]);
+  const _clone = parent => {
+    if (parent === null) return null;
+    if (typeof parent !== 'object') return parent;
+    if (parent !== parent) return NaN;
+
+    let child, proto, index;
+
+    if (isType(parent, 'Array')) {
+      // 对数组做特殊处理
+      child = [];
+    } else if (isType(parent, 'RegExp')) {
+      // 对正则对象做特殊处理
+      child = new RegExp(parent.source, getRegExp(parent));
+      if (parent.lastIndex) child.lastIndex = parent.lastIndex;
+    } else if (isType(parent, 'Date')) {
+      // 对Date对象做特殊处理
+      child = new Date(parent.getTime());
+    } else {
+      // 处理对象原型
+      proto = Object.getPrototypeOf(parent);
+      // 利用Object.create切断原型链
+      child = Object.create(proto);
     }
+
+    // 处理循环引用
+    index = parents.indexOf(parent);
+    if (index != -1) return children[index];
+    parents.push(parent);
+    children.push(child);
+
+    for (let i in parent) {
+      child[i] = _clone(parent[i]);
+    }
+
+    return child;
   };
 
-  // simple clone
-  function normalClone(target) {
-    if ( Object.prototype.toString.call(target) === '[object RegExp]' ) {
-      var reg = new RegExp(target.source, getRegExp(target));
-      target.lastIndex && (reg.lastIndex = target.lastIndex);
+  return _clone(parent);
+};
 
-    } else if( Object.prototype.toString.call(target) === '[object Date]' ) {
-      target = new Date(target.getTime());
-    }
-
-    return target;
-  };
-
-  return step;
-
-})();
-
-/* ------------------- TEST ------------------- */
-var a = [1, 2, {}, /(1|2)/gi];
-var b = deepClone(a);
-b.forEach(function (item, i) {
-  console.log(item, item === a[i]);
-});
+// console.log(deepClone({a: 1, b: {v: 2}, c: /[a-b]/gi, d: [1,2,3,4]}));
