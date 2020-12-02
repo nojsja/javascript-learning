@@ -1,28 +1,29 @@
-  const fs = require('fs');
+  const { remote } = require('electron');
+const fs = require('fs');
   const fsPromise = fs.promises;
   const path = require('path');
   const utils = require('./child.utils');
-  const requireLang = require('../../lang');
   const { readFileBlock, uploadRecordStore, unlink } = utils;
   const fileBlock = readFileBlock();
   const uploadStore = uploadRecordStore();
-  requireLang(process.env.LANG);
 
-  process.on('message', ({action, params, id }) => {
+  global.lang = process.env.lang;
+
+  process.on('message', ({ action, params, id }) => {
     switch (action) {
       case 'init-works':
         initWorks(params).then((rsp) => {
-          process.send({result: rsp, id});
+          process.send({... rsp, id});
         });
         break;
       case 'upload-works':
         uploadWorks(params, id).then(rsp => {
-          process.send({result: rsp, id});
+          process.send({... rsp, id});
         });
         break;
       case 'close':
         close(params, id).then(rsp => {
-          process.send({result: rsp, id});
+          process.send({... rsp, id});
         });
         break;
       case 'record-set':
@@ -30,10 +31,10 @@
         process.send({result: null, id});
         break;
       case 'record-get':
-        process.send({result: uploadStore.get(params), id});
+        process.send({...uploadStore.get(params), id});
         break;
       case 'record-get-all':
-        process.send({result: uploadStore.getAll(params), id});
+        process.send({...uploadStore.getAll(params), id});
         break;
       case 'record-update':
         uploadStore.update(params);
@@ -49,7 +50,7 @@
       break;
       case 'unlink': 
         unlink(params).then(rsp => {
-          process.send({result: rsp, id});
+          process.send({...rsp, id});
         })
       break;
       default:
@@ -60,9 +61,8 @@
   /* *************** file logic *************** */
 
   /* 上传初始化工作 */
-  function initWorks({ pre, prefix, name, abspath, size, fragsize, record }) {
+  function initWorks({username, host, sharename, pre, prefix, name, abspath, size, fragsize, record }) {
     const remotePath = path.join(pre, prefix, name);
-
     return new Promise(resolve => {
       new Promise((reso) => fsPromise.unlink(remotePath).then(reso).catch(reso))
       .then(() => {
@@ -76,6 +76,9 @@
             ...record,
             size, // 文件大小
             remotePath,
+            username,
+            host,
+            sharename,
             startime: utils.getTime(new Date().getTime()), // 上传日期
             total: Math.ceil(size / fragsize),
           };

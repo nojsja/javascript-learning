@@ -442,6 +442,8 @@ const UTILS = {
       },
     ];
 
+    console.log(files);
+
     const data =
       (UTILS.tasksFilter(files, that.state.taskFilter, that.state.keywords)).map((file, i) => {
         file.ID = i + 1;

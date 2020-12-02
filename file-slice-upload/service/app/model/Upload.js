@@ -50,7 +50,6 @@ class Upload extends DataSet {
     return new Promise(async(resolve) => {
       let res = [];
       const { region } = params;
-      // const uploadRecords = await global.ipcUploadProcess.send('upload', { action: 'record-get-all', params: null});
       const uploadRecordsAll = await global.ipcUploadProcess.sendToAll({ action: 'record-get-all', params: null});
       
       uploadRecordsAll.forEach(uploadRecords => {
@@ -58,7 +57,6 @@ class Upload extends DataSet {
           if (region && (key !== region)) continue;
           (uploadRecords[key] || []).forEach(uploadObject => {
             if (uploadObject.status !== 'break') {
-              // this._unlink({filepath: uploadObject.remotePath})
               uploadObject.status = 'error';
               try {
                 console.log('--unlink', uploadObject.remotePath);
@@ -96,7 +94,7 @@ class Upload extends DataSet {
   }
 
   /* -------------- 获取上传前缀路径 -------------- */
-  getUploadPrepath({ host, username, sharename }) {
+  getUploadPrepath() {
     return Promise.resolve(path.join(global.pathRuntime, 'upload'))
   }
 
@@ -139,39 +137,37 @@ class Upload extends DataSet {
     * @param  {[String]} sharename [共享名]
     * @param  {[String]} fragsize [分片大小]
     */
-  init({ host, file, abspath, sharename, fragsize, prefix = '' }) {
+  init({ username, host, file, abspath, sharename, fragsize, prefix = '' }) {
     const date = Date.now();
     const uploadId = getStringMd5(date + file.name + file.type + file.size);
-    let remotePath = '';
     let size = 0;
 
     return new Promise((resolve) => {
         this.getUploadPrepath()
-        .then((pre) => global.ipcUploadProcess.send(
-          {
-            action: 'init-works',
-            params: {
-              pre, prefix, size: file.size, name: file.name, abspath, fragsize, record: 
-              {
-                host, // 主机
-                filename: path.join(prefix, file.name), // 文件名
-                size, // 文件大小
-                fragsize, // 分片大小
-                sharename, // 共享名
-                abspath, // 绝对路径
-                remotePath,
-                startime: getTime(new Date().getTime()), // 上传日期
-                endtime: '', // 上传日期
-                uploadId, // 任务id
-                index: 0,
-                total: Math.ceil(size / fragsize),
-                status: 'uploading' // 上传状态
+        .then((pre) => {
+          return global.ipcUploadProcess.send(
+            {
+              action: 'init-works',
+              params: {
+                username, host, sharename, pre, prefix, size: file.size, name: file.name, abspath, fragsize, record: 
+                {
+                  host, // 主机
+                  filename: path.join(prefix, file.name), // 文件名
+                  size, // 文件大小
+                  fragsize, // 分片大小
+                  abspath, // 绝对路径
+                  startime: getTime(new Date().getTime()), // 上传日期
+                  endtime: '', // 上传日期
+                  uploadId, // 任务id
+                  index: 0,
+                  total: Math.ceil(size / fragsize),
+                  status: 'uploading' // 上传状态
+                }
               }
-            }
-          },
-          uploadId
-        )
-      )
+            },
+            uploadId
+          )
+        })
       .then((rsp) => {
         resolve(rsp);
       }).catch(err => {

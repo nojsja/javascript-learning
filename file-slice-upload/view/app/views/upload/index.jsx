@@ -20,6 +20,10 @@ class UploadPage extends Component {
   uploadDirRef = React.createRef();
   uploadFileRef = React.createRef();
 
+  componentDidMount() {
+    this.props.upload.setLang(this.props.lang);
+  }
+
   // 上传文件
   handleUploadFiles = (e) => {
     // const files = dialog.showOpenDialogSync(remote.getCurrentWindow(), {
@@ -29,7 +33,7 @@ class UploadPage extends Component {
     const files = e.target.files;
     const { sharename, prepath } = this.props.upload.getSharenameAndPrepath();
     const dirSymbol = path.join('/');
-    const host = 'default';
+    const host = 'localhost';
     const user = 'default';
     const filesIterator = [];
 
@@ -175,6 +179,7 @@ class UploadPage extends Component {
   render() {
     const { lang } = this.props.lang;
     const { sharename, prepath, host, user, region } = this.props.upload.getSharenameAndPrepath();
+    console.log(region, this.props.upload);
     const { uploading, error } = this.getRegionTaskTypeLength(this.props.upload.fileStorage, 'default');
     return (
       <div>

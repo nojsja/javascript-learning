@@ -7,6 +7,9 @@ const { app } = require('electron');
 const os = require('os');
 const crypto = require('crypto');
 
+/* 获取随机字符串 */
+exports.getRandomString = () => Math.random().toString(36).substr(2)
+
 /**
 * @name: jsonstr2Object
 * @description: 去除shell返回的json字符串内容的最后一个','符号，并转化成对象

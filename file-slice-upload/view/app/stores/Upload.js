@@ -5,6 +5,7 @@ import {
 import { arrayRemove, formatSizeStr, mapMimeType } from 'utils/utils';
 import { ipcRenderer } from 'electron';
 import { notification } from 'antd';
+import { configConsumerProps } from 'antd/lib/config-provider';
 
 /**
 * @name: FileUpload
@@ -172,7 +173,11 @@ class ObjectFragmentUpload {
         params: {
           host: storageObject.host,
           username: storageObject.username,
-          file: storageObject.file,
+          file: {
+            name: storageObject.file.name,
+            type: storageObject.file.type,
+            size: storageObject.file.size
+          },
           abspath: storageObject.abspath,
           sharename: storageObject.sharename,
           prefix: storageObject.prefix,
@@ -184,7 +189,10 @@ class ObjectFragmentUpload {
       if (data.code !== 200) {
         this.markError(storageObject, data.result);
         this.startTasks(storageObject.region);
-        ('error', null, this.lang.lang.uploadError);
+        notification['error']({
+          message: this.lang.lang.error,
+          description: this.lang.lang.uploadError
+        });
         return { err: true, init: false };
       }
       this.updateUploadId(storageObject, {
@@ -194,7 +202,8 @@ class ObjectFragmentUpload {
         state: 'uploading',
       });
       return { err: false, init: true };
-    }, () => {
+    }, (error) => {
+      console.log(error);
       this.updateUploadId(storageObject, {
         uploadId: null,
         size: 0,
@@ -227,6 +236,7 @@ class ObjectFragmentUpload {
         host, username, sharename,
       },
     }).then((rsp) => {
+      console.log(rsp);
       if (rsp.code === 200) {
         let fileObj;
         rsp.result.forEach((file) => {
@@ -283,8 +293,10 @@ class ObjectFragmentUpload {
         uploadId: id,
       },
     }).then((data) => {
+      console.log(data);
       this.complete(object, region);
     }).catch((error) => {
+      console.log(error);
       this.startTasks(region);
       this.markError(object, error);
     });
@@ -363,7 +375,7 @@ class ObjectFragmentUpload {
 
   getSharenameAndPrepath = () => {
     return {
-      prepath: '.', host: 'localhost', user: 'default', region: 'default'
+      prepath: '.', host: 'localhost', user: 'default', region: `${'localhost'}_${'default'}_${'default'}`, sharename: 'default'
     };
   }
 
@@ -1111,10 +1123,10 @@ class ObjectFragmentUpload {
         speed: '0 MB/S',
         id: encodeURIComponent(`${new Date()}_${file.name}_${file.type}_${file.size}`),
         uploadId: '',
-        host: window.sessionStorage.getItem('rhinodisk_current_host'),
-        username: window.sessionStorage.getItem('login_user'),
+        host: 'localhost',
+        username: 'default',
         abspath: file.abspath,
-        sharename: file.sharename,
+        sharename: 'default',
       };
       const obj = observable(fileObj);
       this.taskType.uninitial.push(obj);

@@ -2,6 +2,16 @@
 export const getRandomString = () => Math.random().toString(36).substr(2);
 
 /**
+ * 文件类型正则匹配
+ * 匹配前需要将后缀名转换为小写
+ */
+export const audioReg = /(mp3)|(cd)|(wave)|(wma)|(ape)|(flac)|(aac)|(mpeg)|(aiff)|(midi)|(amr)/;
+export const imageReg = /(png)|(jpg)|(jpeg)|(raw)|(nef)|(icns)|(gif)|(svg)|(ico)|(bmp)|(tif)|(pcx)|(ufo)/;
+export const videoReg = /(avi)|(mp4)|(asf)|(mov)|(wmv)|(3gp)|(rmvb)|(rm)|(flv)|(f4v)/;
+export const zipReg = /(zip)|(rar)|(jar)|(taz)|(xz)/;
+
+
+/**
  * 文件类型匹配
  * @param {[object]} data [需要处理的数据]
  * @param {[string]} inputkey [需要匹配的key值，默认为name]
