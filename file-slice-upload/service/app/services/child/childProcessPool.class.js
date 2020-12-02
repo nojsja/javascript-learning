@@ -46,6 +46,7 @@ class ChildProcessPool {
   getForkedFromPool(id="default") {
     let forked;
     if (!this.pidMap.get(id)) {
+      console.log(`id: ${id} not found!`)
       if (this.forked.length < this.forkMaxIndex) {
         this.inspectStartIndex ++;
         forked = fork(
@@ -59,15 +60,20 @@ class ChildProcessPool {
         this.forked.push(forked);
         this.forkIndex += 1;
         forked.on('message', (data) => {
-          this.onMessage({ data, id: data.id });
+          const id = data.id;
+          delete data.id
+          this.onMessage({ data, id });
         });
         this.pidMap.set(id, forked.pid);
+        console.log(`id: ${id}, create process!`)
       } else {
         this.forkIndex = this.forkIndex % this.forkMaxIndex;
         forked = this.forked[this.forkIndex];
         this.forkIndex += 1;
+        this.pidMap.set(id, forked.pid);
       }
     } else {
+      console.log(`id: ${id} found!`)
       forked = this.forked.filter(f => f.pid === this.pidMap.get(id))[0];
       if (!forked) throw new Error(`Get forked process from pool failed! the process pid: ${this.pidMap.get(id)}.`);
     }
@@ -89,7 +95,7 @@ class ChildProcessPool {
   }
 
   /* Send request to a process */
-  send(params, givenId) {
+  send(params, givenId="default") {
     const id = givenId || getRandomString();
     const forked = this.getForkedFromPool(id);
     return new Promise(resolve => {

@@ -375,7 +375,12 @@ class ObjectFragmentUpload {
 
   getSharenameAndPrepath = () => {
     return {
-      prepath: '.', host: 'localhost', user: 'default', region: `${'localhost'}_${'default'}_${'default'}`, sharename: 'default'
+      prepath: '.',
+      host: 'localhost',
+      user: 'default',
+      username: 'default',
+      region: `${'localhost'}_${'default'}_${'default'}`,
+      sharename: 'default'
     };
   }
 

@@ -2,13 +2,6 @@ const electron = require('electron');
 const path = require('path');
 const { app, BrowserWindow, ipcMain } = require('electron');
 
-/* ------------------- self module ------------------- */
-global.pathLocator = require('./app/utils/path-locator.js');
-const requireLang = require('./app/lang');
-const IpcMainClass = require('./app/services/main/');
-const ChildProcessPool = require('./app/services/child/childProcessPool.class')
-const IpcMaiWindowClass = require('./app/services/main/windowManage');
-const { readFileSync } = require('./app/utils/write-file');
 const { checkEnvFiles } = require('./app/utils/utils');
 
 /* ------------------- var ------------------- */
@@ -16,6 +9,14 @@ const nodeEnv = process.env.NODE_ENV;
 global.nodeEnv = process.env.NODE_ENV;
 // 检查环境
 global.pathRuntime = checkEnvFiles().pathRuntime;
+
+/* ------------------- self module ------------------- */
+global.pathLocator = require('./app/utils/path-locator.js');
+const requireLang = require('./app/lang');
+const IpcMainClass = require('./app/services/main/');
+const ChildProcessPool = require('./app/services/child/childProcessPool.class')
+const IpcMaiWindowClass = require('./app/services/main/windowManage');
+const { readFileSync } = require('./app/utils/write-file');
 
 
 /* ------------------- middleware ------------------- */
@@ -27,7 +28,7 @@ global.ipcMainProcess = new IpcMainClass(ipcMain);
 global.ipcMainWindow = new IpcMaiWindowClass();
 global.ipcUploadProcess = new ChildProcessPool({
   path: path.join(app.getAppPath(), 'app/services/child/upload.js'),
-  max: 1,
+  max: 3,
   env: { lang: global.lang, NODE_ENV: nodeEnv }
 });
 

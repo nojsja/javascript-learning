@@ -3,9 +3,9 @@ const path = require('path');
 const { app } = require('electron');
 const FileAsync = require('lowdb/adapters/FileAsync')
 const adapters = {
-  uploads: new FileAsync(path.join(app.getAppPath(), 'app/runtime/database/uploads.json')),
-  setting: new FileAsync(path.join(app.getAppPath(), 'app/runtime/database/setting.json')),
-  session: new FileAsync(path.join(app.getAppPath(), 'app/runtime/database/session.json'))
+  uploads: new FileAsync(path.join(global.pathRuntime, 'database/uploads.json')),
+  setting: new FileAsync(path.join(global.pathRuntime, 'database/setting.json')),
+  session: new FileAsync(path.join(global.pathRuntime, 'database/session.json'))
 };
 
 class DataSet {

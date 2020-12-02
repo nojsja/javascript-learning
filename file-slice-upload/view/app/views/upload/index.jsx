@@ -69,7 +69,7 @@ class UploadPage extends Component {
   handleUploadDirs = (e) => {
     const state = true;
     const dirs = e.target.files;
-    const host = 'default';
+    const host = 'localhost';
     const user = 'default';
     const filesIterator = [];
 
