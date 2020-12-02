@@ -1,0 +1,162 @@
+body {
+  background-color: #ffffff;
+}
+
+i {
+  cursor: pointer;
+}
+
+.container-router {
+  padding: 3rem;
+}
+
+.dt-drawer-wrapper {
+  .dt-drawer-title {
+    display: flex;
+    position: relative;
+    justify-content: space-between;
+    flex-direction: row;
+
+    > span {
+      position: absolute;
+      left: .5rem;
+      top: 0;
+    }
+
+    > div {
+      width: 100%;
+      text-align: center;
+    }
+
+    .upload-drawer-tabs {
+      position: absolute;
+      right: 0;
+      top: 0;
+      text-align: center;
+      margin-bottom: 1rem;
+      .upload-drawer-search {
+        text-align: right;
+      }
+    }
+  }
+  .ant-drawer-header {
+    padding: .65rem .5rem;
+  }
+  .ant-drawer-body {
+    padding: .8rem;
+  }
+}
+
+.select-object-wrapper {
+  max-height: 20rem;
+  overflow-y: auto;
+  > div {
+      .select-object-div-header();
+  }
+
+}
+
+.upload_task_operation i {
+  margin: 0 .2rem;
+}
+
+#uploaderDrawerTable {
+  tbody {
+      > tr > td:nth-child(4) > span {
+          display: inline-block;
+          width: 7rem;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          word-break: break-all;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          padding-top: .4rem;
+      }
+
+      > tr > td:nth-child(2) > span {
+          width: 4rem;
+      }
+  }
+
+}
+
+.select-object-div-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: solid 1px #eff0f0;
+  margin-bottom: .3rem;
+  padding-bottom: .1rem;
+  
+  > span:first-child {
+      width: 70%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: break-all;
+      white-space: nowrap;
+  }
+}
+
+.upload-drawer-wrapper {
+  .upload-drawer-list {
+      padding: 0;
+      // width: 100%;
+      overflow-y: auto;
+
+      td {
+        padding: 0 0 0 5px !important;
+      }
+      
+      .upload-item-progress {
+        width: 6rem;
+        .item-progress-label {
+          margin-top: -5px;
+          padding: 0;
+        }
+      }
+
+      .upload-item-speed {
+        width: 4rem;
+      }
+
+      .upload-item-state {
+        padding-left: 15px;
+        // width: 3rem;
+      }
+
+      .upload-item-wrapper {
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        width: 8rem;
+        height: 100%;
+
+        .upload-item-name {
+          display: inline-block;
+          width: 8rem;
+          overflow:hidden; //超出的文本隐藏
+          text-overflow:ellipsis; //溢出用省略号显示
+          white-space:nowrap; //溢出不换行
+        }
+      }
+
+  }
+}
+
+.drawer-action-title {
+  // text-align: center;
+  i {
+      margin: 0 .2rem;
+      cursor: pointer;
+  }
+}
+
+.loader-hover {
+  cursor: pointer;
+
+    &:hover {
+      transition: all .2s;
+    }
+}

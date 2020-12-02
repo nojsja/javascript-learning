@@ -1,0 +1,34 @@
+body {
+  background-color: #ffffff;
+}
+.container-router {
+  padding: 3rem;
+}
+.editable-tree-wrapper .editable-tree-edit-confirm {
+  text-align: center;
+  padding-left: 5px;
+}
+.editable-tree-wrapper .editable-tree-edit-cancel {
+  padding-left: 5px;
+}
+.editable-tree-wrapper .ant-input.normal-text {
+  width: 150px;
+}
+.editable-tree-wrapper .editable-tree-node-action {
+  padding-left: 4px;
+  display: inline-block;
+  text-align: left;
+  max-height: 24px;
+  min-width: 100px;
+}
+.editable-tree-wrapper .editable-tree-node-action i {
+  margin: 0 4px;
+}
+.editable-tree-wrapper .editable-tree-label {
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  height: 19px;
+}

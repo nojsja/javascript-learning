@@ -1,0 +1,16 @@
+module.exports = {
+  node_add_repeat: 'Add the same node repeatedly!',
+  node_cannot_be_connected: 'The node cannot be connected!',
+  node_add_repeat_cluster: 'The cluster which the adding node belongs already has a node added!',
+  net_mount_success: 'The share is successfully mounted locally',
+  net_umount_success: 'The share was successfully unmounted from the local',
+  net_mount_failed_reason: 'Mounting the share to the local failed! the possible reasons: the share has been mounted, resources are occupied, remote services can not connect',
+  net_umount_failed_reason: 'Failed to unmount the share from the local, it may have been unmounted or resources are occupied!',
+  driver_already_mount: 'The driver has been mounted!',
+  driver_not_mounted: 'The driver is not mounted!',
+  get_system_mount_info_failed: 'Failed to get system mount information!',
+  mount_point_is_occupied_by_sharing: 'The mount point is already occupied by network sharing!',
+  mount_point_is_occupied: 'The mount point is already occupied!',
+  mount_action_repeat: 'Mount repeatedly',
+  mount_failed_tip: 'Remote service connection failed or local drive is occupied!',
+};

@@ -1,0 +1,11 @@
+body {
+  background-color: #ffffff;
+}
+
+/*  chrome全局定义scrollbar效果
+============================================================================= */
+::-webkit-scrollbar {width: 6px;height:6px;}
+::-webkit-scrollbar-track-piece{background-color: #eee;margin: -2px;}
+::-webkit-scrollbar-thumb{background: #cdcdcd;min-height: 150px;min-width: 150px;border-radius: 10px;}
+::-webkit-scrollbar-thumb:vertical:hover{background: #909090}
+::-webkit-scrollbar-thumb:horizontal:hover{background: #909090}

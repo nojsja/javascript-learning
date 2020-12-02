@@ -1,0 +1,17 @@
+module.exports = {
+  node_add_repeat: '重复添加同一个节点！',
+  node_cannot_be_connected: '该节点无法连接！',
+  node_add_repeat_cluster: '待添加节点所属集群已经有节点被添加！',
+  net_mount_success: '共享挂载到本地成功',
+  net_umount_success: '共享从本地卸载成功',
+  net_mount_failed_reason: '共享挂载到本地失败！可能原因：该共享已经被挂载、资源被占用、远程服务无法连接',
+  net_umount_failed_reason: '共享从本地卸载失败，可能是已经被卸载或资源被占用！',
+  driver_already_mount: '这个驱动器已经被挂载！',
+  driver_not_mounted: '这个驱动器未被挂载！',
+  get_system_mount_info_failed: '获取系统挂载信息失败！',
+  mount_point_is_occupied_by_sharing: '该挂载点已经被网络共享占用！',
+  mount_point_is_occupied: '该挂载点已经被占用！',
+  mount_action_repeat: '重复挂载！',
+  function_has_not_been_adapted: '当前功能还未适配！',
+  mount_failed_tip: '远程服务连接失败或本地驱动器被占用！',
+};

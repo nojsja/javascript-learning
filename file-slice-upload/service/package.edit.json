@@ -1,0 +1,76 @@
+{
+  "build": {
+    "productName": "electron-react-template",
+    "appId": "org.datatom.electron-react-template",
+    "asar": false,
+    "copyright": "CopyRight © 2011-2020 上海德拓信息技术股份有限公司",
+    "directories": {
+      "buildResources": "build",
+      "output": "build"
+    },
+    "files": [
+      "package.json",
+      "config.json",
+      "index.js",
+      "dist/",
+      "app/",
+      "node_modules/",
+      "resources/*.*"
+    ],
+    "dmg": {
+      "contents": [
+        {
+          "x": 410,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 130,
+          "y": 150,
+          "type": "file"
+        }
+      ]
+    },
+    "mac": {
+      "icon": "build/icon_edit.icns"
+    },
+    "linux": {
+      "icon": "build/iconx_edit_x512.png",
+      "target": [
+        {
+          "target": "zip"
+        }
+      ]
+    },
+    "win": {
+      "icon": "build/icon_edit_x256.ico",
+      "target": [
+        {
+          "target": "zip"
+        },
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "./build/icon_edit_x256.ico",
+      "uninstallerIcon": "./build/icon_edit_x256.ico",
+      "installerHeaderIcon": "./build/icon_edit_x256.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "deleteAppDataOnUninstall": true,
+      "shortcutName": "electron-react-template"
+    },
+    "snap": {
+      "desktop": "electron-react-template"
+    }
+  }
+}
