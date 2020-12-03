@@ -1,3 +1,7 @@
+/**
+  * ProcessHost [process tasks-management center]
+  * @author nojsja
+  */
 class ProcessHost {
   constructor() {
     this.tasks = { };
@@ -51,6 +55,14 @@ class ProcessHost {
           });
       })
     }
+
+    return this;
+  };
+
+  /* unregistry a task */
+  unregistry(taskName) {
+    if (!this.tasks[taskName]) console.warn(`ProcesHost: the task-${taskName} is not registered!`);
+    delete this.tasks[taskName];
 
     return this;
   };

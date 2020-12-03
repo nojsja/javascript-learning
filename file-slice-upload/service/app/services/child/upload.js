@@ -5,7 +5,7 @@ const fs = require('fs');
 
   const utils = require('./child.utils');
   const { readFileBlock, uploadRecordStore, unlink } = utils;
-  const ProcessHost = require('./process.libs');
+  const ProcessHost = require('./libs/ProcessHost.class');
 
   const fileBlock = readFileBlock();
   const uploadStore = uploadRecordStore();

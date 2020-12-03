@@ -14,7 +14,7 @@ global.pathRuntime = checkEnvFiles().pathRuntime;
 global.pathLocator = require('./app/utils/path-locator.js');
 const requireLang = require('./app/lang');
 const IpcMainClass = require('./app/services/main/');
-const ChildProcessPool = require('./app/services/child/childProcessPool.class')
+const ChildProcessPool = require('./app/services/child/libs/ChildProcessPool.class')
 const IpcMaiWindowClass = require('./app/services/main/windowManage');
 const { readFileSync } = require('./app/utils/write-file');
 

@@ -202,7 +202,7 @@ class Upload extends DataSet {
       if (record.error) return resolve({ code: 600, result: lang.upload.readDataFailed });
       if (record.result.status !== 'uploading') return resolve({ code: 600, result: lang.upload.readDataFailed });
   
-      const { host, filename, size, sharename, fragsize, abspath, username } = record.result;
+      const { filename, size, fragsize, abspath } = record.result;
   
       const position = fragsize * (index);
       const slicesize = ((fragsize * (index + 1)) <= size) ? fragsize : (size - fragsize * index);
@@ -245,11 +245,10 @@ class Upload extends DataSet {
     */
   reset({ uploadId }) {
     return new Promise( async(resolve) => {
-      // const record = this._getUploadRecordsInMemory(uploadId);
       const record = await global.ipcUploadProcess.send('record-get', { uploadId }, uploadId);
       if (record.error || !record.result) return Promise.resolve({ code: 600, result: lang.upload.readDataFailed });
   
-      const { host, filename, username, size, sharename } = record.result;
+      const { filename } = record.result;
       this.getUploadPrepath()
         .then((pre) => {
           return this._unlink({filepath: path.join(pre, filename)});
@@ -273,12 +272,11 @@ class Upload extends DataSet {
   removeRecord({ uploadId }) {
     
     return new Promise( async (resolve) => {
-      // const record = this._getUploadRecordsInMemory(uploadId);
       const record = await global.ipcUploadProcess.send('record-get', { uploadId }, uploadId);
       if (record.error || !record.result) return Promise.resolve({ code: 600, result: lang.upload.readDataFailed });
   
   
-      const { abspath, sharename, host, username, filename, status } = record;
+      const { abspath, filename, status } = record;
         this.getUploadPrepath().then(rsp => {
           pre = rsp;
         })
@@ -314,7 +312,7 @@ class Upload extends DataSet {
   removeRecordHistory({ uploadId }) {
     const record = this.get('records', { uploadId });
     if (!record) return Promise.resolve({ code: 600, result: lang.upload.readDataFailed });
-    const { abspath, sharename, host, username, filename, status } = record;
+    const { sharename, host, username, filename, status } = record;
     let pre;
 
     return new Promise(resolve => {
