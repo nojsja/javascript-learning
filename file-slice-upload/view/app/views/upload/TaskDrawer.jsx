@@ -539,6 +539,14 @@ class CifsDirUploadTasksDrawer extends Component {
     });
   }
 
+  /* upload info */
+  getRegionDetails = () => ({
+    host: "localhost",
+    user: "default",
+    username: "default",
+    sharename: this.props.sharename
+  });
+
   pageFilter =
     tasks => tasks.filter((task, i) => this.state.pageCount * this.state.nowPage > (i + 1)
       && this.state.pageCount * (this.state.nowPage - 1) <= i + 1)
@@ -552,9 +560,7 @@ class CifsDirUploadTasksDrawer extends Component {
 
   startOneTask = (file, id) => {
     const { upload } = this.props;
-    const host = window.sessionStorage.getItem('rhinodisk_current_host');
-    const user = window.sessionStorage.getItem('login_user');
-    const { sharename } = this.props;
+    const { host, user, sharename } = this.getRegionDetails();
 
     upload.uploadContinue({
       file,
@@ -565,9 +571,8 @@ class CifsDirUploadTasksDrawer extends Component {
 
   startAllTasks = () => {
     const { upload } = this.props;
-    const host = window.sessionStorage.getItem('rhinodisk_current_host');
-    const user = window.sessionStorage.getItem('login_user');
-    const { sharename } = this.props;
+    const { host, user, sharename } = this.getRegionDetails();
+    
     upload.uploadContinue({
       select: true,
       all: false,
@@ -577,9 +582,7 @@ class CifsDirUploadTasksDrawer extends Component {
 
   pauseOneTask = (file, id) => {
     const { upload } = this.props;
-    const host = window.sessionStorage.getItem('rhinodisk_current_host');
-    const user = window.sessionStorage.getItem('login_user');
-    const { sharename } = this.props;
+    const { host, user, sharename } = this.getRegionDetails();
 
     upload.uploadPause({
       file,
@@ -590,9 +593,7 @@ class CifsDirUploadTasksDrawer extends Component {
 
   pauseAllTasks = () => {
     const { upload } = this.props;
-    const host = window.sessionStorage.getItem('rhinodisk_current_host');
-    const user = window.sessionStorage.getItem('login_user');
-    const { sharename } = this.props;
+    const { host, user, sharename } = this.getRegionDetails();
 
     upload.uploadPause({
       select: true,
@@ -603,9 +604,7 @@ class CifsDirUploadTasksDrawer extends Component {
 
   removeOneTask = (file, id) => {
     const { upload } = this.props;
-    const host = window.sessionStorage.getItem('rhinodisk_current_host');
-    const user = window.sessionStorage.getItem('login_user');
-    const { sharename } = this.props;
+    const { host, user, sharename } = this.getRegionDetails();
 
     upload.uploadTerm({
       file,
@@ -616,9 +615,7 @@ class CifsDirUploadTasksDrawer extends Component {
 
   removeOneTaskHistory = (file, id) => {
     const { upload } = this.props;
-    const host = window.sessionStorage.getItem('rhinodisk_current_host');
-    const user = window.sessionStorage.getItem('login_user');
-    const { sharename } = this.props;
+    const { host, user, sharename } = this.getRegionDetails();
 
     upload.uploadTermHistory({
       file,
@@ -629,9 +626,7 @@ class CifsDirUploadTasksDrawer extends Component {
 
   removeAllTasks = () => {
     const { upload } = this.props;
-    const host = window.sessionStorage.getItem('rhinodisk_current_host');
-    const user = window.sessionStorage.getItem('login_user');
-    const { sharename } = this.props;
+    const { host, user, sharename } = this.getRegionDetails();
 
     upload.uploadTerm({
       select: true,
@@ -642,9 +637,7 @@ class CifsDirUploadTasksDrawer extends Component {
 
   removeAllTasksHistory = () => {
     const { upload } = this.props;
-    const host = window.sessionStorage.getItem('rhinodisk_current_host');
-    const user = window.sessionStorage.getItem('login_user');
-    const { sharename } = this.props;
+    const { host, user, sharename } = this.getRegionDetails();
 
     upload.uploadTermHistory({
       select: true,
@@ -655,9 +648,7 @@ class CifsDirUploadTasksDrawer extends Component {
 
   retryOneTask = (file, id) => {
     const { upload } = this.props;
-    const host = window.sessionStorage.getItem('rhinodisk_current_host');
-    const user = window.sessionStorage.getItem('login_user');
-    const { sharename } = this.props;
+    const { host, user, sharename } = this.getRegionDetails();
 
     upload.uploadRestore({
       file,
@@ -669,9 +660,7 @@ class CifsDirUploadTasksDrawer extends Component {
 
   retryAllTasks = () => {
     const { upload } = this.props;
-    const host = window.sessionStorage.getItem('rhinodisk_current_host');
-    const user = window.sessionStorage.getItem('login_user');
-    const { sharename } = this.props;
+    const { host, user, sharename } = this.getRegionDetails();
 
     upload.uploadRestore({
       select: true,
@@ -682,10 +671,7 @@ class CifsDirUploadTasksDrawer extends Component {
 
   restartOneTask = (file, id) => {
     const { upload } = this.props;
-    const host = window.sessionStorage.getItem('rhinodisk_current_host');
-    const user = window.sessionStorage.getItem('login_user');
-
-    const { sharename } = this.props;
+    const { host, user, sharename } = this.getRegionDetails();
 
     upload.uploadRestore({
       file,
@@ -697,10 +683,7 @@ class CifsDirUploadTasksDrawer extends Component {
 
   restartOneTaskHistory = (file, id) => {
     const { upload } = this.props;
-    const host = window.sessionStorage.getItem('rhinodisk_current_host');
-    const user = window.sessionStorage.getItem('login_user');
-
-    const { sharename } = this.props;
+    const { host, user, sharename } = this.getRegionDetails();
 
     upload.uploadRestoreHistory({
       file,
@@ -712,9 +695,8 @@ class CifsDirUploadTasksDrawer extends Component {
 
   restartAllTasks = (file) => {
     const { upload } = this.props;
-    const host = window.sessionStorage.getItem('rhinodisk_current_host');
-    const user = window.sessionStorage.getItem('login_user');
-    const { sharename } = this.props;
+    const { host, user, sharename } = this.getRegionDetails();
+
     upload.uploadRestore({
       file,
       select: true,
@@ -726,10 +708,7 @@ class CifsDirUploadTasksDrawer extends Component {
 
   restartAllTasksHistory = (file, id) => {
     const { upload } = this.props;
-    const host = window.sessionStorage.getItem('rhinodisk_current_host');
-    const user = window.sessionStorage.getItem('login_user');
-
-    const { sharename } = this.props;
+    const { host, user, sharename } = this.getRegionDetails();
 
     upload.uploadRestoreHistory({
       file,

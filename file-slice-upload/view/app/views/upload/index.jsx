@@ -179,7 +179,6 @@ class UploadPage extends Component {
   render() {
     const { lang } = this.props.lang;
     const { sharename, prepath, host, user, region } = this.props.upload.getSharenameAndPrepath();
-    console.log(region, this.props.upload);
     const { uploading, error } = this.getRegionTaskTypeLength(this.props.upload.fileStorage, 'default');
     return (
       <div>
