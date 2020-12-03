@@ -25,7 +25,7 @@ class Upload extends DataSet {
     * @return {[Promise]}
     */
   _unlink({filepath}) {
-    return global.ipcUploadProcess.send({action: 'unlink', params: { filepath }}, getRandomString());
+    return global.ipcUploadProcess.send('unlink', { filepath }, getRandomString());
   }
 
   /**
@@ -46,16 +46,25 @@ class Upload extends DataSet {
     * storeUploadRecordsInFile [存储一条上传记录-文件中]
     * @param  {[String]} region [某个任务区域-可选参数]
     */
-  _storeUploadRecordsInFile(params = {}) {
+  storeUploadRecordsInFile(params = {}) {
     return new Promise(async(resolve) => {
       let res = [];
       const { region } = params;
-      const uploadRecordsAll = await global.ipcUploadProcess.sendToAll({ action: 'record-get-all', params: null});
+      const uploadRecordsAll = await global.ipcUploadProcess.sendToAll('record-get-all', null);
+
+      if (
+        !uploadRecordsAll ||
+        uploadRecordsAll.find((item) => item.error)
+      ) return resolve({
+        code: 600,
+        result: global.lang.upload.syncDataFailed
+      });
       
+      uploadRecordsAll.length &&
       uploadRecordsAll.forEach(uploadRecords => {
-        for (let key in uploadRecords) {
+        for (let key in uploadRecords.result) {
           if (region && (key !== region)) continue;
-          (uploadRecords[key] || []).forEach(uploadObject => {
+          (uploadRecords.result[key] || []).forEach(uploadObject => {
             if (uploadObject.status !== 'break') {
               uploadObject.status = 'error';
               try {
@@ -66,11 +75,11 @@ class Upload extends DataSet {
               }
             }
           });
-          res = res.concat(uploadRecords[key] || []);
+          res = res.concat(uploadRecords.result[key] || []);
         }
       })
       
-      await global.ipcUploadProcess.sendToAll({ action: 'record-reset', params: { region }});
+      await global.ipcUploadProcess.sendToAll('record-reset', { region });
 
       let { records, errors } = this.getState();
       records.unshift(...res);
@@ -146,30 +155,31 @@ class Upload extends DataSet {
         this.getUploadPrepath()
         .then((pre) => {
           return global.ipcUploadProcess.send(
+            'init-works',
             {
-              action: 'init-works',
-              params: {
-                username, host, sharename, pre, prefix, size: file.size, name: file.name, abspath, fragsize, record: 
-                {
-                  host, // 主机
-                  filename: path.join(prefix, file.name), // 文件名
-                  size, // 文件大小
-                  fragsize, // 分片大小
-                  abspath, // 绝对路径
-                  startime: getTime(new Date().getTime()), // 上传日期
-                  endtime: '', // 上传日期
-                  uploadId, // 任务id
-                  index: 0,
-                  total: Math.ceil(size / fragsize),
-                  status: 'uploading' // 上传状态
-                }
+              username, host, sharename, pre, prefix, size: file.size, name: file.name, abspath, fragsize, record: 
+              {
+                host, // 主机
+                filename: path.join(prefix, file.name), // 文件名
+                size, // 文件大小
+                fragsize, // 分片大小
+                abspath, // 绝对路径
+                startime: getTime(new Date().getTime()), // 上传日期
+                endtime: '', // 上传日期
+                uploadId, // 任务id
+                index: 0,
+                total: Math.ceil(size / fragsize),
+                status: 'uploading' // 上传状态
               }
             },
             uploadId
           )
         })
       .then((rsp) => {
-        resolve(rsp);
+        resolve({
+          code: rsp.error ? 600 : 200,
+          result: rsp.result,
+        });
       }).catch(err => {
         resolve({
           code: 600,
@@ -187,33 +197,36 @@ class Upload extends DataSet {
   upload({ uploadId, index }) {
     return new Promise(async (resolve) => {
 
-      const record = await global.ipcUploadProcess.send({ action: 'record-get', params: { uploadId }}, uploadId);
+      const record = await global.ipcUploadProcess.send('record-get', { uploadId }, uploadId);
 
-      if (!record) resolve({ code: 600, result: lang.upload.readDataFailed });
-      if (record.status !== 'uploading') resolve({ code: 600, result: lang.upload.readDataFailed });
+      if (record.error) return resolve({ code: 600, result: lang.upload.readDataFailed });
+      if (record.result.status !== 'uploading') return resolve({ code: 600, result: lang.upload.readDataFailed });
   
-      const { host, filename, size, sharename, fragsize, abspath, username } = record;
+      const { host, filename, size, sharename, fragsize, abspath, username } = record.result;
   
       const position = fragsize * (index);
       const slicesize = ((fragsize * (index + 1)) <= size) ? fragsize : (size - fragsize * index);
       if (position > size) {
-        resolve({
+        return resolve({
           code: 600,
           result: lang.upload.upload_index_overflow
         });
-        return;
       }
 
       new Promise(reso => {
         this.getUploadPrepath()
         .then((pre) => {
-          global.ipcUploadProcess.send({
-            action: 'upload-works',
-            params: { abspath, position, slicesize, filePath: path.join(pre, filename), uploadId, index }
-          }, uploadId)
+          global.ipcUploadProcess.send(
+            'upload-works',
+            { abspath, position, slicesize, filePath: path.join(pre, filename), uploadId, index },
+            uploadId
+          )
           .then((rsp) => {
-            resolve(rsp);
-          })
+            resolve({
+              code: rsp.error ? 600 : 200,
+              result: rsp.error || rsp.result
+            });  
+          });
         })
         .catch(err => {
           resolve({
@@ -233,10 +246,10 @@ class Upload extends DataSet {
   reset({ uploadId }) {
     return new Promise( async(resolve) => {
       // const record = this._getUploadRecordsInMemory(uploadId);
-      const record = await global.ipcUploadProcess.send({ action: 'record-get', params: { uploadId }}, uploadId);
-      if (!record) return Promise.resolve({ code: 600, result: lang.upload.readDataFailed });
+      const record = await global.ipcUploadProcess.send('record-get', { uploadId }, uploadId);
+      if (record.error || !record.result) return Promise.resolve({ code: 600, result: lang.upload.readDataFailed });
   
-      const { host, filename, username, size, sharename } = record;
+      const { host, filename, username, size, sharename } = record.result;
       this.getUploadPrepath()
         .then((pre) => {
           return this._unlink({filepath: path.join(pre, filename)});
@@ -261,17 +274,17 @@ class Upload extends DataSet {
     
     return new Promise( async (resolve) => {
       // const record = this._getUploadRecordsInMemory(uploadId);
-      const record = await global.ipcUploadProcess.send({ action: 'record-get', params: { uploadId }}, uploadId);
-      if (!record) return Promise.resolve({ code: 600, result: lang.upload.readDataFailed });
+      const record = await global.ipcUploadProcess.send('record-get', { uploadId }, uploadId);
+      if (record.error || !record.result) return Promise.resolve({ code: 600, result: lang.upload.readDataFailed });
   
   
       const { abspath, sharename, host, username, filename, status } = record;
         this.getUploadPrepath().then(rsp => {
           pre = rsp;
         })
-        .then(() => global.ipcUploadProcess.send({ action: 'close', params: { abspath }}, uploadId))
+        .then(() => global.ipcUploadProcess.send('close', { abspath }, uploadId))
         .then(() => {
-          return global.ipcUploadProcess.send({ action: 'record-remove', params: { uploadId }}, uploadId);
+          return global.ipcUploadProcess.send('record-remove', { uploadId }, uploadId);
         })
         .then(() => {
           if (status !== 'break') {
@@ -338,7 +351,7 @@ class Upload extends DataSet {
     * @param  {[String]} uploadId [上传任务ID]
     */
   complete({ uploadId }) {
-    return global.ipcUploadProcess.send({ action: 'close', params: { uploadId }}, uploadId);
+    return global.ipcUploadProcess.send('close', { uploadId }, uploadId);
   }
 }
 

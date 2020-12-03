@@ -712,7 +712,7 @@ class ObjectFragmentUpload {
    */
   @action
   uploadRegionSync = region => ipcRenderer.invoke('upload', {
-    action: '_storeUploadRecordsInFile',
+    action: 'storeUploadRecordsInFile',
     params: {
       region,
     },

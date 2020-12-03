@@ -2,6 +2,8 @@ import { observable } from 'mobx';
 
 class Lang {
   @observable lang = {
+    completionTime: '完成时间',
+    creationTime: '创建时间',
     Name: '名称',
     name: '名称',
     size: '大小',

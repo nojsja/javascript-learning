@@ -2,68 +2,59 @@
 const fs = require('fs');
   const fsPromise = fs.promises;
   const path = require('path');
+
   const utils = require('./child.utils');
   const { readFileBlock, uploadRecordStore, unlink } = utils;
+  const ProcessHost = require('./process.libs');
+
   const fileBlock = readFileBlock();
   const uploadStore = uploadRecordStore();
 
   global.lang = process.env.lang;
 
-  process.on('message', ({ action, params, id }) => {
-    switch (action) {
-      case 'init-works':
-        initWorks(params).then((rsp) => {
-          process.send({... rsp, id});
-        });
-        break;
-      case 'upload-works':
-        uploadWorks(params, id).then(rsp => {
-          process.send({... rsp, id});
-        });
-        break;
-      case 'close':
-        close(params, id).then(rsp => {
-          process.send({... rsp, id});
-        });
-        break;
-      case 'record-set':
-        uploadStore.set(params);
-        process.send({result: null, id});
-        break;
-      case 'record-get':
-        process.send({...uploadStore.get(params), id});
-        break;
-      case 'record-get-all':
-        process.send({...uploadStore.getAll(params), id});
-        break;
-      case 'record-update':
-        uploadStore.update(params);
-        process.send({result: null, id});
-        break;
-      case 'record-remove':
-        uploadStore.remove(params);
-        process.send({result: null, id});
-        break;
-      case 'record-reset': 
-        uploadStore.reset(params);
-        process.send({result: null, id});
-      break;
-      case 'unlink': 
-        unlink(params).then(rsp => {
-          process.send({...rsp, id});
-        })
-      break;
-      default:
-        break;
-    }
-  });
+  ProcessHost
+    .registry('init-works', (params) => {
+      return initWorks(params);
+    })
+    .registry('upload-works', (params) => {
+      return uploadWorks(params);
+    })
+    .registry('close', (params) => {
+      return close(params);
+    })
+    .registry('record-set', (params) => {
+      uploadStore.set(params);
+      return { result: null };
+    })
+    .registry('record-get', (params) => {
+      return uploadStore.get(params);
+    })
+    .registry('record-get-all', (params) => {
+      return (uploadStore.getAll(params));
+    })
+    .registry('record-update', (params) => {
+      uploadStore.update(params);
+      return ({result: null});
+    })
+    .registry('record-remove', (params) => {
+      uploadStore.remove(params);
+      return { result: null };
+    })
+    .registry('record-reset', (params) => {
+      uploadStore.reset(params);
+      return { result: null };
+    })
+    .registry('unlink', (params) => {
+      return unlink(params);
+    });
+
 
   /* *************** file logic *************** */
 
   /* 上传初始化工作 */
   function initWorks({username, host, sharename, pre, prefix, name, abspath, size, fragsize, record }) {
     const remotePath = path.join(pre, prefix, name);
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       new Promise((reso) => fsPromise.unlink(remotePath).then(reso).catch(reso))
       .then(() => {
         const dirs = utils.getFileDirs([path.join(prefix, name)]);
@@ -83,27 +74,21 @@ const fs = require('fs');
             total: Math.ceil(size / fragsize),
           };
           uploadStore.set(newRecord);
-          return {
-            code: 200,
-            result: newRecord
-          };
+          return newRecord;
         } else {
-          return rsp;
+          throw new Error(rsp.result);
         }
      })
      .then(resolve)
      .catch(error => {
-      resolve({
-        code: 600,
-        result: error.toString()
-      });
-     })
+      reject(error.toString());
+     });
     })
   }
 
   /* 上传文件 */
   function uploadWorks({abspath, position, data, slicesize, filePath, uploadId, index}, id) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       fileBlock.read(abspath, position, slicesize)
       .then(rsp => new Promise(reso => {
         if (rsp.code === 200) {
@@ -134,35 +119,20 @@ const fs = require('fs');
         if (err) {
           utils.checkPermission(path.join(filePath, '..'), 'ew', (err2, isExit, canWrite) => {
             if (err2) {
-              resolve({
-                code: 600,
-                result: global.lang.upload.writeDataFailed
-              });
+              reject(global.lang.upload.writeDataFailed);
             } else if (isExit && !canWrite) {
-              resolve({
-                code: 600,
-                result: global.lang.upload.insufficientPermissionUpload
-              });
+              reject(global.lang.upload.insufficientPermissionUpload);
             } else {
-              resolve({
-                code: 600,
-                result: global.lang.upload.writeDataFailed
-              });
+              reject(global.lang.upload.writeDataFailed);
             }
           });
         } else {
           uploadStore.update({ record: { index: (index + 1) }, uploadId })
-          resolve({
-            code: 200,
-            result: { uploadId, index, abspath }
-          });
+          resolve({ uploadId, index, abspath });
         }
       })
       .catch(err => {
-        resolve({
-          code: 600,
-          result: err.toString()
-        });
+        reject(err.toString());
       })
     })
   }
@@ -182,11 +152,9 @@ const fs = require('fs');
       // 关闭文件描述符
       fileBlock.close(abspath).then((rsp) => {
         if (rsp.code === 200) {
-          resolve({
-            code: 200
-          });
+          resolve();
         } else {
-          resolve(rsp);
+          reject(rsp.result);
         }
       });
     })

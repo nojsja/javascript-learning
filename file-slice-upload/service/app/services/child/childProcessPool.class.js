@@ -61,7 +61,8 @@ class ChildProcessPool {
         this.forkIndex += 1;
         forked.on('message', (data) => {
           const id = data.id;
-          delete data.id
+          delete data.id;
+          delete data.action;
           this.onMessage({ data, id });
         });
         this.pidMap.set(id, forked.pid);
@@ -95,17 +96,17 @@ class ChildProcessPool {
   }
 
   /* Send request to a process */
-  send(params, givenId="default") {
+  send(taskName, params, givenId="default") {
     const id = givenId || getRandomString();
     const forked = this.getForkedFromPool(id);
     return new Promise(resolve => {
       this.callbacks[id] = resolve;
-      forked.send({...params, id});
+      forked.send({action: taskName, params, id });
     });
   }
 
   /* Send requests to all processes */
-  sendToAll(params) {
+  sendToAll(taskName, params) {
     const id = getRandomString(); 
     return new Promise(resolve => {
       this.callbacks[id] = resolve;
@@ -113,11 +114,11 @@ class ChildProcessPool {
       if (this.forked.length) {
         // use process in pool
         this.forked.forEach((forked) => {
-          forked.send({...params, id});
+          forked.send({ action: taskName, params, id });
         })
       } else {
         // use default process
-        this.getForkedFromPool().send({...params, id});
+        this.getForkedFromPool().send({ action: taskName, params, id });
       }
     });
   }
