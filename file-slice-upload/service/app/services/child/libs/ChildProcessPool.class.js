@@ -46,7 +46,7 @@ class ChildProcessPool {
   getForkedFromPool(id="default") {
     let forked;
     if (!this.pidMap.get(id)) {
-      console.log(`id: ${id} not found!`)
+      // create new process
       if (this.forked.length < this.forkMaxIndex) {
         this.inspectStartIndex ++;
         forked = fork(
@@ -58,23 +58,25 @@ class ChildProcessPool {
           }
         );
         this.forked.push(forked);
-        this.forkIndex += 1;
         forked.on('message', (data) => {
           const id = data.id;
           delete data.id;
           delete data.action;
           this.onMessage({ data, id });
         });
-        this.pidMap.set(id, forked.pid);
-        console.log(`id: ${id}, create process!`)
       } else {
         this.forkIndex = this.forkIndex % this.forkMaxIndex;
         forked = this.forked[this.forkIndex];
-        this.forkIndex += 1;
-        this.pidMap.set(id, forked.pid);
       }
+      
+      if(id !== 'default')
+        this.pidMap.set(id, forked.pid);
+      if(this.pidMap.values.length === 1000)
+        console.warn('ChildProcessPool: The count of pidMap is over than 1000, suggest to use unique id!');
+        
+      this.forkIndex += 1;
     } else {
-      console.log(`id: ${id} found!`)
+      // use existing processes
       forked = this.forked.filter(f => f.pid === this.pidMap.get(id))[0];
       if (!forked) throw new Error(`Get forked process from pool failed! the process pid: ${this.pidMap.get(id)}.`);
     }
@@ -96,9 +98,11 @@ class ChildProcessPool {
   }
 
   /* Send request to a process */
-  send(taskName, params, givenId="default") {
-    const id = givenId || getRandomString();
-    const forked = this.getForkedFromPool(id);
+  send(taskName, params, givenId) {
+    if (givenId === 'default') throw new Error('ChildProcessPool: Prohibit the use of this id value: [default] !')
+
+    const id = getRandomString();
+    const forked = this.getForkedFromPool(givenId);
     return new Promise(resolve => {
       this.callbacks[id] = resolve;
       forked.send({action: taskName, params, id });

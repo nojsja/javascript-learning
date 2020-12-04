@@ -28,7 +28,7 @@ global.ipcMainProcess = new IpcMainClass(ipcMain);
 global.ipcMainWindow = new IpcMaiWindowClass();
 global.ipcUploadProcess = new ChildProcessPool({
   path: path.join(app.getAppPath(), 'app/services/child/upload.js'),
-  max: 3,
+  max: 6,
   env: { lang: global.lang, NODE_ENV: nodeEnv }
 });
 
