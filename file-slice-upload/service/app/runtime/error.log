@@ -1,11 +1,5 @@
-ReferenceError: ChildProcessClass is not defined
-    at Object.<anonymous> (/home/nojsja/github/javascript-learning/file-slice-upload/service/index.js:27:31)
-    at Module._compile (internal/modules/cjs/loader.js:967:30)
-    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1004:10)
-    at Module.load (internal/modules/cjs/loader.js:815:32)
-    at Module._load (internal/modules/cjs/loader.js:727:14)
-    at Function.Module._load (electron/js2c/asar.js:769:28)
-    at loadApplicationPackage (/home/nojsja/github/javascript-learning/file-slice-upload/service/node_modules/electron/dist/resources/default_app.asar/main.js:109:16)
-    at Object.<anonymous> (/home/nojsja/github/javascript-learning/file-slice-upload/service/node_modules/electron/dist/resources/default_app.asar/main.js:155:9)
-    at Module._compile (internal/modules/cjs/loader.js:967:30)
-    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1004:10)
+ReferenceError: removeForkedFromPool is not defined
+    at ChildProcessPool.onProcessDisconnect (/home/nojsja/github/javascript-learning/file-slice-upload/service/app/services/child/libs/ChildProcessPool.class.js:94:5)
+    at ChildProcess.<anonymous> (/home/nojsja/github/javascript-learning/file-slice-upload/service/app/services/child/libs/ChildProcessPool.class.js:66:40)
+    at ChildProcess.emit (events.js:223:5)
+    at Process.ChildProcess._handle.onexit (internal/child_process.js:272:12)

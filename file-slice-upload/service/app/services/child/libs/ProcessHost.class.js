@@ -2,7 +2,7 @@
   * ProcessHost [process tasks-management center]
   * @author nojsja
   */
-class ProcessHost {
+ class ProcessHost {
   constructor() {
     this.tasks = { };
 
