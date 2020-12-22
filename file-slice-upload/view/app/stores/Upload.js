@@ -449,7 +449,6 @@ class ObjectFragmentUpload {
     if (object.state !== 'uninitial') {
       arrayRemove(this.taskType[object.state], object);
     }
-    arrayRemove(this.taskType.series, object);
     this.taskType.pause.push(object);
     object.state = 'pause';
   };
@@ -549,7 +548,6 @@ class ObjectFragmentUpload {
     fileObject.state = 'error';
     fileObject.speed = '';
     this.taskType.error.push(fileObject);
-    arrayRemove(this.taskType.series, fileObject);
   }
 
 
@@ -786,7 +784,6 @@ class ObjectFragmentUpload {
       arrayRemove(this.taskType.pause, object);
       object.state = 'pending';
       this.taskType.pending.push(object);
-      this.taskType.series.push(object);
       this.startTasks(region);
     };
     if (!all && !select) {
@@ -841,7 +838,6 @@ class ObjectFragmentUpload {
       arrayRemove(this.taskType.break, object);
       arrayRemove(this.taskType.error, object);
       arrayRemove(this.taskType.pause, object);
-      arrayRemove(this.taskType.series, object);
     };
 
     const checkInitialized = (object) => {
@@ -1036,29 +1032,6 @@ class ObjectFragmentUpload {
     }
   }
 
-  /* 刷新任务列表 */
-  @action
-  refreshTasks = (region) => {
-    // 统计空闲任务
-    const storageObject = this.fileStorage.get(region);
-    if (!storageObject) return;
-
-    if (this.taskType.series.length >= this.multiTaskCount) return;
-
-    for (let i = 0; i < storageObject.length; i += 1) {
-      if (this.taskType.series.length === this.multiTaskCount) break;
-      if (
-        storageObject[i].index !== storageObject[i].total
-        &&
-        (storageObject[i].state === 'pending' || storageObject[i].state === 'uninitial')
-        &&
-        !this.taskType.series.includes(storageObject[i])
-      ) {
-        this.taskType.series.push(storageObject[i]);
-      }
-    }
-  }
-
   /**
    * [startTasks 开启上传任务队列]
    * @param  {[String]} region [桶名]
@@ -1066,22 +1039,27 @@ class ObjectFragmentUpload {
   startTasks = (region) => {
     // 根据空闲任务类型和空闲任务并发限制开启空闲任务
     // let storageObject;
-    this.refreshTasks(region);
+    const storageObjects = this.fileStorage.get(region);
+    const length = storageObjects.length;
+    let storageObject;
 
     if (this.isUploadListEmpty(region)) return;
 
     const maxLength = this.multiTaskCount - this.taskType.uploading.length;
     const taskSeries = [];
-    for (let i = 0; i < (maxLength) && this.taskType.series[i]; i += 1) {
-      const storageObject = this.taskType.series[i];
+
+    for (let i = 0; i < length; i += 1) {
+      storageObject = storageObjects[i];
+      if (!storageObject) continue;
       if (storageObject.state === 'uploading') continue; // 上传中
       if (storageObject.state === 'pause') continue;
+      if (storageObject.state === 'error') continue;
+      if (storageObject.state === 'break') continue;
       taskSeries.push(storageObject);
+      if (taskSeries.length === maxLength) break;
     }
 
-    let index;
-    taskSeries.forEach((storageObject) => {
-      arrayRemove(this.taskType.series, storageObject);
+     taskSeries.forEach((storageObject) => {
       if (this.taskType.uninitial.includes(storageObject)) {
         this.initRequest(storageObject).then(({ err, init }) => {
           if (!err && init) {
@@ -1135,7 +1113,6 @@ class ObjectFragmentUpload {
       };
       const obj = observable(fileObj);
       this.taskType.uninitial.push(obj);
-      this.taskType.series.push(obj);
       if (!this.fileStorage.get(region)) {
         this.fileStorage.set(region, [obj]);
       } else {
