@@ -29,15 +29,13 @@
  * @return {TreeNode}
  */
 var removeLeafNodes = function(root, target, parent=null, attr=null) {
-  if (root) {
-    if (root.left) removeLeafNodes(root.left, target, root, 'left');
-    if (root.right) removeLeafNodes(root.right, target, root, 'right');
-    if (!root.left && !root.right && root.val === target) {
-      if (parent)
-        parent[attr] = null
-      else
-        root = null;
-    }
+  if (root.left) removeLeafNodes(root.left, target, root, 'left');
+  if (root.right) removeLeafNodes(root.right, target, root, 'right');
+  if (!root.left && !root.right && root.val === target) {
+    if (parent)
+      parent[attr] = null
+    else
+      root = null;
   }
   
   return root;
