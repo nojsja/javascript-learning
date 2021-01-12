@@ -4,77 +4,55 @@
 * @return {[type]}        深克隆后的对象
 */
 
-function deepClone(parent) {
-  // 维护两个储存循环引用的数组
-  const parents = [];
-  const children = [];
-  
+function deepClone(data) {
+
+  const map = new WeakMap();
+
   const getRegExp = re => {
-    var flags = '';
+    let flags = '';
     if (re.global) flags += 'g';
     if (re.ignoreCase) flags += 'i';
     if (re.multiline) flags += 'm';
+
     return flags;
   };
   
-  const isType = (obj, type) => {
+  const isObjType = (obj, type) => {
     if (typeof obj !== 'object') return false;
     const typeString = Object.prototype.toString.call(obj);
-    let flag;
-    switch (type) {
-      case 'Array':
-        flag = typeString === '[object Array]';
-        break;
-      case 'Date':
-        flag = typeString === '[object Date]';
-        break;
-      case 'RegExp':
-        flag = typeString === '[object RegExp]';
-        break;
-      default:
-        flag = false;
-    }
-    return flag;
+    return typeString === `[object ${type}]`;
   };
 
-  const _clone = parent => {
-    if (parent === null) return null;
-    if (typeof parent !== 'object') return parent;
-    if (parent !== parent) return NaN;
+  const _clone = (target) => {
+    if (target === null) return null;
+    if (target !== target) return NaN;
+    if (!isObjType(target)) return target;
+    
+    let base;
 
-    let child, proto, index;
+    // 对正则对象做特殊处理
+    if (isObjType(target, 'RegExp')) return new RegExp(target.source, getRegExp(target));
+    // 对Date对象做特殊处理
+    if (isObjType(target, 'Date')) return new Date(target.getTime());
 
-    if (isType(parent, 'Array')) {
-      // 对数组做特殊处理
-      child = [];
-    } else if (isType(parent, 'RegExp')) {
-      // 对正则对象做特殊处理
-      child = new RegExp(parent.source, getRegExp(parent));
-      if (parent.lastIndex) child.lastIndex = parent.lastIndex;
-    } else if (isType(parent, 'Date')) {
-      // 对Date对象做特殊处理
-      child = new Date(parent.getTime());
-    } else {
-      // 处理对象原型
-      proto = Object.getPrototypeOf(parent);
-      // 利用Object.create切断原型链
-      child = Object.create(proto);
-    }
+    base = isObjType(target, 'Array') ? [] : {};
 
     // 处理循环引用
-    index = parents.indexOf(parent);
-    if (index != -1) return children[index];
-    parents.push(parent);
-    children.push(child);
-
-    for (let i in parent) {
-      child[i] = _clone(parent[i]);
+    if (map.get(target)) return map.get(target);
+    map.set(target, base);
+    
+    for (let i in target) {
+      base[i] = _clone(target[i]);
     }
-
-    return child;
+    
+    return base;
   };
 
-  return _clone(parent);
+  return _clone(data);
 };
 
-// console.log(deepClone({a: 1, b: {v: 2}, c: /[a-b]/gi, d: [1,2,3,4]}));
+const a = {a: 1, b: {v: 2}, c: /[a-b]/gim, d: [1,2,3,4], f: new Date()};
+a.e = a;
+const b = deepClone(a);
+
+console.log(b, b.b === a.b, b.c === a.c, b.c === a.d, b.e === b);

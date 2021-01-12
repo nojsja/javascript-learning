@@ -11,10 +11,10 @@
  */
 function shallowComparison(data1, data2) {
 
-  var hasOwnProperty = Object.prototype.hasOwnProperty;
-  var type1, type2, keys1, keys2;
+  const hasOwnProperty = Object.prototype.hasOwnProperty;
+  let type1, type2, keys1, keys2;
   // 获取变量类型
-  var getType = function (d) {
+  const getType = function (d) {
     if (typeof d === 'object') {
       if (!(d instanceof Object)) {
         return 'null';
@@ -39,7 +39,7 @@ function shallowComparison(data1, data2) {
   };
 
   // 基本类型比较
-  var is = function (d1, d2, type) {
+  const is = function (d1, d2, type) {
     if (type === 'nan') {
       return true;
     }
@@ -50,7 +50,7 @@ function shallowComparison(data1, data2) {
   }
 
   // 单层比较
-  var compare = function (d1, d2) {
+  const compare = function (d1, d2) {
     var type1 = getType(d1);
     var type2 = getType(d2);
 
@@ -59,16 +59,12 @@ function shallowComparison(data1, data2) {
     }
 
     if (type1 === 'object') {
-      var keys1 = Object.keys(d1).filter(function (k) {
-        return hasOwnProperty.call(d1, k);
-      });
-      var keys2 = Object.keys(d2).filter(function (k) {
-        return hasOwnProperty.call(d2, k);
-      });
+      var keys1 = Object.keys(d1).filter(k => hasOwnProperty.call(d1, k));
+      var keys2 = Object.keys(d2).filter(k => hasOwnProperty.call(d2, k));
       if (keys1.length !== keys2.length) {
         return false;
       }
-      for (var i = 0; i < keys1.length; i++) {
+      for (let i = 0; i < keys1.length; i++) {
         if (
           !keys2.includes(keys1[i]) ||
           (d1[keys1[i]] !== d2[keys2[keys2.indexOf(keys1[i])]])

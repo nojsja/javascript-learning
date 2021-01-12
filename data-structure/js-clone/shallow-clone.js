@@ -4,15 +4,15 @@
 ----------------------------------------------------------------------------- */
 
 function shallowClone(data) {
-  var base;
+  let base;
 
   if (!data || !(typeof data === 'object')) {
-    throw new Error('argument of shallowClone must be an object!');
+    return data;
   } else {
-    base = Object.prototype.toString.call(data) === '[object array]' ? [] : {};
+    base = Object.prototype.toString.call(data) === '[object Array]' ? [] : {};
   }
 
-  for (var attr in data) {
+  for (let attr in data) {
     if (data.hasOwnProperty(attr)) {
       base[attr] = data[attr];
     }
