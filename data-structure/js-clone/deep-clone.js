@@ -7,31 +7,21 @@
 function deepClone(data) {
 
   const map = new WeakMap();
-
-  const getRegExp = re => {
-    let flags = '';
-    if (re.global) flags += 'g';
-    if (re.ignoreCase) flags += 'i';
-    if (re.multiline) flags += 'm';
-
-    return flags;
-  };
   
   const isObjType = (obj, type) => {
     if (typeof obj !== 'object') return false;
-    const typeString = Object.prototype.toString.call(obj);
-    return typeString === `[object ${type}]`;
+    return Object.prototype.toString.call(obj) === `[object ${type}]`;
   };
 
   const _clone = (target) => {
     if (target === null) return null;
     if (target !== target) return NaN;
-    if (!isObjType(target)) return target;
+    if (typeof target !== 'object') return target;
     
     let base;
 
     // 对正则对象做特殊处理
-    if (isObjType(target, 'RegExp')) return new RegExp(target.source, getRegExp(target));
+    if (isObjType(target, 'RegExp')) return new RegExp(target.source, target.flags);
     // 对Date对象做特殊处理
     if (isObjType(target, 'Date')) return new Date(target.getTime());
 
@@ -55,4 +45,4 @@ const a = {a: 1, b: {v: 2}, c: /[a-b]/gim, d: [1,2,3,4], f: new Date()};
 a.e = a;
 const b = deepClone(a);
 
-console.log(b, b.b === a.b, b.c === a.c, b.c === a.d, b.e === b);
+console.log(b, b.b === a.b, b.c === a.c, b.d === a.d, b.e === b);
