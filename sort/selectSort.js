@@ -1,26 +1,25 @@
 /**
-* @name: bubbleSort
+* @name: selectSort
 * @description: 选择排序
 */
 
-const origin = [32, 43, 1, 100, 10, 11, 50, 7, 8, 200, 2, 1000];
-const sorted = [];
+var origin = [32, 43, 1, 100, 10, 11, 50, 7, 8, 200, 2, 1000];
 
-function selectSort(origin, sorted) {
-  var max,temp;
-  for (var i = 0; i < origin.length ; i++) {
-    max = 0;
-    for (var j = 1; j < origin.length - i; j++) {
-      if (origin[j] > origin[max]) {
-        max = j;
+function selectSort(origin) {
+  var min, temp;
+  for (var i = 0; i < origin.length - 1; i++) {
+    min = i;
+    for (var j = i + 1; j < origin.length; j++) {
+      if (origin[j] < origin[min]) {
+        min = j;
       }
     }
-    temp = origin[j - 1];
-    origin[j - 1] = origin[max];
-    origin[max] = temp;
+    temp = origin[i];
+    origin[i] = origin[min];
+    origin[min] = temp;
   }
 
   return origin;
 }
 
-console.log('result => ', selectSort(origin, sorted));
+console.log('result => ', selectSort(origin));

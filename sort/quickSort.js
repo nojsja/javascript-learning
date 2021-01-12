@@ -3,12 +3,13 @@
 * @description: 快速排序
 */
 
-const origin = [32, 43, 1, 100, 10, 11, 50, 7, 8, 200, 2, 1000];
-const sorted = [];
+var origin = [32, 43, 1, 100, 10, 11, 50, 7, 8, 200, 2, 1000];
 
-function sortIterator(origin, sorted) {
+function quickSort(origin) {
+  if (!origin.length) return origin;
+
   var left = [], right = [];
-  var flag = origin[parseInt(origin.length / 2)];
+  var flag = origin[(origin.length / 2) ^ 0];
 
   for (var i = 0; i < origin.length; i++) {
     if (origin[i] > flag) {
@@ -17,13 +18,10 @@ function sortIterator(origin, sorted) {
       left.push(origin[i]);
     }
   }
-  left = (left.length > 1) ? sortIterator(left, []) : left;
-  sorted = [].concat(left);
-  sorted = sorted.concat([flag]);
-  right = (right.length > 1) ? sortIterator(right, []) : right;
-  sorted = sorted.concat(right);
 
-  return sorted;
+  return quickSort(left)
+    .concat(flag)
+    .concat(quickSort(right));
 }
 
-console.log('result => ',sortIterator(origin, sorted));
+console.log('result => ', quickSort(origin));

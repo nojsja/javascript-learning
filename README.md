@@ -1,10 +1,5 @@
 ### __The road to javascript developer pro__
 
-
-#### > cluster <
-
->闭包相关  
-
 ####  > data-binding <
 
 * [弄懂常见框架双向数据绑定的原理](./data-binding/README.md)
