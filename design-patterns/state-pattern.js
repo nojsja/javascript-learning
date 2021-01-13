@@ -25,7 +25,7 @@ var MarrayState = function () {
       },
       shoot: function () {
         console.log('shoot');
-      }，
+      },
       squat: function () {
         console.log('squat');
       }

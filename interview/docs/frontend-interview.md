@@ -114,16 +114,132 @@
 ### 要点：Javascript
 ----------
 
-- js基础类型的判断
+- js类型的判断
+```js
+/*
+基础类型：string/boolean/number/null/undefined/symbol
+引用类型：function/object(date|regexp|obj)/array
+*/
+function getTypeOf(data) {
+  if (data !== data) return 'nan';
+  switch(Object.prototype.toString.call(data)) {
+    case '[object Null]':
+      return 'null';
+    break;
+    case '[object Array]':
+      return 'array';
+    break;
+    case '[object Object]':
+      return 'object';
+    case '[object RegExp]':
+      return 'regexp';
+    break;
+    case '[object Date]':
+      return 'date';
+    break;
+    default:
+      return (typeof data);
+    break;
+  }
+}
+```
 - Js实现继承
 - 编实现EventBus
 - 深拷贝和浅拷贝
+```js
+
+/* -------------- 深拷贝 -------------- */
+function deepClone(data) {
+
+  const map = new WeakMap();
+  
+  const isObjType = (obj, type) => {
+    if (typeof obj !== 'object') return false;
+    return Object.prototype.toString.call(obj) === `[object ${type}]`;
+  };
+
+  const _clone = (target) => {
+    if (target === null) return null;
+    if (target !== target) return NaN;
+    if (typeof target !== 'object') return target;
+    
+    let base;
+
+    // 对正则对象做特殊处理
+    if (isObjType(target, 'RegExp')) return new RegExp(target.source, target.flags);
+    // 对Date对象做特殊处理
+    if (isObjType(target, 'Date')) return new Date(target.getTime());
+
+    base = isObjType(target, 'Array') ? [] : {};
+
+    // 处理循环引用
+    if (map.get(target)) return map.get(target);
+    map.set(target, base);
+    
+    for (let i in target) {
+      base[i] = _clone(target[i]);
+    }
+    
+    return base;
+  };
+
+  return _clone(data);
+};
+
+/* -------------- 浅拷贝 -------------- */
+function shallowClone(data) {
+  let base;
+
+  if (!data || !(typeof data === 'object')) {
+    return data;
+  } else {
+    base = Object.prototype.toString.call(data) === '[object Array]' ? [] : {};
+  }
+
+  for (let attr in data) {
+    if (data.hasOwnProperty(attr)) {
+      base[attr] = data[attr];
+    }
+  }
+
+  return base;
+}
+
+```
 - JS事件循环和Node事件循环，两者有何区别
 - ES6新增特性
 - async await如何利用generator
 - 移动端点击穿透问题
 - 图片懒加载具体实现方案和思路
 - 函数防抖和节流实现
+```js
+/* 去抖 */
+function debounce(fn, time) {
+  let timer;
+
+  return function() {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn.apply(this, arguments);
+    }, time);
+  }
+}
+
+/* 节流 */
+function throttle(fn, time) {
+  let canRun = true;
+
+  return function() {
+    if (canRun) {
+      canRun = false;
+      setTimeout(() => {
+        fn.apply(this, arguments);
+        canRun = true;
+      }, time)
+    }
+  }
+}
+```
 - Js/Node的事件循环(宏任务、微任务)
 - 页面加载会触发哪些事件。
 - document.ready和window.onload的区别。
@@ -143,7 +259,8 @@
 
 - 如何自己实现一个单点登录系统。
 - 手写diff。
-- 手写Promise
+- 手写Promise  
+[链接-> 使用ES5实现ES6 Promise API](https://github.com/nojsja/promise-nojsja)
 
 ### 要点：Node.js
 ----------
@@ -156,6 +273,22 @@
 
 ### 要点：设计模式
 ----------
+
+1. [策略模式](https://github.com/nojsja/javascript-learning/tree/master/design-patterns#1-the-strategy-pattern%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F)
+
+2. [观察者模式](https://github.com/nojsja/javascript-learning/tree/master/design-patterns#2-the-observer-pattern%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F)
+
+3. [享元模式](https://github.com/nojsja/javascript-learning/tree/master/design-patterns#3-the-flyweight-pattern%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F)
+
+4. [装饰者模式](https://github.com/nojsja/javascript-learning/tree/master/design-patterns#4-the-decorator-pattern%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F)
+
+5. [代理模式](https://github.com/nojsja/javascript-learning/tree/master/design-patterns#5-the-proxy-pattern%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F)
+
+6. [状态模式](https://github.com/nojsja/javascript-learning/tree/master/design-patterns#6-the-state-pattern%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F)
+
+7. [责任链模式](https://github.com/nojsja/javascript-learning/tree/master/design-patterns#7-the-responsibility-chain-pattern%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F)
+
+8. [模板方法模式](https://github.com/nojsja/javascript-learning/tree/master/design-patterns#7-the-responsibility-chain-pattern%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F)
 
 ### 要点：前端工具
 ---------

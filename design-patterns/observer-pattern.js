@@ -85,7 +85,7 @@ function ObserverTarget() {
 }
 
 ObserverTarget.prototype = {
-  constructor: EventTarget,
+  constructor: ObserverTarget,
   addHandler: function (type, handler) {
     if (this.handlers[type]) {
       this.handlers[type].push(handler);
