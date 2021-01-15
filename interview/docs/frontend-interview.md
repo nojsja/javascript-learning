@@ -125,21 +125,16 @@ function getTypeOf(data) {
   switch(Object.prototype.toString.call(data)) {
     case '[object Null]':
       return 'null';
-    break;
     case '[object Array]':
       return 'array';
-    break;
     case '[object Object]':
       return 'object';
     case '[object RegExp]':
       return 'regexp';
-    break;
     case '[object Date]':
       return 'date';
-    break;
     default:
       return (typeof data);
-    break;
   }
 }
 ```
@@ -206,7 +201,6 @@ function shallowClone(data) {
 }
 
 ```
-- JS事件循环和Node事件循环，两者有何区别
 - ES6新增特性
 - async await如何利用generator
 - 移动端点击穿透问题
@@ -245,16 +239,59 @@ function throttle(fn, time) {
 - document.ready和window.onload的区别。
 - 闭包Closure
 - 函数式编程思想的体现
-- vue双向绑定实现原理。
+- vue双向绑定实现原理
 - Vue2.0与Vue3.0双向绑定，proxy实现
 - React-Fiber原理
-- React生命周期，React16.3版本后变化，为什么要这样做。（结合React Fiber)，有哪些不安全的生命周期。
-- react虚拟dom以及diff算法。
-- babel源码。
+- React生命周期，React16.3版本后变化，为什么要这样做。（结合React Fiber)，有哪些不安全的生命周期
+- react虚拟dom以及diff算法
+- babel源码
 - React SetState原理
-- 错误监控方法。
+- 错误监控方法
 - 实现一个EventEmitter类，支持事件的on,off,emit,once,setMaxListeners。
-```sh
+```js
+function EventEmitter() {
+  this.maxListeners = 100;
+  this.listeners = {};
+  this.onceMap = {};
+}
+
+EventEmitter.prototype.setMaxListeners = function(num) {
+  if (typeof num !== 'number' || !Number.isInteger(num) || num <= 0)
+    throw new Error('setMaxListeners - param num must be a positive integer!');
+  this.maxListeners = num;
+}
+
+EventEmitter.prototype.on = function(type, func) {
+  if (!type || !func instanceof Function) return;
+  if (this.listeners[type]) {
+    this.listeners[type].push(func);
+  } else {
+    this.listeners[type] = [func];
+  }
+  this.onceMap[type] = false;
+}
+
+EventEmitter.prototype.once = function(type, func) {
+  if (!type || !func instanceof Function) return;
+  this.on(type, func);
+  this.onceMap[type] = true;
+}
+
+EventEmitter.prototype.off = function(type, func) {
+  if (!type || !func) return;
+  if (this.listeners[type]) {
+    this.listeners[type] = this.listeners[type].filter(function(fn) { return fn !== func; });
+    delete this.onceMap[type];
+  }
+}
+
+EventEmitter.prototype.emit = function(type) {
+  (this.listeners[type] || []).forEach(function(fn) {
+    fn();
+  });
+  if (this.onceMap[type]) delete this.listeners[type];
+  delete this.onceMap[type];
+}
 ```
 
 - 如何自己实现一个单点登录系统。
