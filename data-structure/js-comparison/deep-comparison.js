@@ -40,8 +40,8 @@ function deepComparison(data1, data2) {
     if (type1 !== type2) return false;
 
     if (type1 === 'object') {
-      var keys1 = Object.keys(d1).filter(k => hasOwnProperty.call(d1, k));
-      var keys2 = Object.keys(d2).filter(k => hasOwnProperty.call(d2, k));
+      var keys1 = Object.keys(d1);
+      var keys2 = Object.keys(d2);
       if (keys1.length !== keys2.length) {
         return false;
       }

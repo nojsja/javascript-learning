@@ -13,7 +13,7 @@ function shallowClone(data) {
   }
 
   for (let attr in data) {
-    if (data.hasOwnProperty(attr)) {
+    if (Object.prototype.hasOwnProperty.call(data, attr)) {
       base[attr] = data[attr];
     }
   }

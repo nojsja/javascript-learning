@@ -32,7 +32,9 @@ function deepClone(data) {
     map.set(target, base);
     
     for (let i in target) {
-      base[i] = _clone(target[i]);
+      if (Object.prototype.hasOwnProperty.call(target, i)) {
+        base[i] = _clone(target[i]);
+      }
     }
     
     return base;

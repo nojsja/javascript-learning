@@ -138,8 +138,42 @@ function getTypeOf(data) {
   }
 }
 ```
+- 实现New操作
+```sh
+```
 - Js实现继承
-- 编实现EventBus
+```sh
+function Inherit (parent, child) {
+  function Empty() {};
+  Empty.prototype = parent.prototype;
+  var empty = new Empty();
+  empty.constructor = child;
+  child.prototype = empty;
+}
+
+function Parent(parent) {
+  this.p_attr = parent;
+}
+
+Parent.prototype.p_print = function() {
+  console.log(this.p_attr);
+}
+
+function Child(attr) {
+  Parent.call(this, 'parent');
+  this.c_attr = attr;
+  this.print = function() {
+    console.log(this.c_attr);
+  }
+}
+
+Inherit(Parent, Child);
+
+var child = new Child('child');
+
+child.print();
+child.p_print();
+```
 - 深拷贝和浅拷贝
 ```js
 
@@ -172,7 +206,9 @@ function deepClone(data) {
     map.set(target, base);
     
     for (let i in target) {
-      base[i] = _clone(target[i]);
+      if (Object.prototype.hasOwnProperty.call(target, i)) {
+        base[i] = _clone(target[i]);
+      }
     }
     
     return base;
@@ -192,7 +228,7 @@ function shallowClone(data) {
   }
 
   for (let attr in data) {
-    if (data.hasOwnProperty(attr)) {
+    if (Object.prototype.hasOwnProperty.call(data, attr)) {
       base[attr] = data[attr];
     }
   }
@@ -202,6 +238,17 @@ function shallowClone(data) {
 
 ```
 - ES6新增特性
+```sh
+- Promise
+- let/const/块级作用域
+- Arrow Function、函数默认参数、数组、对象、函数返回值的解构
+- Map/WeakMap/Set/WeakSet
+- ES6 Class
+- 字符串方法扩展repeat/trim/includes/startsWith/endsWith/padStart/padEnd
+- 数组方法扩展find/findIndex/fill/includes
+- Array.from将类数组和实现了迭代器的对象转换成数组
+- Array.of将一个或多个值转换成数组
+```
 - async await如何利用generator
 - 移动端点击穿透问题
 - 图片懒加载具体实现方案和思路
@@ -264,6 +311,8 @@ EventEmitter.prototype.setMaxListeners = function(num) {
 EventEmitter.prototype.on = function(type, func) {
   if (!type || !func instanceof Function) return;
   if (this.listeners[type]) {
+    if (this.listeners[type].length > this.maxListeners) 
+      return console.error('The max listeners limitation: ', this.maxListeners);
     this.listeners[type].push(func);
   } else {
     this.listeners[type] = [func];
@@ -280,8 +329,8 @@ EventEmitter.prototype.once = function(type, func) {
 EventEmitter.prototype.off = function(type, func) {
   if (!type || !func) return;
   if (this.listeners[type]) {
-    this.listeners[type] = this.listeners[type].filter(function(fn) { return fn !== func; });
-    delete this.onceMap[type];
+    this.listeners[type] =
+      this.listeners[type].filter(function(fn) { return fn !== func; });
   }
 }
 
