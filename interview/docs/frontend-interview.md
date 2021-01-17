@@ -140,6 +140,13 @@ function getTypeOf(data) {
 ```
 - 实现New操作
 ```sh
+function New(func) {
+  var empty = Object.create(null);
+  var args = Array.prototype.slice.call(arguments, 1);
+  func.apply(empty, args);
+  empty.__proto__ = func.prototype;
+  return empty;
+}
 ```
 - Js实现继承
 ```sh
@@ -249,9 +256,34 @@ function shallowClone(data) {
 - Array.from将类数组和实现了迭代器的对象转换成数组
 - Array.of将一个或多个值转换成数组
 ```
-- async await如何利用generator
 - 移动端点击穿透问题
-- 图片懒加载具体实现方案和思路
+- 图片懒加载具体实现方案和思路  
+使用滚动监听器IntersectionObserver来监听界面滚动，当被监听元素界面可见时，设置图片元素的src为真实的地址。如果不使用这个API的话需要手动监听页面滚动然后通过计算img元素的`offsetTop < document.documentElement.clientHeight + (document.documentElement.scrollTop || document.body.scrollTop)` 来判断元素进入视区来实现，并注意配合防抖函数进行优化。
+```sh
+(function lazyLoad(){
+    const imageToLazy = document.querySelectorAll('img[data-src]');
+    const loadImage = function (image) {
+        image.setAttribute('src', image.getAttribute('data-src'));
+        image.addEventListener('load', function() {
+            image.removeAttribute("data-src");
+        })
+    }
+
+
+    const intersectionObserver = new IntersectionObserver(function(items, observer) {
+        items.forEach(function(item) {
+            if(item.isIntersecting) {
+                loadImage(item.target);
+                observer.unobserve(item.target);
+            }
+        });
+    });
+
+    imageToLazy.forEach(function(image){
+        intersectionObserver.observe(image);
+    })
+})()
+```
 - 函数防抖和节流实现
 ```js
 /* 去抖 */
@@ -283,8 +315,47 @@ function throttle(fn, time) {
 ```
 - Js/Node的事件循环(宏任务、微任务)
 - 页面加载会触发哪些事件。
-- document.ready和window.onload的区别。
-- 闭包Closure
+```sh
+1. document readystatechange事件
+  readyState 属性描述了文档的加载状态，在整个加载过程中
+  document.readyState会不断变化，每次变化都会触发readystatechange事件。
+  readyState 有以下状态：
+    1) loading - document仍在加载。
+    2) interactive - 互动文档已经完成加载，文档已被解析，但是诸如图像，样式表和框架之类的子资源仍在加载。
+    3) complete - 完成文档和所有子资源已完成加载。
+2. document DOMContentLoaded事件
+  DOM树渲染完成时触发DOMContentLoaded事件，此时可能外部资源还在加载，jquery中的ready事件就是同样的效果
+3. window load事件
+  所有的资源全部加载完成会触发window的load事件。
+```
+- document.ready和window.onload的区别。  
+```sh
+ready事件在DOM结构绘制完成之后就会执行，这样能确保就算有大量的媒体文件没加载出来，JS代码一样可以执行。
+load事件必须等到网页中所有内容全部加载完毕之后才被执行，如果一个网页中有大量的图片的话，则就会出现这种情况：网页文档已经呈现出来，但由于网页数据还没有完全加载完毕，导致load事件不能够即时被触发。
+```
+- 闭包Closure  
+1）执行上下文  
+函数每次执行，都会生成一个执行上下文内部对象(可理解为函数作用域)，这个上下文对象会保存函数中所有的变量值和该函数内部定义的函数的引用。函数每次执行时对应的执行上下文都是独一无二的，正常情况下函数执行完毕执行上下文就会被销毁。  
+2）内部作用域的外部引用导致作用域内变量垃圾回收不执行  
+当一个函数内部作用域(注意不是单纯的变量引用)被其外层作用域引用时，函数执行完之后，其执行上下文不会被销毁，我们还能沿着作用域链访问到某个被引用的内部变量。
+```js
+// 外层作用域
+function counterCreator() {
+  // 内层作用域1
+  var index = 1;
+  return function () {
+    // 内层作用域2，引用作用域1的变量index
+    return index ++;
+  };
+}
+
+// 外层作用域通过作用域链保存了内层作用域1的变量引用
+var counterA = counterCreator();
+// index变量不会被垃圾回收
+counterA();     // 1
+counterA();     // 2
+
+```
 - 函数式编程思想的体现
 - vue双向绑定实现原理
 - Vue2.0与Vue3.0双向绑定，proxy实现
