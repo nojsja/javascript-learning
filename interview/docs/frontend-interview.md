@@ -11,24 +11,30 @@
 
 #### 重点
 
-- 我最突出的技能是什么
-- 我在哪方面的知识掌握是最全面的
-- 我性格上最大的优势是什么
-- 我最擅长的事情是什么
-- 我有哪些成就和贡献
+1. 我最突出的技能是什么  
+Js的多维运用
+2. 我在哪方面的知识掌握是最全面的  
+Js的多维运用
+3. 我性格上最大的优势是什么  
+对技术的热情和对问题孜孜不倦的深挖实践
+4. 我最擅长的事情是什么  
+擅长从工作中分析总结，制定对某类问题的解决方法，编写效率工具
+5. 我有哪些成就和贡献  
+...
+
+#### 描述在上一家公司的工作经历
+在前一个公司，我们使用React/Mobx/Node.js/Electron等技术，我主要负责一个存储集群产品的前端开发迭代、中间层维护和通用打包脚本编写这些。也曾担任过一个SMB客户端产品主要开发工作，负责项目搭建、架构优化以及多文件分片上传模块编写。
 
 #### 范例
-
-
-
-### 描述在上一家公司的工作经历
-----------
+面试官，你好，我叫xx，毕业于xx大学xx专业，三年工作经验。在前一个公司主要负责一个存储集群产品的前端开发、中间层维护和通用打包脚本编写这些，也担任过一个SMB客户端产品主要开发工作，负责项目搭建、架构优化以及多文件分片上传模块编写。  
+自己比较擅长从日常工作中分析总结，制定对某类问题的解决方法，编写效率工具。  
+在技术方面比较熟悉React/Node开发，对前端客户端技术Electron也有涉猎，平时会更新技术博客和Github。
 
 
 ### 要点：HTML/CSS
 ----------
 
-- BFC，块级格式化上下文。
+#### BFC，块级格式化上下文。
 ```sh
 1) BFC 就是块级格式上下文，是页面盒模型布局中的一种 CSS 渲染模式，
 相当于一个独立的容器，里面的元素和外部的元素相互不影响。创建 BFC 的方式有：
@@ -52,13 +58,13 @@
   计算BFC的高度时，浮动元素也会参与计算
 
 ```
-- 两列布局实现。
+#### 两列布局实现。
 ```sh
 1) 使用float浮动元素同时设置元素宽度为100/列数 %
 2) 使用inline-block实现方式同1
 2) 使用css属性column-count实现
 ```
-- 1px问题。
+#### 1px问题。
 ```sh
 1) 涉及到css像素比 device pixel/css pixel = devicePixelRatio(DPR)
 2) 解决方法一
@@ -87,10 +93,10 @@
             0  1px  1px -1px #e5e5e5,   //下边线
             -1px 0  1px -1px #e5e5e5;   //左边线
 ```
-- 浮动解决的方案。
+#### 浮动解决的方案。
 ```sh
 1) 清除浮动的属性
-  需要不跟随浮动元素尾部布局的元素设置clear:both
+  浮动元素尾部那个不跟随浮动的元素设置clear:both
 2) 撑起浮动容器元素的方法一
   在浮动元素的最后插入一个声明了clear:both的块级元素
 3) 撑起浮动容器元素的方法二
@@ -105,7 +111,7 @@
   利用BFC特性，设置浮动元素的overflow不为visible
 ```
 
-- 位图和矢量图的区别。
+#### 位图和矢量图的区别。
 ```sh
 1) 位图也叫像素图，每个点可以用二进制描述颜色和亮度信息，色彩表现丰富，占用空间大，缩放失真
 2) 矢量图使用计算机指令绘制而成，由点线面构成，色彩不丰富，占用空间小，缩放不失真
@@ -114,7 +120,7 @@
 ### 要点：Javascript
 ----------
 
-- js类型的判断
+#### js类型的判断
 ```js
 /*
 基础类型：string/boolean/number/null/undefined/symbol
@@ -138,7 +144,7 @@ function getTypeOf(data) {
   }
 }
 ```
-- 实现New操作
+#### 实现new操作
 ```sh
 function New(func) {
   var empty = Object.create(null);
@@ -148,7 +154,7 @@ function New(func) {
   return empty;
 }
 ```
-- Js实现继承
+#### Js实现继承
 ```sh
 function Inherit (parent, child) {
   function Empty() {};
@@ -181,10 +187,10 @@ var child = new Child('child');
 child.print();
 child.p_print();
 ```
-- 深拷贝和浅拷贝
+#### 深拷贝和浅拷贝
 ```js
 
-/* -------------- 深拷贝 -------------- */
+/* -------------#### 深拷贝 -------------#### */
 function deepClone(data) {
 
   const map = new WeakMap();
@@ -224,7 +230,7 @@ function deepClone(data) {
   return _clone(data);
 };
 
-/* -------------- 浅拷贝 -------------- */
+/* -------------#### 浅拷贝 -------------#### */
 function shallowClone(data) {
   let base;
 
@@ -244,20 +250,20 @@ function shallowClone(data) {
 }
 
 ```
-- ES6新增特性
-```sh
-- Promise
-- let/const/块级作用域
-- Arrow Function、函数默认参数、数组、对象、函数返回值的解构
-- Map/WeakMap/Set/WeakSet
-- ES6 Class
-- 字符串方法扩展repeat/trim/includes/startsWith/endsWith/padStart/padEnd
-- 数组方法扩展find/findIndex/fill/includes
-- Array.from将类数组和实现了迭代器的对象转换成数组
-- Array.of将一个或多个值转换成数组
-```
-- 移动端点击穿透问题
-- 图片懒加载具体实现方案和思路  
+#### ES6新增特性
+
+1. Promise
+2. let/const/块级作用域
+3. Arrow Function、函数默认参数、数组、对象、函数返回值的解构
+4. Map/WeakMap/Set/WeakSet
+5. ES6 Class
+6. 字符串方法扩展repeat/trim/includes/startsWith/endsWith/padStart/padEnd
+7. 数组方法扩展find/findIndex/fill/includes
+8. Array.from将类数组和实现了迭代器的对象转换成数组
+9. Array.of将一个或多个值转换成数组
+
+#### 移动端点击穿透问题
+#### 图片懒加载具体实现方案和思路  
 使用滚动监听器IntersectionObserver来监听界面滚动，当被监听元素界面可见时，设置图片元素的src为真实的地址。如果不使用这个API的话需要手动监听页面滚动然后通过计算img元素的`offsetTop < document.documentElement.clientHeight + (document.documentElement.scrollTop || document.body.scrollTop)` 来判断元素进入视区来实现，并注意配合防抖函数进行优化。
 ```sh
 (function lazyLoad(){
@@ -284,7 +290,7 @@ function shallowClone(data) {
     })
 })()
 ```
-- 函数防抖和节流实现
+#### 函数防抖和节流实现
 ```js
 /* 去抖 */
 function debounce(fn, time) {
@@ -313,27 +319,51 @@ function throttle(fn, time) {
   }
 }
 ```
-- Js/Node的事件循环(宏任务、微任务)
-- 页面加载会触发哪些事件。
-```sh
-1. document readystatechange事件
-  readyState 属性描述了文档的加载状态，在整个加载过程中
-  document.readyState会不断变化，每次变化都会触发readystatechange事件。
-  readyState 有以下状态：
-    1) loading - document仍在加载。
-    2) interactive - 互动文档已经完成加载，文档已被解析，但是诸如图像，样式表和框架之类的子资源仍在加载。
-    3) complete - 完成文档和所有子资源已完成加载。
-2. document DOMContentLoaded事件
-  DOM树渲染完成时触发DOMContentLoaded事件，此时可能外部资源还在加载，jquery中的ready事件就是同样的效果
-3. window load事件
-  所有的资源全部加载完成会触发window的load事件。
+#### Js/Node的事件循环(宏任务、微任务)
+
+#### 页面加载会触发哪些事件。
+1. document readystatechange事件  
+readyState 属性描述了文档的加载状态，在整个加载过程中document.readyState会不断变化，每次变化都会触发readystatechange事件。
+readyState 有以下状态：  
+  _1）loading - document仍在加载。_  
+  _2）interactive - 文档结构已经完成加载，文档已被解析并且可以交互，但是诸如图像，样式表和框架之类的外部资源仍在加载。_  
+  _3）complete - 完成文档和所有外部资源已完成加载。_  
+2. document DOMContentLoaded事件  
+  DOM树渲染完成时触发DOMContentLoaded事件，此时可能外部资源还在加载，事件同于jQuery中的ready事件和`readyState === 'interactive'`阶段；事件使用`document.addEventListener('DOMContentLoaded', function)`监听。
+3. window load事件  
+  所有的资源全部加载完成会触发window的load事件；事件使用`window.onload=function`进行监听。
+```js
+switch (document.readyState) {
+  case "loading":
+    // 表示文档还在加载中，即处于“正在加载”状态。
+    break;
+  case "interactive":
+    // 文档已经结束了“正在加载”状态，DOM元素可以被访问，但是像图像，样式表和框架等资源依然还在加载。
+    break;
+  case "complete":
+    // 页面所有内容都已被完全加载.
+    break;
+}
+/* 模拟 原生DOMContentLoaded 和 jquery ready 事件 */
+document.onreadystatechange = function () {
+  if (document.readyState === "interactive") {
+    initApplication();
+  }
+}
+
+/* 模拟 window.onload 事件 */
+document.onreadystatechange = function () {
+  if (document.readyState === "complete") {
+    initApplication();
+  }
+}
 ```
-- document.ready和window.onload的区别。  
+#### document.ready和window.onload的区别。  
 ```sh
 ready事件在DOM结构绘制完成之后就会执行，这样能确保就算有大量的媒体文件没加载出来，JS代码一样可以执行。
 load事件必须等到网页中所有内容全部加载完毕之后才被执行，如果一个网页中有大量的图片的话，则就会出现这种情况：网页文档已经呈现出来，但由于网页数据还没有完全加载完毕，导致load事件不能够即时被触发。
 ```
-- 闭包Closure  
+#### 闭包Closure  
 1）执行上下文  
 函数每次执行，都会生成一个执行上下文内部对象(可理解为函数作用域)，这个上下文对象会保存函数中所有的变量值和该函数内部定义的函数的引用。函数每次执行时对应的执行上下文都是独一无二的，正常情况下函数执行完毕执行上下文就会被销毁。  
 2）内部作用域的外部引用导致作用域内变量垃圾回收不执行  
@@ -356,16 +386,25 @@ counterA();     // 1
 counterA();     // 2
 
 ```
-- 函数式编程思想的体现
-- vue双向绑定实现原理
-- Vue2.0与Vue3.0双向绑定，proxy实现
-- React-Fiber原理
-- React生命周期，React16.3版本后变化，为什么要这样做。（结合React Fiber)，有哪些不安全的生命周期
-- react虚拟dom以及diff算法
-- babel源码
-- React SetState原理
-- 错误监控方法
-- 实现一个EventEmitter类，支持事件的on,off,emit,once,setMaxListeners。
+#### 函数式编程思想的体现
+
+#### vue双向绑定实现原理
+
+#### Vue2.0与Vue3.0双向绑定，proxy实现
+
+#### React-Fiber原理
+
+#### React生命周期，React16.3版本后变化，为什么要这样做。（结合React Fiber)，有哪些不安全的生命周期
+
+#### react虚拟dom以及diff算法
+
+#### babel源码
+
+#### React SetState原理
+
+#### 错误监控方法
+
+#### 实现一个EventEmitter类，支持事件的on,off,emit,once,setMaxListeners。
 ```js
 function EventEmitter() {
   this.maxListeners = 100;
@@ -375,7 +414,7 @@ function EventEmitter() {
 
 EventEmitter.prototype.setMaxListeners = function(num) {
   if (typeof num !== 'number' || !Number.isInteger(num) || num <= 0)
-    throw new Error('setMaxListeners - param num must be a positive integer!');
+    throw new Error('setMaxListeners #### param num must be a positive integer!');
   this.maxListeners = num;
 }
 
@@ -414,18 +453,20 @@ EventEmitter.prototype.emit = function(type) {
 }
 ```
 
-- 如何自己实现一个单点登录系统。
-- 手写diff。
-- 手写Promise  
+#### 如何自己实现一个单点登录系统
+
+#### 手写diff
+
+#### 手写Promise  
 [链接-> 使用ES5实现ES6 Promise API](https://github.com/nojsja/promise-nojsja)
 
 ### 要点：Node.js
 ----------
 
-- node是IO密集型体现在哪里。
+#### node是IO密集型体现在哪里。
 从node异步的角度来回答这个问题。
 参考点这里➡️ https://www.jianshu.com/p/c28219029c65
-0- node事件循环。
+0#### node事件循环。
 
 
 ### 要点：设计模式
@@ -450,58 +491,51 @@ EventEmitter.prototype.emit = function(type) {
 ### 要点：前端工具
 ---------
 
-- 打包gulp.webpack,rollup一些区别。
-- ts自己的看法，和应用。
-- webpack loader和plugin区别。
-- webpack中循环引用问题，a里面引用了b，b里面引用了a
-- webpack性能优化方面
+#### 打包gulp.webpack,rollup一些区别
+
+#### ts自己的看法，和应用
+
+#### webpack loader和plugin区别
+
+#### webpack中循环引用问题，a里面引用了b，b里面引用了a
+#### webpack性能优化方面
 
 ### 要点：性能优化
 --------
 
-- 性能优化的各方面
+#### 性能优化的各方面
 
-- 弱网环境下页面首屏如何快速加载
+#### 弱网环境下页面首屏如何快速加载
 方案：1.缓存的使用 2.SSR使用 3.骨架屏使用
 
 ### 要点：操作系统和网络
 ----------
 
-- 常见攻击，CSRF是什么，如何防范，token产生策略。
+#### 常见攻击，CSRF是什么，如何防范，token产生策略。
 
-- 跨域的基本概念和解决方法，在项目中的实际应用。
+#### 跨域的基本概念和解决方法，在项目中的实际应用。
 
-- 强缓存和协商缓存，缓存的应用，如何用在页面性能优化上。
+#### 强缓存和协商缓存，缓存的应用，如何用在页面性能优化上。
 
-- 爬虫方面问题，反爬如何实现，针对反爬的实现(IP代理等）。
+#### 爬虫方面问题，反爬如何实现，针对反爬的实现(IP代理等）。
 
-- 进程和线程区别。
+#### 进程和线程区别。
 
-- cpu调度算法。
+#### cpu调度算法。
 
-- 2台计算机底层之间如何通信 socket IO通信实现。
+#### 2台计算机底层之间如何通信 socket IO通信实现。
 
-- cookie中常见的字段。
-- 同源策略。
-- http中一些常见的响应头和请求头，有什么应用。
-- 简单请求和非简单请求区别。
-- http2 http3优化点在哪 https建立连接过程
-- 计算机网络中，http地址，在7层协议中，如何一步步向下解析，从应用层到最底层的物理层，每一层处理的事情。
-- http2.0 http3.0分别改进了什么
+#### cookie中常见的字段。
 
-### 要点：数据结构和算法
-----------
+#### 同源策略。
 
-- 算法题：版本号比较
-https://leetcode-cn.com/problems/compare-version-numbers/
-- IP地址复原
-https://leetcode-cn.com/problems/restore-ip-addresses/
+#### http中一些常见的响应头和请求头，有什么应用。
 
-- 全排列算法的实现。
-- 斐波那契算法。
-- 25匹马、5个赛道,怎么用最少的次数决出前三名
+#### 简单请求和非简单请求区别。
 
-### 要点：个人规划
-----------
+#### http2 http3优化点在哪 https建立连接过程
 
-- 未来规划，如何学习前端的，自己感兴趣的前端方向是什么。
+#### 计算机网络中，http地址，在7层协议中，如何一步步向下解析，从应用层到最底层的物理层，每一层处理的事情。
+
+#### http2.0 http3.0分别改进了什么
+#### 未来规划，如何学习前端的，自己感兴趣的前端方向是什么。
