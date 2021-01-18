@@ -263,6 +263,13 @@ function shallowClone(data) {
 9. Array.of将一个或多个值转换成数组
 
 #### 移动端点击穿透问题
+1. 问题来源  
+移动浏览器提供一个特殊的功能：双击(double tap)放大，300ms的延迟就来自这里，用户碰触页面之后，需要等待一段时间来判断是不是双击动作，而不是立即响应单击（click），等待的这段时间大约是300ms。为了消除延迟，我们使用touch start / touch end 事件来模拟click事件，这便是造成点击穿透问题的原因，想象一个场景：mask蒙层有个绑定touch start事件的关闭按钮，点击之后蒙层消失，之后300ms后点击位置触发click事件，导致mask下面的元素被误触。
+2. 问题解决  
+1）界面统一使用touch事件替代click事件  
+2）界面只click事件(会造成300ms延迟)  
+3）mask隐藏后，给按钮下面元素添上`pointer-events: none`(会造成元素短时间无法响应)  
+4）使用外部框架解决  
 #### 图片懒加载具体实现方案和思路  
 使用滚动监听器IntersectionObserver来监听界面滚动，当被监听元素界面可见时，设置图片元素的src为真实的地址。如果不使用这个API的话需要手动监听页面滚动然后通过计算img元素的`offsetTop < document.documentElement.clientHeight + (document.documentElement.scrollTop || document.body.scrollTop)` 来判断元素进入视区来实现，并注意配合防抖函数进行优化。
 ```sh
