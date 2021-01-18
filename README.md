@@ -16,7 +16,7 @@
 * 原型式继承(prototype)
 
 #### > data-structure <
->数据结构
+>js数据结构
 
 #### > design-patterns <
 
@@ -37,6 +37,7 @@
 * [es6 map/set 用法](./doc-from-other-authors/es6-map-set.md)
 * [js 字符创截取](./doc-from-other-authors/js字符串截取函数.md)
 * [js 基础知识](./doc-from-other-authors/js-basic.md)
+* [js正则](./doc-from-other-authors/JavaScript正则.pdf)
 
 #### > file-slice-upload <
 >  s3 bucket 多文件分割上传demo
@@ -82,14 +83,9 @@
 
 >js动画相关  
 
-#### > sort <
+#### > sorting-algorithm <
 
 >js排序相关
-
-#### > utils < 
-
->工具函数相关
-
 #### > mind-mapping < 
 
 >思维导图

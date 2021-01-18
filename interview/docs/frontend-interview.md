@@ -144,6 +144,39 @@ function getTypeOf(data) {
   }
 }
 ```
+#### 实现Call和Apply
+```js
+Function.prototype.myCall = function(context) {
+  var args, result, symbol;
+
+  context = Object(context) || window;
+  args = Array.prototype.slice.call(arguments, 1);
+  symbol = Symbol('myCall');
+  context[symbol] = this;
+  // 如果不使用扩展运算符的话可以将args[i]转换成逗号分隔的字符串
+  // 然后通过eval('context.fn('+ argstr +')')获取结果
+  result = context[symbol](...args);
+  delete context[symbol];
+
+  return result;
+};
+
+Function.prototype.myApply = function(context, args) {
+  var result, symbol;
+
+  args = args || [];
+  context = Object(context) || window;
+  if (!(args instanceof Array)) throw new Error('The args of apply must be an array.');
+
+  symbol = Symbol('myApply');
+  context[symbol] = this;
+  result = context[symbol](...args);
+  delete context[symbol];
+
+  return result;
+};
+
+```
 #### 实现new操作
 ```sh
 function New(func) {
