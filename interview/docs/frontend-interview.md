@@ -223,7 +223,7 @@ child.p_print();
 #### 深拷贝和浅拷贝
 ```js
 
-/* -------------#### 深拷贝 -------------#### */
+/* 深拷贝 */
 function deepClone(data) {
 
   const map = new WeakMap();
@@ -263,7 +263,7 @@ function deepClone(data) {
   return _clone(data);
 };
 
-/* -------------#### 浅拷贝 -------------#### */
+/* 浅拷贝 */
 function shallowClone(data) {
   let base;
 
@@ -302,10 +302,10 @@ function shallowClone(data) {
 1）界面统一使用touch事件替代click事件  
 2）界面只click事件(会造成300ms延迟)  
 3）mask隐藏后，给按钮下面元素添上`pointer-events: none`(会造成元素短时间无法响应)  
-4）使用外部框架解决  
+4）使用外部框架`fastclick`解决  
 #### 图片懒加载具体实现方案和思路  
-使用滚动监听器IntersectionObserver来监听界面滚动，当被监听元素界面可见时，设置图片元素的src为真实的地址。如果不使用这个API的话需要手动监听页面滚动然后通过计算img元素的`offsetTop < document.documentElement.clientHeight + (document.documentElement.scrollTop || document.body.scrollTop)` 来判断元素进入视区来实现，并注意配合防抖函数进行优化。
-```sh
+使用监听器IntersectionObserver来监听界面滚动，当被监听元素处于视口可见区域时，设置图片元素的src为真实的地址。如果不使用这个API的话需要手动监听页面滚动然后通过计算img元素的`offsetTop < document.documentElement.clientHeight + (document.documentElement.scrollTop || document.body.scrollTop)` 来判断元素进入视区实现，并注意配合防抖函数进行优化。
+```js
 (function lazyLoad(){
     const imageToLazy = document.querySelectorAll('img[data-src]');
     const loadImage = function (image) {
@@ -363,22 +363,22 @@ function throttle(fn, time) {
 
 #### 页面加载会触发哪些事件。
 1. document readystatechange事件  
-readyState 属性描述了文档的加载状态，在整个加载过程中document.readyState会不断变化，每次变化都会触发readystatechange事件。
+readyState 属性描述了文档的加载状态，在整个加载过程中document.readyState会不断变化，每次变化都会触发readystatechange事件。事件使用`document.onreadystatechange`进行监听。  
 readyState 有以下状态：  
   _1）loading - document仍在加载。_  
-  _2）interactive - 文档结构已经完成加载，文档已被解析并且可以交互，但是诸如图像，样式表和框架之类的外部资源仍在加载。_  
-  _3）complete - 完成文档和所有外部资源已完成加载。_  
+  _2）interactive - 文档结构已经完成加载，文档已被解析并且可以交互，但是诸如图像，样式表和脚本之类的外部资源仍在加载_  
+  _3）complete - 文档和所有外部资源已完成加载。_  
 2. document DOMContentLoaded事件  
-  DOM树渲染完成时触发DOMContentLoaded事件，此时可能外部资源还在加载，事件同于jQuery中的ready事件和`readyState === 'interactive'`阶段；事件使用`document.addEventListener('DOMContentLoaded', function)`监听。
+  DOM树渲染完成时触发DOMContentLoaded事件，此时可能外部资源还在加载，事件同于jQuery中的ready事件和`readyState == 'interactive'`阶段。事件使用`document.addEventListener('DOMContentLoaded', function)`监听。
 3. window load事件  
-  所有的资源全部加载完成会触发window的load事件；事件使用`window.onload=function`进行监听。
+  所有的资源全部加载完成会触发window的load事件。事件使用`window.onload=function`进行监听。
 ```js
 switch (document.readyState) {
   case "loading":
     // 表示文档还在加载中，即处于“正在加载”状态。
     break;
   case "interactive":
-    // 文档已经结束了“正在加载”状态，DOM元素可以被访问，但是像图像，样式表和框架等资源依然还在加载。
+    // 文档已经结束了“正在加载”状态，DOM元素可以被访问
     break;
   case "complete":
     // 页面所有内容都已被完全加载.
@@ -434,11 +434,36 @@ counterA();     // 2
 
 #### React-Fiber原理
 
+1. \> React架构  
+  - 1）Virtual DOM 层，描述页面长什么样  
+  - 2）Reconciler 层，负责调用组件生命周期方法，进行 Diff 运算-等  
+  - 3）Renderer 层，根据不同的平台，渲染出相应的页面，如ReactDOM和ReactNative
+
+2. \> React15遗留问题  
+![StackReconciler](./images/StackReconciler.jpg)
+  - 1）浏览器中，由于JS运算、页面布局和页面绘制都是运行在主线程当中，三者不能同时进行。  
+  - 2）React15使用JS的函数调用栈(Stack Reconciler)递归渲染界面，因此在处理DOM元素过多的复杂页面的频繁更新时，大量同步进行的任务(树diff和页面render)会导致界面更新阻塞、事件响应延迟、动画卡顿等，因此React团队在16版本重写了React Reconciler架构。
+
+3. \> React16问题解决  
+![FiberReconciler](./images/FiberReconciler.jpg)
+ - 1）`Fiber Reconciler`架构可以允许同步阻塞的任务拆分成多个小任务，每个任务占用一小段时间片，任务执行完成后判断有无空闲时间，有则继续执行下一个任务，否则将控制权交由浏览器以让浏览器去处理更高优先级的任务，等下次拿到时间片后，其它子任务继续执行。整个流程类似CPU调度逻辑，底层是使用了浏览器API`requestIdleCallback`。  
+- 2）为了实现整个Diff和Render的流程可中断和恢复，单纯的VirtualDom Tree不再满足需求，React16引入了采用单链表结构的Fiber树，如下图所示。
+- 3）FiberReconciler架构将更新流程划分成了两个阶段：1.diff(由多个diff任务组成，任务时间片消耗完后被可被中断，中断后由requestIdleCallback再次唤醒) => 2.commit(diff完毕后拿到fiber tree更新结果触发DOM渲染，不可被中断)。左边灰色部分的树即为一颗fiber树，右边的workInProgress为中间态，它是在diff过程中自顶向下构建的树形结构，可用于断点恢复，所有工作单元都更新完成之后，生成的workInProgress树会成为新的fiber tree。
+- 4）fiber tree中每个节点即一个工作单元，跟之前的VirtualDom树类似，表示一个虚拟DOM节点。workInProgress tree的每个fiber node都保存着diff过程中产生的effect list，它用来存放diff结果，并且底层的树节点会依次向上层merge effect list，以收集所有diff结果。注意的是如果某些节点并未更新，workInProgress tree会直接复用原fiber tree的节点(链表操作)，而有数据更新的节点会被打上tag标签。
+```js
+<FiberNode> : {
+    stateNode,    // 节点实例
+    child,        // 子节点
+    sibling,      // 兄弟节点
+    return,       // 父节点
+}
+```  
+![FiberTree](./images/FiberTree.png)
 #### React生命周期，React16.3版本后变化，为什么要这样做。（结合React Fiber)，有哪些不安全的生命周期
 
-#### react虚拟dom以及diff算法
+#### React虚拟dom以及diff算法
 
-#### babel源码
+#### Babel源码
 
 #### React SetState原理
 
