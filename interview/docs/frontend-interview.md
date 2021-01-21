@@ -1,40 +1,40 @@
 
-### 面试阶段分析
+### I. 面试阶段分析
 ----------
 
 1. 一面主要是针对基础知识，面试官会根据你的简历对各个知识点进行考察，需要有扎实的基础，提升对基础知识的熟悉度。
 2. 二面面试官会考察你知识掌握的深入程度，会根据你的个人项目，深挖其中的技术点。比如如果项目中用了React的话可能问你React diff算法、React性能优化等等，所以需要对个人项目所涉及到的技术点有深入研究和理解。
 3. 三面四面也会根据你的项目对你提问，需要熟知自己项目的闪光点以及一些尚待优化之处。除此之外面试官可能会出一些实际生产环境下的场景题，考察你的思维逻辑、技术积累和应变能力。
 
-### 个人介绍
+### II. 个人介绍
 ----------
 
-#### 重点
+#### ➣ 重点
 
 1. 我最突出的技能是什么  
-Js的多维运用
+例如：Js的多维运用
 2. 我在哪方面的知识掌握是最全面的  
-Js的多维运用
+例如：前端工程化
 3. 我性格上最大的优势是什么  
-对技术的热情和对问题孜孜不倦的深挖实践
+例如：对技术的热情和对问题孜孜不倦的深挖实践
 4. 我最擅长的事情是什么  
-擅长从工作中分析总结，制定对某类问题的解决方法，编写效率工具
+例如：擅长从工作中分析总结，制定对某类问题的解决方法，编写效率工具
 5. 我有哪些成就和贡献  
 ...
 
-#### 描述在上一家公司的工作经历
+#### ➣ 描述在上一家公司的工作经历
 在前一个公司，我们使用React/Mobx/Node.js/Electron等技术，我主要负责一个存储集群产品的前端开发迭代、中间层维护和通用打包脚本编写这些。也曾担任过一个SMB客户端产品主要开发工作，负责项目搭建、架构优化以及多文件分片上传模块编写。
 
-#### 范例
+#### ➣ 范例
 面试官，你好，我叫xx，毕业于xx大学xx专业，三年工作经验。在前一个公司主要负责一个存储集群产品的前端开发、中间层维护和通用打包脚本编写这些，也担任过一个SMB客户端产品主要开发工作，负责项目搭建、架构优化以及多文件分片上传模块编写。  
 自己比较擅长从日常工作中分析总结，制定对某类问题的解决方法，编写效率工具。  
 在技术方面比较熟悉React/Node开发，对前端客户端技术Electron也有涉猎，平时会更新技术博客和Github。
 
 
-### 要点：HTML/CSS
+### III. 要点：HTML/CSS
 ----------
 
-#### BFC，块级格式化上下文。
+#### ➣ BFC，块级格式化上下文。
 ```sh
 1) BFC 就是块级格式上下文，是页面盒模型布局中的一种 CSS 渲染模式，
 相当于一个独立的容器，里面的元素和外部的元素相互不影响。创建 BFC 的方式有：
@@ -58,17 +58,17 @@ Js的多维运用
   计算BFC的高度时，浮动元素也会参与计算
 
 ```
-#### 两列布局实现。
+#### ➣ 两列布局实现。
 ```sh
 1) 使用float浮动元素同时设置元素宽度为100/列数 %
 2) 使用inline-block实现方式同1
 2) 使用css属性column-count实现
 ```
-#### 1px问题。
-```sh
-1) 涉及到css像素比 device pixel/css pixel = devicePixelRatio(DPR)
-2) 解决方法一
-  伪元素设置height模拟边框：
+#### ➣ 1px问题。
+1. 涉及到css像素比 device pixel/css pixel = devicePixelRatio(DPR)  
+2. 解决方法一  
+伪元素设置height模拟边框：
+```js
   .setBorderAll{
      position: relative;
        &:after{
@@ -86,41 +86,41 @@ Js的多维运用
       }
     }
   }
-3) 解决方法二
-  设置盒子阴影：
+```
+3. 解决方法二  
+设置盒子阴影：
+```css
   box-shadow: 0  -1px 1px -1px #e5e5e5,   //上边线
             1px  0  1px -1px #e5e5e5,   //右边线
             0  1px  1px -1px #e5e5e5,   //下边线
             -1px 0  1px -1px #e5e5e5;   //左边线
 ```
-#### 浮动解决的方案。
-```sh
-1) 清除浮动的属性
-  浮动元素尾部那个不跟随浮动的元素设置clear:both
-2) 撑起浮动容器元素的方法一
-  在浮动元素的最后插入一个声明了clear:both的块级元素
-3) 撑起浮动容器元素的方法二
-  在浮动容器元素后使用伪元素
+#### ➣ 浮动布局相关
+1. 清除浮动的属性  
+浮动元素尾部那个不跟随浮动的元素设置`clear:both`
+2. 撑起浮动容器元素的方法一  
+在浮动元素的最后插入一个声明了`clear:both`的块级元素
+3. 撑起浮动容器元素的方法二  
+在浮动容器元素后使用伪元素：
+```css
   .container:after {
     content: '.';
     height: 0;
     display: block;
     clear: both;
   }
-4) 撑起浮动容器元素的方法三
-  利用BFC特性，设置浮动元素的overflow不为visible
 ```
+4. 撑起浮动容器元素的方法三  
+利用BFC特性，设置浮动容器元素的`overflow`不为visible
 
-#### 位图和矢量图的区别。
-```sh
-1) 位图也叫像素图，每个点可以用二进制描述颜色和亮度信息，色彩表现丰富，占用空间大，缩放失真
-2) 矢量图使用计算机指令绘制而成，由点线面构成，色彩不丰富，占用空间小，缩放不失真
-```
+#### ➣ 位图和矢量图的区别。
+1. 位图也叫像素图，每个点可以用二进制描述颜色和亮度信息，色彩表现丰富，占用空间大，缩放失真
+2. 矢量图使用计算机指令绘制而成，由点线面构成，色彩不丰富，占用空间小，缩放不失真
 
-### 要点：Javascript
+### IV. 要点：Javascript
 ----------
 
-#### js类型的判断
+#### ➣ js类型的判断
 ```js
 /*
 基础类型：string/boolean/number/null/undefined/symbol
@@ -144,7 +144,7 @@ function getTypeOf(data) {
   }
 }
 ```
-#### 实现Call和Apply
+#### ➣ 实现Call和Apply
 ```js
 Function.prototype.myCall = function(context) {
   var args, result, symbol;
@@ -177,7 +177,7 @@ Function.prototype.myApply = function(context, args) {
 };
 
 ```
-#### 实现new操作
+#### ➣ 实现new操作
 ```sh
 function New(func) {
   var empty = Object.create(null);
@@ -187,7 +187,7 @@ function New(func) {
   return empty;
 }
 ```
-#### Js实现继承
+#### ➣ Js实现继承
 ```sh
 function Inherit (parent, child) {
   function Empty() {};
@@ -220,9 +220,11 @@ var child = new Child('child');
 child.print();
 child.p_print();
 ```
-#### 深拷贝和浅拷贝
-```js
+#### ➣ 深拷贝和浅拷贝
+<details>
+<summary>点击展开查看</summary>
 
+```js
 /* 深拷贝 */
 function deepClone(data) {
 
@@ -283,7 +285,9 @@ function shallowClone(data) {
 }
 
 ```
-#### ES6新增特性
+</details>
+
+#### ➣ ES6新增特性
 
 1. Promise
 2. let/const/块级作用域
@@ -295,7 +299,7 @@ function shallowClone(data) {
 8. Array.from将类数组和实现了迭代器的对象转换成数组
 9. Array.of将一个或多个值转换成数组
 
-#### 移动端点击穿透问题
+#### ➣ 移动端点击穿透问题
 1. 问题来源  
 移动浏览器提供一个特殊的功能：双击(double tap)放大，300ms的延迟就来自这里，用户碰触页面之后，需要等待一段时间来判断是不是双击动作，而不是立即响应单击（click），等待的这段时间大约是300ms。为了消除延迟，我们使用touch start / touch end 事件来模拟click事件，这便是造成点击穿透问题的原因，想象一个场景：mask蒙层有个绑定touch start事件的关闭按钮，点击之后蒙层消失，之后300ms后点击位置触发click事件，导致mask下面的元素被误触。
 2. 问题解决  
@@ -303,7 +307,7 @@ function shallowClone(data) {
 2）界面只click事件(会造成300ms延迟)  
 3）mask隐藏后，给按钮下面元素添上`pointer-events: none`(会造成元素短时间无法响应)  
 4）使用外部框架`fastclick`解决  
-#### 图片懒加载具体实现方案和思路  
+#### ➣ 图片懒加载具体实现方案和思路  
 使用监听器IntersectionObserver来监听界面滚动，当被监听元素处于视口可见区域时，设置图片元素的src为真实的地址。如果不使用这个API的话需要手动监听页面滚动然后通过计算img元素的`offsetTop < document.documentElement.clientHeight + (document.documentElement.scrollTop || document.body.scrollTop)` 来判断元素进入视区实现，并注意配合防抖函数进行优化。
 ```js
 (function lazyLoad(){
@@ -330,7 +334,7 @@ function shallowClone(data) {
     })
 })()
 ```
-#### 函数防抖和节流实现
+#### ➣ 函数防抖和节流实现
 ```js
 /* 去抖 */
 function debounce(fn, time) {
@@ -359,9 +363,12 @@ function throttle(fn, time) {
   }
 }
 ```
-#### Js/Node的事件循环(宏任务、微任务)
+#### ➣ Js/Node的事件循环(宏任务、微任务)
 
-#### 页面加载会触发哪些事件。
+#### ➣ 页面加载会触发哪些事件
+<details>
+<summary>点击展开查看</summary>
+
 1. document readystatechange事件  
 readyState 属性描述了文档的加载状态，在整个加载过程中document.readyState会不断变化，每次变化都会触发readystatechange事件。事件使用`document.onreadystatechange`进行监听。  
 readyState 有以下状态：  
@@ -398,15 +405,20 @@ document.onreadystatechange = function () {
   }
 }
 ```
-#### document.ready和window.onload的区别。  
+</details>
+
+#### ➣ document.ready和window.onload的区别。  
 ```sh
 ready事件在DOM结构绘制完成之后就会执行，这样能确保就算有大量的媒体文件没加载出来，JS代码一样可以执行。
 load事件必须等到网页中所有内容全部加载完毕之后才被执行，如果一个网页中有大量的图片的话，则就会出现这种情况：网页文档已经呈现出来，但由于网页数据还没有完全加载完毕，导致load事件不能够即时被触发。
 ```
-#### 闭包Closure  
-1）执行上下文  
+#### ➣ 闭包Closure  
+<details>
+<summary>点击展开查看</summary>
+
+1. 执行上下文  
 函数每次执行，都会生成一个执行上下文内部对象(可理解为函数作用域)，这个上下文对象会保存函数中所有的变量值和该函数内部定义的函数的引用。函数每次执行时对应的执行上下文都是独一无二的，正常情况下函数执行完毕执行上下文就会被销毁。  
-2）内部作用域的外部引用导致作用域内变量垃圾回收不执行  
+2. 内部作用域的外部引用导致作用域内变量垃圾回收不执行  
 当一个函数内部作用域(注意不是单纯的变量引用)被其外层作用域引用时，函数执行完之后，其执行上下文不会被销毁，我们还能沿着作用域链访问到某个被引用的内部变量。
 ```js
 // 外层作用域
@@ -426,13 +438,18 @@ counterA();     // 1
 counterA();     // 2
 
 ```
-#### 函数式编程思想的体现
 
-#### vue双向绑定实现原理
+</details>
+#### ➣ 函数式编程思想的体现
 
-#### Vue2.0与Vue3.0双向绑定，proxy实现
+#### ➣ vue双向绑定实现原理
 
-#### React-Fiber原理
+#### ➣ Vue2.0与Vue3.0双向绑定，proxy实现
+
+#### ➣ React-Fiber原理
+
+<details>
+<summary>点击展开查看</summary>
 
 1. \> React架构  
   - 1）Virtual DOM 层，描述页面长什么样  
@@ -459,17 +476,23 @@ counterA();     // 2
 }
 ```  
 ![FiberTree](./images/FiberTree.png)
-#### React生命周期，React16.3版本后变化，为什么要这样做。（结合React Fiber)，有哪些不安全的生命周期
 
-#### React虚拟dom以及diff算法
+</details>
 
-#### Babel源码
+#### ➣ React生命周期，React16.3版本后变化，为什么要这样做。（结合React Fiber)，有哪些不安全的生命周期
 
-#### React SetState原理
+#### ➣ React虚拟dom以及diff算法
 
-#### 错误监控方法
+#### ➣ Babel源码
 
-#### 实现一个EventEmitter类，支持事件的on,off,emit,once,setMaxListeners。
+#### ➣ React SetState原理
+
+#### ➣ 错误监控方法
+
+#### ➣ 实现一个EventEmitter类，支持事件的on,off,emit,once,setMaxListeners。
+<details>
+<summary>点击展开查看</summary>
+
 ```js
 function EventEmitter() {
   this.maxListeners = 100;
@@ -479,7 +502,7 @@ function EventEmitter() {
 
 EventEmitter.prototype.setMaxListeners = function(num) {
   if (typeof num !== 'number' || !Number.isInteger(num) || num <= 0)
-    throw new Error('setMaxListeners #### param num must be a positive integer!');
+    throw new Error('setMaxListeners #### ➣ param num must be a positive integer!');
   this.maxListeners = num;
 }
 
@@ -517,24 +540,25 @@ EventEmitter.prototype.emit = function(type) {
   delete this.onceMap[type];
 }
 ```
+</details>
 
-#### 如何自己实现一个单点登录系统
+#### ➣ 如何自己实现一个单点登录系统
 
-#### 手写diff
+#### ➣ 手写diff
 
-#### 手写Promise  
+#### ➣ 手写Promise  
 [链接-> 使用ES5实现ES6 Promise API](https://github.com/nojsja/promise-nojsja)
 
-### 要点：Node.js
+### V. 要点：Node.js
 ----------
 
-#### node是IO密集型体现在哪里。
+#### ➣ node是IO密集型体现在哪里。
 从node异步的角度来回答这个问题。
 参考点这里➡️ https://www.jianshu.com/p/c28219029c65
-0#### node事件循环。
+0#### ➣ node事件循环。
 
 
-### 要点：设计模式
+### VI. 要点：设计模式
 ----------
 
 1. [策略模式](https://github.com/nojsja/javascript-learning/tree/master/design-patterns#1-the-strategy-pattern%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F)
@@ -553,54 +577,54 @@ EventEmitter.prototype.emit = function(type) {
 
 8. [模板方法模式](https://github.com/nojsja/javascript-learning/tree/master/design-patterns#7-the-responsibility-chain-pattern%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F)
 
-### 要点：前端工具
+### VII. 要点：前端工具
 ---------
 
-#### 打包gulp.webpack,rollup一些区别
+#### ➣ 打包gulp.webpack,rollup一些区别
 
-#### ts自己的看法，和应用
+#### ➣ ts自己的看法，和应用
 
-#### webpack loader和plugin区别
+#### ➣ webpack loader和plugin区别
 
-#### webpack中循环引用问题，a里面引用了b，b里面引用了a
-#### webpack性能优化方面
+#### ➣ webpack中循环引用问题，a里面引用了b，b里面引用了a
+#### ➣ webpack性能优化方面
 
-### 要点：性能优化
+### VIII. 要点：性能优化
 --------
 
-#### 性能优化的各方面
+#### ➣ 性能优化的各方面
 
-#### 弱网环境下页面首屏如何快速加载
+#### ➣ 弱网环境下页面首屏如何快速加载
 方案：1.缓存的使用 2.SSR使用 3.骨架屏使用
 
-### 要点：操作系统和网络
+### IX. 要点：操作系统和网络
 ----------
 
-#### 常见攻击，CSRF是什么，如何防范，token产生策略。
+#### ➣ 常见攻击，CSRF是什么，如何防范，token产生策略。
 
-#### 跨域的基本概念和解决方法，在项目中的实际应用。
+#### ➣ 跨域的基本概念和解决方法，在项目中的实际应用。
 
-#### 强缓存和协商缓存，缓存的应用，如何用在页面性能优化上。
+#### ➣ 强缓存和协商缓存，缓存的应用，如何用在页面性能优化上。
 
-#### 爬虫方面问题，反爬如何实现，针对反爬的实现(IP代理等）。
+#### ➣ 爬虫方面问题，反爬如何实现，针对反爬的实现(IP代理等）。
 
-#### 进程和线程区别。
+#### ➣ 进程和线程区别。
 
-#### cpu调度算法。
+#### ➣ cpu调度算法。
 
-#### 2台计算机底层之间如何通信 socket IO通信实现。
+#### ➣ 2台计算机底层之间如何通信 socket IO通信实现。
 
-#### cookie中常见的字段。
+#### ➣ cookie中常见的字段。
 
-#### 同源策略。
+#### ➣ 同源策略。
 
-#### http中一些常见的响应头和请求头，有什么应用。
+#### ➣ http中一些常见的响应头和请求头，有什么应用。
 
-#### 简单请求和非简单请求区别。
+#### ➣ 简单请求和非简单请求区别。
 
-#### http2 http3优化点在哪 https建立连接过程
+#### ➣ http2 http3优化点在哪 https建立连接过程
 
-#### 计算机网络中，http地址，在7层协议中，如何一步步向下解析，从应用层到最底层的物理层，每一层处理的事情。
+#### ➣ 计算机网络中，http地址，在7层协议中，如何一步步向下解析，从应用层到最底层的物理层，每一层处理的事情。
 
-#### http2.0 http3.0分别改进了什么
-#### 未来规划，如何学习前端的，自己感兴趣的前端方向是什么。
+#### ➣ http2.0 http3.0分别改进了什么
+#### ➣ 未来规划，如何学习前端的，自己感兴趣的前端方向是什么。
