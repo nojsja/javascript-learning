@@ -440,6 +440,7 @@ counterA();     // 2
 ```
 
 </details>
+
 #### ➣ 函数式编程思想的体现
 
 #### ➣ vue双向绑定实现原理
@@ -479,7 +480,145 @@ counterA();     // 2
 
 </details>
 
-#### ➣ React生命周期，React16.3版本后变化，为什么要这样做。（结合React Fiber)，有哪些不安全的生命周期
+#### ➣ React生命周期，React16.3版本后变化，为什么要这样做，有哪些不安全的生命周期（结合React Fiber)
+
+##### React16.3之前的生命周期
+
+![](./images/react-lifecycle-old.png)
+
+1. componentWillMount()  
+此生命周期函数会在在组件挂载之前被调用，整个生命周期中只被触发一次。开发者通常用来进行一些数据的预请求操作，以减少请求发起时间，建议的替代方案是考虑放入constructor构造函数中，或者componentDidMount后；另一种情况是在在使用了外部状态管理库时，如Mobx，可以用于重置Mobx Store中的的已保存数据，替代方案是使用生命周期componentWilUnmount在组件卸载时自动执行数据清理。
+
+2. componentDidMount()  
+此生命周期函数在组件被挂载之后被调用，整个生命周期中只触发一次。开发者同样可以用来进行一些数据请求的操作；除此之外也可用于添加事件订阅(需要在componentWillUnmount中取消事件订阅)；因为函数触发时dom元素已经渲染完毕，第三种使用情况是处理一些界面更新的副作用，比如使用默认数据来初始化一个echarts组件，然后在componentDidUpdate后进行echarts组件的数据更新。
+
+3. componentWillReceiveProps(nextProps, nexState)  
+此生命周期发生在组件挂载之后的组件更新阶段。最常见于在一个依赖于prop属性进行组件内部state更新的非完全受控组件中，非完全受控组件即组件内部维护state更新，同时又在某个特殊条件下会采用外部传入的props来更新内部state，注意不要直接将props完全复制到state，否则应该使用完全受控组件`Function Component`，一个例子如下：
+```js
+class EmailInput extends Component {
+  state = { email: this.props.email };
+
+  render() {
+    return <input onChange={this.handleChange} value={this.state.email} />;
+  }
+
+  handleChange = e => his.setState({ email: e.target.value });
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.userID !== this.props.userID) {
+      this.setState({ email: nextProps.email });
+    }
+  }
+}
+```
+
+4. shouldComponentUpdate(nextProps)  
+此生命周期发生在组件挂载之后的组件更新阶段。  
+值得注意的是子组件更新不一定是由于props或state改变引起的，也可能是父组件的其它部分更改导致父组件重渲染而使得当前子组件在props/state未改变的情况下重新渲染一次。  
+函数被调用时会被传入即将更新的`nextProps`和`nextState`对象，开发者可以通过对比前后两个props对象上与界面渲染相关的属性是否改变，再决定是否允许这次更新(return `true`表示允许执行更新，否则忽略更新，默认为`true`)。常搭配对象深比较函数用于减少界面无用渲染次数，优化性能。在一些只需要简单浅比较props变化的场景下，并且相同的state和props会渲染出相同的内容时，建议使用`React.PureComponnet`替代，在props更新时React会自动帮你进行一次浅比较，以减少不必要渲染。
+```js
+class EmailInput extends Component {
+  state = { email: this.props.email };
+
+  render() {
+    return <input onChange={this.handleChange} value={this.state.email} />;
+  }
+
+  handleChange = e => his.setState({ email: e.target.value });
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      nextProps.userID === this.props.userID &&
+      nextState.email == this.state.email
+    ) return false;
+  }
+}
+```
+
+5. componenetWillUpdate()  
+此生命周期发生在组件挂载之后的更新阶段。当组件收到新的props或state，并且`shouldComponentUpdate`返回允许更新时，会在渲染之前调此方法，不可以在此生命周期执行`setState`。在此生命周期中开发者可以在界面实际渲染更新之前拿到最新的`nextProps`和`nextState`，从而执行一些副作用：比如触发一个事件、根据最新的props缓存一些计算数据到组件内、平滑界面元素动画等：
+```js
+ // 需要搭配css属性transition使用
+ componentWillUpdate : function(newProps,newState){
+    if(!newState.show)
+      $(ReactDOM.findDOMNode(this.refs.elem)).css({'opacity':'1'});
+    else
+      $(ReactDOM.findDOMNode(this.refs.elem)).css({'opacity':'0'});;
+  },
+  componentDidUpdate : function(oldProps,oldState){
+    if(this.state.show)
+      $(ReactDOM.findDOMNode(this.refs.elem)).css({'opacity':'1'});
+    else
+      $(ReactDOM.findDOMNode(this.refs.elem)).css({'opacity':'0'});;
+  }
+```
+
+6. componenetDidUpdate()  
+此生命周期发生在组件挂载之后的更新阶段，组件初次挂载不会触发。当组件的props和state改变引起界面渲染更新后，此函数会被调用，不可以在此生命周期执行`setState`。我们使用它用来执行一些副作用：比如条件式触发必要的网络请求来更新本地数据、使用render后的最新数据来调用一些外部库的执行(例子：定时器请求接口数据动态绘制echarts折线图)：
+```js
+  ...
+  componentDidMount() {
+    this.echartsElement = echarts.init(this.refs.echart);
+    this.echartsElement.setOption(this.props.defaultData);
+    ...
+  }
+  componentDidUpdate() {
+    const { treeData } = this.props;
+    const optionData = this.echartsElement.getOption();
+    optionData.series[0].data = [treeData];
+    this.echartsElement.setOption(optionData, true);
+  }
+```
+
+
+7. componentWillUnmount()  
+此生命周期发生在组件卸载之前，组件生命周期中只会触发一次。开发者可以在此函数中执行一些数据清理重置、取消页面组件的事件订阅等。
+
+##### React16.3之后的生命周期
+![](./images/react-lifecycle.png)
+
+React16.3之后React的`Reconciler`架构被重写(Reconciler用于处理生命周期钩子函数和DOM DIFF)，之前版本采用函数调用栈递归同步渲染机制即Stack Reconciler，dom的diff阶段不能被打断，所以不利于动画执行和事件响应。React团队使用Fiber Reconciler架构之后，diff阶段根据虚拟DOM节点拆分成包含多个工作任务单元(FiberNode)的Fiber树(以链表实现)，实现了Fiber任务单元之间的任意切换和任务之间的打断及恢复等等。Fiber架构下的异步渲染导致了`componentWillMount`、`componentWillReceiveProps`、`componentWillUpdate`三个生命周期在实际渲染之前可能会被调用多次，产生不可预料的调用结果，因此这三个不安全生命周期函数不建议被使用。取而代之的是使用全新的两个生命周期函数：`getDerivedStateFromProps`和`getSnapshotBeforeUpdate`。
+
+1. __getDerivedStateFromProps(nextProps, currentState)__  
+- 1）定义  
+此生命周期发生在组件初始化挂载和组件更新阶段，开发者可以用它来替代之前的`componentWillReceiveProps`生命周期，可用于根据props变化来动态设置组件内部state。  
+函数为static静态函数，因此我们无法使用`this`直接访问组件实例，也无法使用`this.setState`直接对state进行更改，以此可以看出React团队想通过React框架的API式约束来尽量减少开发者的API滥用。函数调用时会被传入即将更新的props和当前组件的state数据作为参数，我们可以通过对比处理props然后返回一个对象来触发的组件state更新，如果返回null则不更新任何内容。  
+- 2）滥用场景一  
+直接复制props到state上面：  
+这会导致父层级重新渲染时，SimpleInput组件的state都会被重置为父组件重新传入的props，不管props是否发生了改变。如果你说使用`shouldComponentUpdate`搭配着避免这种情况可以吗？代码层面上可以，不过可能导致后期`shouldComponentUpdate`函数的数据来源混乱，任何一个prop的改变都会导致重新渲染和不正确的状态重置，维护一个可靠的`shouldComponentUpdate`会更难。
+```js
+class SimpleInput extends Component {
+  state = { attr: ''  };
+
+  render() {
+    return <input onChange={(e) => this.setState({ attr: e.target.value })} value={this.state.attr} />;
+  }
+
+  static getDerivedStateFromProps(nextProps, currentState) {
+    // 这会覆盖所有组件内的state更新！
+    return { attr: nextProps.attr };
+  }
+}
+```
+
+- 3）使用场景一  
+
+
+
+2. componentDidMount()  
+...
+
+3. shouldComponentUpdate(nextProps, nexState)  
+...
+
+4. getSnapshotBeforeUpdate()  
+
+5. componenetDidUpdate  
+...
+
+6. componenetWillUnmount  
+...
+
 
 #### ➣ React虚拟dom以及diff算法
 
