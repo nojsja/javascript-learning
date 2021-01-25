@@ -1,3 +1,35 @@
+## 前端面试重难点攻坚指南
+
+### Contents
+------------
+```sh
+├── Contents (you are here!)
+│
+├── I.    面试阶段分析
+├── II.   个人介绍
+│
+├── III.  要点：HTML/CSS
+├── IV.   要点：Javascript
+├── V.    要点：Node.js
+├── VI.   要点：设计模式
+│   ├────── 策略模式
+│   ├────── 观察者模式
+│   ├────── 享元模式
+│   ├────── 装饰者模式
+│   ├────── 代理模式
+│   ├────── 状态模式
+│   ├────── 责任链模式
+│   └────── 模板方法模式
+│
+├── VII.  要点：前端工具
+├── VIII. 要点：性能优化
+├── IX.   要点：操作系统和网络
+├── X.    要点：Leetcode算法刷题
+│   ├────── 考察重点
+│   ├────── 常见考题
+│   └────── 推荐作者和资源
+│
+```
 
 ### I. 面试阶段分析
 ----------
@@ -459,7 +491,7 @@ counterA();     // 2
 
 2. \> React15遗留问题  
 ![StackReconciler](./images/StackReconciler.jpg)
-  - 1）浏览器中，由于JS运算、页面布局和页面绘制都是运行在主线程当中，三者不能同时进行。  
+  - 1）浏览器的整体渲染是多线程的，包括GUI渲染线程、JS引擎线程、事件触发线程、定时触发器线程和异步http请求线程。页面绘制和JS运算是互斥的线程，两者不能同时进行。  
   - 2）React15使用JS的函数调用栈(Stack Reconciler)递归渲染界面，因此在处理DOM元素过多的复杂页面的频繁更新时，大量同步进行的任务(树diff和页面render)会导致界面更新阻塞、事件响应延迟、动画卡顿等，因此React团队在16版本重写了React Reconciler架构。
 
 3. \> React16问题解决  
@@ -481,6 +513,9 @@ counterA();     // 2
 </details>
 
 #### ➣ React生命周期，React16.3版本后变化，为什么要这样做，有哪些不安全的生命周期（结合React Fiber)
+
+<details>
+<summary>点击展开查看</summary>
 
 ##### React16.3之前的生命周期
 
@@ -735,6 +770,7 @@ class ScrollingList extends Component {
 6. componenetWillUnmount  
 ...
 
+</details>
 
 #### ➣ React虚拟dom以及diff算法
 
@@ -799,19 +835,15 @@ EventEmitter.prototype.emit = function(type) {
 
 #### ➣ 如何自己实现一个单点登录系统
 
-#### ➣ 手写diff
-
 #### ➣ 手写Promise  
 [链接-> 使用ES5实现ES6 Promise API](https://github.com/nojsja/promise-nojsja)
 
 ### V. 要点：Node.js
 ----------
 
-#### ➣ node是IO密集型体现在哪里。
-从node异步的角度来回答这个问题。
-参考点这里➡️ https://www.jianshu.com/p/c28219029c65
-0#### ➣ node事件循环。
+#### ➣ 谈谈node子进程child_process和实际使用场景
 
+#### ➣ node是IO密集型体现在哪里
 
 ### VI. 要点：设计模式
 ----------
@@ -835,51 +867,122 @@ EventEmitter.prototype.emit = function(type) {
 ### VII. 要点：前端工具
 ---------
 
-#### ➣ 打包gulp.webpack,rollup一些区别
+#### ➣ 打包gulp/webpack/rollup一些区别
 
 #### ➣ ts自己的看法，和应用
 
 #### ➣ webpack loader和plugin区别
 
 #### ➣ webpack中循环引用问题，a里面引用了b，b里面引用了a
+
 #### ➣ webpack性能优化方面
 
 ### VIII. 要点：性能优化
 --------
 
 #### ➣ 性能优化的各方面
+![](./images/frontend-optimization.png)
 
 #### ➣ 弱网环境下页面首屏如何快速加载
-方案：1.缓存的使用 2.SSR使用 3.骨架屏使用
+方案：
+1. 缓存的使用
+2. SSR使用
+3. 骨架屏使用
 
 ### IX. 要点：操作系统和网络
-----------
+-------------
 
-#### ➣ 常见攻击，CSRF是什么，如何防范，token产生策略。
+#### ➣ 常见攻击，CSRF是什么，如何防范，token产生策略
 
-#### ➣ 跨域的基本概念和解决方法，在项目中的实际应用。
+#### ➣ 跨域的基本概念和解决方法，在项目中的实际应用
 
-#### ➣ 强缓存和协商缓存，缓存的应用，如何用在页面性能优化上。
+#### ➣ 强缓存和协商缓存，缓存的应用，如何用在页面性能优化上
 
-#### ➣ 爬虫方面问题，反爬如何实现，针对反爬的实现(IP代理等）。
+#### ➣ 爬虫方面问题，反爬如何实现，针对反爬的实现(IP代理等）
 
-#### ➣ 进程和线程区别。
+#### ➣ 进程和线程区别
 
-#### ➣ cpu调度算法。
+#### ➣ cpu调度算法
 
-#### ➣ 2台计算机底层之间如何通信 socket IO通信实现。
+#### ➣ 2台计算机底层之间如何通信 socket IO通信实现
 
-#### ➣ cookie中常见的字段。
+#### ➣ cookie中常见的字段
 
-#### ➣ 同源策略。
+#### ➣ 同源策略
 
-#### ➣ http中一些常见的响应头和请求头，有什么应用。
+#### ➣ http中一些常见的响应头和请求头，有什么应用
 
-#### ➣ 简单请求和非简单请求区别。
+#### ➣ 简单请求和非简单请求区别
 
 #### ➣ http2 http3优化点在哪 https建立连接过程
 
-#### ➣ 计算机网络中，http地址，在7层协议中，如何一步步向下解析，从应用层到最底层的物理层，每一层处理的事情。
+#### ➣ 计算机网络中，http地址，在7层协议中，如何一步步向下解析，从应用层到最底层的物理层，每一层处理的事情
 
 #### ➣ http2.0 http3.0分别改进了什么
-#### ➣ 未来规划，如何学习前端的，自己感兴趣的前端方向是什么。
+
+### X. 要点：Leetcode算法刷题
+--------------
+
+<details>
+<summary>点击展开查看</summary>
+
+#### ➣ 考察重点
+
+1. 各种算法考察概率
+
+> 统计不是绝对的，请理性看待
+
+![](./images/leetcode_key.png)
+
+2. 公司考察频率
+
+![](./images/leetcode_value.jpeg)
+
+3. leetcode高频考题
+
+- 1）数组
+![](./images/数组.png)
+
+- 2）哈希表
+![](./images/哈希表.png)
+
+- 3）二分查找
+![](./images/二分查找.png)
+
+- 4）回溯
+![](./images/回溯.png)
+
+- 5）字符串
+![](./images/字符串.png)
+
+- 6）贪心
+![](./images/贪心.png)
+
+- 7）动态规划
+![](./images/dp.png)
+
+- 8）位运算
+![](./images/位运算.png)
+
+- 9）数学
+![](./images/数学.png)
+
+- 10）广度优先
+![](./images/广度优先.png)
+
+- 11）二分查找
+![](./images/二分查找.png)
+
+- 12）深度优先
+![](./images/深度优先.png)
+
+- 12）二叉树
+![](./images/二叉树.png)
+
+#### ➣ 推荐作者和资源
+
+1. [力扣加加算法题解](https://leetcode-solution-leetcode-pp.gitbook.io/leetcode-solution/thinkings)
+
+2. [labuladong 的算法小抄](https://labuladong.gitee.io/algo/)
+
+</details>
