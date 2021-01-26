@@ -17,7 +17,7 @@
 │    ├────── 分析比较 opacity: 0、visibility: hidden、display: none
 │    ├────── 怎么让一个 div 水平垂直居中
 │    ├────── 浮动布局相关
-│    ├────── Flex布局相关
+│    ├────── display/position属性相关
 │    ├────── 媒体查询：网页自适应相关
 │    └────── 浮动布局相关
 │
