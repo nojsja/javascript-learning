@@ -961,13 +961,127 @@ EventEmitter.prototype.emit = function(type) {
 
 #### ➣ 常见的网页攻击方式，如何防范
 
-1. XSS：跨站脚本攻击(Cross-site scripting)
+<details>
+<summary>点击展开查看</summary>
 
-2. XSRF：跨站请求伪造(Cross-site request forgery)
+##### 1. XSS：跨站脚本攻击(Cross-site scripting)
+&nbsp;&nbsp;&nbsp;&nbsp; 它允许使用者恶将代码恶意注入到网页上，属于代码注入的一种攻击方式，常通过HTML和Javascript进行注入攻击成功后，攻击者可能获取网站更高的操作权限、私密网页信息、会话和cookie等各种内容。
+
+1）常用的XSS攻击手段和目的有：
+
+- 盗用cookie，获取敏感信息。
+- 利用植入Flash，通过crossdomain权限设置进一步获取更高权限；或者利用Java等得到类似的操作。
+- 利用iframe、frame、XMLHttpRequest或上述Flash等方式，以（被攻击）用户-的身份执行一些管理动作，或执行一些一般的如发微博、加好友、发私信等操作。
+- 利用可被攻击的域受到其他域信任的特点，以受信任来源的身份请求一些平时不允许的操作，如进行不当的投票活动。
+- 在访问量极大的一些页面上的XSS可以攻击一些小型网站，实现DoS攻击的效果。
+
+2）防范手段：
+
+- 将使用者所提供的内容进行过滤，许多语言都有提供对HTML的过滤：
+>PHP的htmlentities()或是htmlspecialchars()；Python的cgi.escape()；
+ASP的Server.HTMLEncode()；ASP.NET的Server.HtmlEncode()或功能更强的Microsoft Anti-Cross Site Scripting Library 页面存档备份，存于互联网档案馆；Java的xssprotect (Open Source Library) 页面存档备份，存于互联网档案馆；Node.js的node-validator。
+
+- 很多时候可以使用HTTP头指定内容的类型，使得输出的内容避免被作为HTML解析。如在PH
+```php
+<?php
+   header('Content-Type: text/javascript; charset=utf-8');
+?>
+```
+##### 2. XSRF：跨站请求伪造(Cross-site request forgery)
+&nbsp;&nbsp;&nbsp;&nbsp; 攻击者通过一些技术手段欺骗用户的浏览器去访问一个自己曾经认证过的网站并运行一些操作（如发邮件，发消息，甚至财产操作如转账和购买商品）。由于浏览器曾经认证过，所以被访问的网站会认为是真正的用户操作而去运行。
+
+1）攻击示例：
+- 假如一家银行用以运行转账操作的URL地址如下： https://bank.example.com/withdraw?account=AccoutName&amount=1000&for=PayeeName，
+那么，一个恶意攻击者可以在另一个网站上放置如下代码：`<img src="https://bank.example.com/withdraw?account=Alice&amount=1000&for=Badman" />`。如果有账户名为Alice的用户访问了恶意站点，而她之前刚访问过银行不久，登录信息尚未过期，那么她就会损失1000资金。
+
+2）防范措施：
+
+- 令牌同步模式  
+&nbsp;&nbsp;&nbsp;&nbsp; 令牌同步模式（英语：Synchronizer token pattern，简称STP）。原理是：当用户发送请求时，服务器端应用将令牌（英语：token，一个保密且唯一的值）嵌入HTML表格，并发送给客户端。客户端提交HTML表格时候，会将令牌发送到服务端，令牌的验证是由服务端实行的。令牌可以通过任何方式生成，只要确保随机性和唯一性。这样确保攻击者发送请求时候，由于没有该令牌而无法通过验证。  
+&nbsp;&nbsp;&nbsp;&nbsp; STP能在HTML下运作顺利，但会导致服务端的复杂度升高，复杂度源于令牌的生成和验证。因为令牌是唯一且随机，如果每个表格都使用一个唯一的令牌，那么当页面过多时，服务器由于生产令牌而导致的负担也会增加。而使用session会话等级的令牌代替的话，服务器的负担将没有那么重。
+Django框架默认带有STP功能：
+```html
+<form method="post">
+    {% csrf_token %}
+</form>
+渲染后的效果如下：
+<form method="post">
+    <input type="hidden" name="csrfmiddlewaretoken" value="KbyUmhTLMpYj7CD2di7JKP1P3qmLlkPt" />
+</form>
+```
+
+- 检查Referer字段  
+&nbsp;&nbsp;&nbsp;&nbsp; HTTP头中有一个Referer字段，这个字段用以标明请求来源于哪个地址。在处理敏感数据请求时，通常来说，Referer字段应和请求的地址位于同一域名下。以上文银行操作为例，Referer字段地址通常应该是转账按钮所在的网页地址，应该也位于bank.example.com之下。而如果是CSRF攻击传来的请求，Referer字段会是包含恶意网址的地址，不会位于bank.example.com之下，这时候服务器就能识别出恶意的访问。  
+这种办法简单易行，工作量低，仅需要在关键访问处增加一步校验。但这种办法也有其局限性，因其完全依赖浏览器发送正确的Referer字段。虽然http协议对此字段的内容有明确的规定，但并无法保证来访的浏览器的具体实现，亦无法保证浏览器没有安全漏洞影响到此字段。并且也存在攻击者攻击某些浏览器，篡改其Referer字段的可能。
+ 
+- 添加校验token  
+&nbsp;&nbsp;&nbsp;&nbsp; 由于CSRF的本质在于攻击者欺骗用户去访问自己设置的地址，所以如果要求在访问敏感数据请求时，要求用户浏览器提供不保存在cookie中，并且攻击者无法伪造的数据作为校验，那么攻击者就无法再运行CSRF攻击。这种数据通常是窗体中的一个数据项。服务器将其生成并附加在窗体中，其内容是一个伪随机数。当客户端通过窗体提交请求时，这个伪随机数也一并提交上去以供校验。正常的访问时，客户端浏览器能够正确得到并传回这个伪随机数，而通过CSRF传来的欺骗性攻击中，攻击者无从事先得知这个伪随机数的值，服务端就会因为校验token的值为空或者错误，拒绝这个可疑请求。
+
+</details>
 
 #### ➣ 跨域的基本概念和解决方法，在项目中的实际应用
 
 #### ➣ 强缓存和协商缓存，缓存的应用，如何用在页面性能优化上
+&nbsp;&nbsp;&nbsp;&nbsp; 通过网络获取内容既速度缓慢又开销巨大。较大的响应需要在客户端与服务器之间进行多次往返通信，这会延迟浏览器获得和处理内容的时间，还会增加访问者的流量费用。因此，缓存并重复利用之前获取的资源的能力成为性能优化的一个关键方面。
+
+#### 常见的缓存方式
+
+1. Memory/Disk Cache  
+
+&nbsp;&nbsp;&nbsp;&nbsp; 这里先看张大家最熟悉的Devtools-Network图：
+![](./images/network.png)
+&nbsp;&nbsp;&nbsp;&nbsp; 图中青色、绿色和橙色圈出的部分分别是来自内存(memory缓存)、磁盘(disk缓存)和Http请求拿到的数据(非缓存)，还有一种返回码304的请求也是从缓存(memory/disk)中获取数据。304跟memory/disk缓存的区别是：在浏览器判断资源已经过期的情况下会去服务器查询资源是否更新，如果资源没更新则返回304码，浏览器收到304码就会更新资源的过期时间并直接从之前disk/memory缓存中拿到当前资源，换言之如果资源没过期，那么浏览器就会跳过向服务器校验资源这一步并直接去拿memory/disk缓存获取。
+
+这里看一下浏览器缓存的大致流程：
+
+- 1） 检查内存中是否存在资源，存在且没过期的话直接加载(from memory - 200)，过期了直接向服务器发送请求获取资源。如果资源没更新，服务器返回304，浏览器从内存缓存中获取资源，并更新过期时间/Etag。如果资源更新了则获取最新的资源，并通过将资源HTTP请求返回。
+
+- 2）如果内存没有，择取从硬盘获取，存在且没过期的话直接加载(from disk - 200)，过期了直接向服务器发送请求获取资源。如果资源没更新，服务器返回304，浏览器从硬盘缓存中获取资源，并更新过期时间/Etag。如果资源更新了则获取最新的资源，并通过将资源HTTP请求返回。
+
+- 3）如果硬盘也没有，那么向后端发送HTTP网络请求。
+
+- 4）加载到的资源缓存到硬盘和内存，并更新资源的过期时间/Etag。
+
+以上可以看出其实这里所说的`Memory/Disk Cache`更多的强调了一种缓存存储方式，它们的工作方式同样依赖于`HTTP Cache`校验流程，并通过校验来最终确定何时从缓存读取，何时更新资源。
+
+2. HTTP Cache
+
+&nbsp;&nbsp;&nbsp;&nbsp; HTTP缓存根据工作方式分为`强缓存`和`协商缓存`，浏览器首先会判断`强缓存`是否命中，命中失败才会尝试进行`协商缓存`。
+
+![](./images/http_cache.png)
+
+1）强缓存  
+
+- \> HTTP 1.0时代 - expires  
+&nbsp;&nbsp;&nbsp;&nbsp; 我们通过浏览器获取服务器远程资源时，服务器通过http请求response headers返回一个`expires`时间戳字段(上图中蓝色部分)，例如`expires: Wed, 13 Oct 2021 22:15:05 GMT`，表明这个资源的过期时间为格林威治时间`2021年10月13日 周三 22:15:05`(北京时间+8h=格林威治时间)，浏览器判断当前时间在资源过期时间之前的话，就会从缓存中去读取资源(如果缓存中存在的话)，负责会重新向服务器发送请求。  
+&nbsp;&nbsp;&nbsp;&nbsp;  expires的工作机制要求客户端时间与服务器时间误差较小，否则缓存更新策略可能在短时间不生效。
+
+- \> HTTP 1.1时代 - cache-control  
+&nbsp;&nbsp;&nbsp;&nbsp; `cache-control`方式也是通过服务器返回资源时携带的response headers中的相应字段实现的，比如：`cache-control: max-age=31536000`，表明资源距浏览器接收到此资源后的31536000秒后过期。与`expires`返回的时间戳方式不同，cache-control为了避免时间误差，直接返回一个时间长度，浏览器可以根据一个本地时间差值进行精确判断。  
+`cache-control`其它相关字段还有：  
+__i.__ __public/private__：在依赖各种代理的大型架构中，我们不得不考虑代理服务器的缓存问题，public 与 private 用来控制代理服务缓存是否能缓存资源。如果我们为资源设置了 public，那么它既可以被浏览器缓存，也可以被代理服务器缓存；如果我们设置了 private，则该资源只能被浏览器缓存。private 为默认值，不过在只设置s-maxage的情况下，代理缓存也能生效。   
+__ii.__ __s-maxage__：针对于代理服务器的缓存问题，此字段用于表示 cache 服务器上（比如 cache CDN）的缓存的有效时间的，只对 public 缓存有效，`cache-control: max-age=3600, s-maxage=31536000`。  
+__iii.__ __no-cache__：为资源设置了 no-cache 后，每一次发起请求都不会再去询问浏览器的缓存情况，而是直接向服务端去确认该资源是否过期，直接进行`协商缓存`。   
+__iv.__ ————：不使用任何缓存策略，每次请求都直接从服务器获取，并在浏览器客户端不进行资源缓存。   
+
+- \> cache-control和expires并存  
+&nbsp;&nbsp;&nbsp;&nbsp; expires的优先级更高，当cache-control与 expires同时出现时，以cache-control为准，不过考虑向下兼容性可以选择同时返回两组缓存策略。
+
+2）协商缓存
+
+
+
+3. Service-Worker Cache
+
+&nbsp;&nbsp;&nbsp;&nbsp; Service Worker 是一种独立于主线程之外的 Javascript 线程。它脱离于浏览器窗体，因此无法直接访问 DOM。这样独立的个性使得 Service Worker 的“个人行为”无法干扰页面的性能，这个“幕后工作者”可以帮我们实现离线缓存、消息推送和网络代理等功能。我们借助 Service worker 实现的离线缓存就称为 Service Worker Cache。
+
+4. Push Cache
+
+&nbsp;&nbsp;&nbsp;&nbsp;Push Cache 是指 HTTP2 在 server push 阶段存在的缓存。这块的知识比较新，资料比较少。
+
+- Push Cache 是缓存的最后一道防线。浏览器只有在 Memory Cache、HTTP Cache 和 Service Worker Cache 均未命中的情况下才会去询问 Push Cache。
+- Push Cache 是一种存在于会话阶段的缓存，当 session 终止时，缓存也随之释放。
+- 不同的页面只要共享了同一个 HTTP2 连接，那么它们就可以共享同一个 Push Cache。
 
 #### ➣ 爬虫方面问题，反爬如何实现，针对反爬的实现(IP代理等）
 
