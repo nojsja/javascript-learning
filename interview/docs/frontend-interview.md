@@ -1059,16 +1059,28 @@ Django框架默认带有STP功能：
 - \> HTTP 1.1时代 - cache-control  
 &nbsp;&nbsp;&nbsp;&nbsp; `cache-control`方式也是通过服务器返回资源时携带的response headers中的相应字段实现的，比如：`cache-control: max-age=31536000`，表明资源距浏览器接收到此资源后的31536000秒后过期。与`expires`返回的时间戳方式不同，cache-control为了避免时间误差，直接返回一个时间长度，浏览器可以根据一个本地时间差值进行精确判断。  
 `cache-control`其它相关字段还有：  
-__i.__ __public/private__：在依赖各种代理的大型架构中，我们不得不考虑代理服务器的缓存问题，public 与 private 用来控制代理服务缓存是否能缓存资源。如果我们为资源设置了 public，那么它既可以被浏览器缓存，也可以被代理服务器缓存；如果我们设置了 private，则该资源只能被浏览器缓存。private 为默认值，不过在只设置s-maxage的情况下，代理缓存也能生效。   
-__ii.__ __s-maxage__：针对于代理服务器的缓存问题，此字段用于表示 cache 服务器上（比如 cache CDN）的缓存的有效时间的，只对 public 缓存有效，`cache-control: max-age=3600, s-maxage=31536000`。  
-__iii.__ __no-cache__：为资源设置了 no-cache 后，每一次发起请求都不会再去询问浏览器的缓存情况，而是直接向服务端去确认该资源是否过期，直接进行`协商缓存`。   
-__iv.__ ————：不使用任何缓存策略，每次请求都直接从服务器获取，并在浏览器客户端不进行资源缓存。   
+&nbsp;&nbsp;&nbsp;&nbsp; __i.__ __public/private__：在依赖各种代理的大型架构中，我们不得不考虑代理服务器的缓存问题，public 与 private 用来控制代理服务缓存是否能缓存资源。如果我们为资源设置了 public，那么它既可以被浏览器缓存，也可以被代理服务器缓存；如果我们设置了 private，则该资源只能被浏览器缓存。private 为默认值，不过在只设置s-maxage的情况下，代理缓存也能生效。   
+&nbsp;&nbsp;&nbsp;&nbsp; __ii.__ __s-maxage__：针对于代理服务器的缓存问题，此字段用于表示 cache 服务器上（比如 cache CDN）的缓存的有效时间的，只对 public 缓存有效，`cache-control: max-age=3600, s-maxage=31536000`。  
+&nbsp;&nbsp;&nbsp;&nbsp; __iii.__ __no-cache__：为资源设置了 no-cache 后，每一次发起请求都不会再去询问浏览器的缓存情况，而是直接向服务端去确认该资源是否过期，直接进行`协商缓存`。   
+&nbsp;&nbsp;&nbsp;&nbsp; __iv.__ __no-store__：不使用任何缓存策略，每次请求都直接从服务器获取，并在浏览器客户端不进行资源缓存。   
 
 - \> cache-control和expires并存  
 &nbsp;&nbsp;&nbsp;&nbsp; expires的优先级更高，当cache-control与 expires同时出现时，以cache-control为准，不过考虑向下兼容性可以选择同时返回两组缓存策略。
 
 2）协商缓存
 
+&nbsp;&nbsp;&nbsp;&nbsp; 协商缓存依赖于服务端与浏览器之间的通信，在第一次获取资源时浏览器会存储HTTP请求的response headers字段：Last-Modified / Etag，当强缓存未命中的时候，它的值作为浏览器和服务器通信携带的标志位用于判断资源是否过期，如果服务器判断资源过期的话就会重新下载资源，并更新相应标志位。如果判断资源未更新的话，会返回304状态码，浏览器就会复用客户端缓存资源。
+
+- \> Last-Modified和If-Modified-Since方式  
+&nbsp;&nbsp;&nbsp;&nbsp; `Last-Modified`为随服务器端HTTP请求返回携带的时间戳，表示一个资源最近一次被更新的时间，客户端请求资源时通过request headers携带上标志位`If-Modified-Since`(值与Last-Modified相同)用于服务器做校验判断资源是否更新，`Last-Modified: Wed, 13 Jan 2021 15:34:55 GMT`。  
+使用 Last-Modified 存在一些弊端：  
+&nbsp;&nbsp;&nbsp;&nbsp; __i. 命中失误1：__ 当我们更新了服务器的某个资源文件，但其实际内容并未发生变化，其相应的资源更新时间戳会改变，浏览器端在服务端文件并未发生改变的情况下，仅仅通过时间戳这种判断方式也会导致资源被完全重新下载。  
+&nbsp;&nbsp;&nbsp;&nbsp; __ii. 命中失误2：__ If-Modified-Since 只能检查到以秒为最小计量单位的时间差，感知不到1s以内的文件改动的情况，这会导致一些浏览器缓存更新不及时的情况。
+
+- \> Etag和If-None-Match方式  
+&nbsp;&nbsp;&nbsp;&nbsp; `Etag`就是为了弥补`Last-Modified`的弊端而产生的新的协商缓存方式。Etag为随服务器端HTTP请求返回携带的资源描述符，它根据资源内容而生成，可以精确感知资源的变动情况，即使多次更新，只要内容不变，Etag值也是不会变化的。浏览器下一次请求此资源时，request headers里就会带上一个值相同的名为`if-None-Match`的字段用于服务器对此资源做对比。
+
+- \> `Etag`在感知文件变化上比`Last-Modified`更加准确，优先级也更高，不过`Etag`的生成会消耗掉部分服务器的性能，Etag可以作为一种辅助协商缓存方式与前者相互配合使用。当`Etag`和`Last-Modified`同时存在时，以`Etag`为准。
 
 
 3. Service-Worker Cache
@@ -1077,7 +1089,7 @@ __iv.__ ————：不使用任何缓存策略，每次请求都直接从服
 
 4. Push Cache
 
-&nbsp;&nbsp;&nbsp;&nbsp;Push Cache 是指 HTTP2 在 server push 阶段存在的缓存。这块的知识比较新，资料比较少。
+&nbsp;&nbsp;&nbsp;&nbsp; Push Cache 是指 HTTP2 在 server push 阶段存在的缓存。这块的知识比较新，资料比较少。
 
 - Push Cache 是缓存的最后一道防线。浏览器只有在 Memory Cache、HTTP Cache 和 Service Worker Cache 均未命中的情况下才会去询问 Push Cache。
 - Push Cache 是一种存在于会话阶段的缓存，当 session 终止时，缓存也随之释放。
