@@ -2,101 +2,85 @@
 
 ### Contents
 ------------
-```sh
-├── Contents (you are here!)
-│
-├── 面试阶段分析
-├── 个人介绍
-│
-├── 要点：HTML/CSS 
-│    ├────── BFC及其应用
-│    ├────── 两列布局实现
-│    ├────── 1px问题
-│    ├────── 浮动布局相关
-│    ├────── 位图和矢量图的区别 
-│    ├────── 分析比较 opacity: 0、visibility: hidden、display: none
-│    ├────── 怎么让一个 div 水平垂直居中
-│    ├────── 浮动布局相关
-│    ├────── display/position属性相关
-│    ├────── 媒体查询：网页自适应相关
-│    └────── 浮动布局相关
-│
-├── 要点：Javascript
-│    ├────── js类型的判断
-│    ├────── 实现Call和Apply
-│    ├────── 实现对象new操作
-│    ├────── Js实现继承
-│    ├────── 手写深拷贝和浅拷贝
-│    ├────── ES6新增特性
-│    ├────── 移动端点击穿透问题
-│    ├────── 图片懒加载具体实现方案和思路
-│    ├────── 函数防抖和节流实现
-│    ├────── Js/Node的事件循环(宏任务、微任务)
-│    ├────── 页面加载会触发哪些事件
-│    ├────── document.ready和window.onload的区别
-│    ├────── 闭包Closure
-│    ├────── 函数式编程思想的体现
-│    ├────── vue双向绑定实现原理
-│    ├────── Vue2.0与Vue3.0双向绑定，proxy实现
-│    ├────── React-Fiber原理
-│    ├────── React生命周期，React16.3版本后变化
-│    ├────── React虚拟dom以及diff算法
-│    ├────── React SetState原理
-│    ├────── 前端错误监控方法
-│    ├────── 实现一个EventEmitter类，支持事件的on,off,emit,once等操作
-│    ├────── 如何自己实现一个单点登录系统
-│    ├────── Babel源码
-│    └────── 使用ES5实现Promise
-│
-├── 要点：Node.js
-│    ├────── 谈谈node子进程child_process和实际使用场景
-│    ├────── node是IO密集型体现在哪里 
-│    ├────── 介绍一下NPM安装机制 
-│    └────── node在开发项目中的应用
-│
-├── 要点：设计模式
-│    ├────── 策略模式 
-│    ├────── 观察者模式
-│    ├────── 享元模式
-│    ├────── 装饰者模式
-│    ├────── 代理模式
-│    ├────── 状态模式
-│    ├────── 责任链模式
-│    └────── 模板方法模式
-│
-├── 要点：前端工具
-│    ├────── 打包gulp/webpack/rollup一些区别
-│    ├────── ts自己的看法，和应用
-│    ├────── webpack loader和plugin区别
-│    ├────── webpack中循环引用问题，a里面引用了b，b里面引用了a
-│    ├────── webpack性能优化方面
-│
-├── 要点：性能优化
-│    ├────── 性能优化的各方面
-│    └────── 弱网环境下页面首屏如何快速加载
-│
-├── 要点：操作系统和网络
-│    ├────── 常见的网页攻击方式，如何防范
-│    ├────── 跨域的基本概念和解决方法，在项目中的实际应用
-│    ├────── 强缓存和协商缓存，缓存的应用，如何用在页面性能优化上
-│    ├────── 爬虫方面问题，反爬如何实现，针对反爬的实现(IP代理等）
-│    ├────── 进程和线程区别
-│    ├────── cpu调度算法
-│    ├────── 2台计算机底层之间如何通信 socket IO通信实现
-│    ├────── cookie中常见的字段
-│    ├────── 同源策略
-│    ├────── http中一些常见的响应头和请求头，有什么应用
-│    ├────── 简单请求和非简单请求区别
-│    ├────── https建立连接过程
-│    ├────── http2.0 http3.0作了哪些优化
-│    └────── 计算机网络7层协议
-│
-├── 要点：Leetcode算法刷题
-│    ├────── 考察重点
-│    ├────── 常见考题
-│    └────── 推荐作者和资源
-│
-```
+- [前端重难点攻坚指南(updating)](#前端重难点攻坚指南updating)
+- [### Contents](#-contents)
+- [### I. 面试阶段分析](#-i-面试阶段分析)
+- [### II. 个人介绍](#-ii-个人介绍)
+    - [➣ 重点](#-重点)
+    - [➣ 描述在上一家公司的工作经历](#-描述在上一家公司的工作经历)
+    - [➣ 范例](#-范例)
+- [### III. 要点：HTML/CSS](#-iii-要点htmlcss)
+    - [➣ BFC及其应用](#-bfc及其应用)
+    - [➣ 两列布局实现](#-两列布局实现)
+    - [➣ 1px问题](#-1px问题)
+    - [➣ 浮动布局相关](#-浮动布局相关)
+    - [➣ 位图和矢量图的区别](#-位图和矢量图的区别)
+- [### IV. 要点：Javascript](#-iv-要点javascript)
+    - [➣ js类型的判断](#-js类型的判断)
+    - [➣ 实现Call和Apply](#-实现call和apply)
+    - [➣ 实现对象new操作](#-实现对象new操作)
+    - [➣ Js实现继承](#-js实现继承)
+    - [➣ 手写深拷贝和浅拷贝](#-手写深拷贝和浅拷贝)
+    - [➣ ES6新增特性](#-es6新增特性)
+    - [➣ 移动端点击穿透问题](#-移动端点击穿透问题)
+    - [➣ 图片懒加载具体实现方案和思路](#-图片懒加载具体实现方案和思路)
+    - [➣ 函数防抖和节流实现](#-函数防抖和节流实现)
+    - [➣ Js/Node的事件循环(宏任务、微任务)](#-jsnode的事件循环宏任务微任务)
+    - [➣ 页面加载会触发哪些事件](#-页面加载会触发哪些事件)
+    - [➣ document.ready和window.onload的区别](#-documentready和windowonload的区别)
+    - [➣ 闭包Closure](#-闭包closure)
+    - [➣ 函数式编程思想的体现](#-函数式编程思想的体现)
+    - [➣ vue双向绑定实现原理](#-vue双向绑定实现原理)
+    - [➣ Vue2.0与Vue3.0双向绑定，proxy实现](#-vue20与vue30双向绑定proxy实现)
+    - [➣ React-Fiber原理](#-react-fiber原理)
+    - [➣ React生命周期，React16.3版本后变化，为什么要这样做，有哪些不安全的生命周期（结合React Fiber)](#-react生命周期react163版本后变化为什么要这样做有哪些不安全的生命周期结合react-fiber)
+      - [React16.3之前的生命周期](#react163之前的生命周期)
+      - [React16.3之后的生命周期](#react163之后的生命周期)
+    - [➣ React虚拟dom以及diff算法](#-react虚拟dom以及diff算法)
+    - [➣ Babel源码](#-babel源码)
+    - [➣ React SetState原理](#-react-setstate原理)
+    - [➣ 前端错误监控方法](#-前端错误监控方法)
+    - [➣ 实现一个EventEmitter类，支持事件的on,off,emit,once,setMaxListeners。](#-实现一个eventemitter类支持事件的onoffemitoncesetmaxlisteners)
+    - [➣ 如何自己实现一个单点登录系统](#-如何自己实现一个单点登录系统)
+    - [➣ 使用ES5实现Promise](#-使用es5实现promise)
+- [### V. 要点：Node.js](#-v-要点nodejs)
+    - [➣ 谈谈node子进程child_process和实际使用场景](#-谈谈node子进程child_process和实际使用场景)
+    - [➣ node是IO密集型体现在哪里](#-node是io密集型体现在哪里)
+- [### VI. 要点：设计模式](#-vi-要点设计模式)
+- [### VII. 要点：前端工具](#-vii-要点前端工具)
+    - [➣ 打包gulp/webpack/rollup一些区别](#-打包gulpwebpackrollup一些区别)
+    - [➣ ts自己的看法，和应用](#-ts自己的看法和应用)
+    - [➣ webpack loader和plugin区别](#-webpack-loader和plugin区别)
+    - [➣ webpack中循环引用问题，a里面引用了b，b里面引用了a](#-webpack中循环引用问题a里面引用了bb里面引用了a)
+    - [➣ webpack性能优化方面](#-webpack性能优化方面)
+- [### VIII. 要点：性能优化](#-viii-要点性能优化)
+    - [➣ 性能优化的各方面](#-性能优化的各方面)
+    - [➣ 弱网环境下页面首屏如何快速加载](#-弱网环境下页面首屏如何快速加载)
+- [### IX. 要点：操作系统和网络](#-ix-要点操作系统和网络)
+    - [➣ 常见的网页攻击方式，如何防范](#-常见的网页攻击方式如何防范)
+      - [1. XSS：跨站脚本攻击(Cross-site scripting)](#1-xss跨站脚本攻击cross-site-scripting)
+      - [2. XSRF：跨站请求伪造(Cross-site request forgery)](#2-xsrf跨站请求伪造cross-site-request-forgery)
+    - [➣ 跨域的基本概念和解决方法，在项目中的实际应用](#-跨域的基本概念和解决方法在项目中的实际应用)
+    - [➣ 强缓存和协商缓存，缓存的应用，如何用在页面性能优化上](#-强缓存和协商缓存缓存的应用如何用在页面性能优化上)
+      - [浏览器缓存的工作流程](#浏览器缓存的工作流程)
+      - [1. Service-Worker Cache(优先级最高)](#1-service-worker-cache优先级最高)
+      - [2. Memory Cache(优先级次之)](#2-memory-cache优先级次之)
+      - [3. HTTP Cache(优先级次之)](#3-http-cache优先级次之)
+      - [4. Push Cache(优先级最低)](#4-push-cache优先级最低)
+    - [➣ 爬虫方面问题，反爬如何实现，针对反爬的实现(IP代理等）](#-爬虫方面问题反爬如何实现针对反爬的实现ip代理等)
+    - [➣ 进程和线程区别](#-进程和线程区别)
+    - [➣ cpu调度算法](#-cpu调度算法)
+    - [➣ 2台计算机底层之间如何通信 socket IO通信实现](#-2台计算机底层之间如何通信-socket-io通信实现)
+    - [➣ cookie中常见的字段](#-cookie中常见的字段)
+    - [➣ 同源策略](#-同源策略)
+    - [➣ http中一些常见的响应头和请求头，有什么应用](#-http中一些常见的响应头和请求头有什么应用)
+    - [➣ 简单请求和非简单请求区别](#-简单请求和非简单请求区别)
+    - [➣ http2.0 http3.0作了哪些优化](#-http20-http30作了哪些优化)
+    - [➣ https建立连接过程](#-https建立连接过程)
+    - [➣ 计算机网络中，http地址，在7层协议中，如何一步步向下解析，从应用层到最底层的物理层，每一层处理的事情](#-计算机网络中http地址在7层协议中如何一步步向下解析从应用层到最底层的物理层每一层处理的事情)
+- [### X. 要点：Leetcode算法刷题](#-x-要点leetcode算法刷题)
+    - [➣ 考察重点](#-考察重点)
+    - [➣ 推荐作者和资源](#-推荐作者和资源)
 
 ### I. 面试阶段分析
 ----------
@@ -1027,9 +1011,9 @@ Django框架默认带有STP功能：
 <details>
 <summary>点击展开查看</summary>
 
-##### 浏览器缓存的大致流程
+##### 浏览器缓存的工作流程
 
-&nbsp;&nbsp;&nbsp;&nbsp; 这里先看张大家最熟悉的Devtools-Network图：
+&nbsp;&nbsp;&nbsp;&nbsp; 这里先看张大家最熟悉的Devtools网络图：
 ![](./images/network.png)
 
 图中青色、绿色和橙色圈出的部分分别是来自内存(memory缓存)、磁盘(disk缓存)和Http请求拿到的数据(非缓存)，还有一种返回码304的请求也是从缓存(memory/disk)中获取数据。304跟memory/disk缓存的区别是：在浏览器判断资源已经过期的情况下会去服务器查询资源是否更新，如果资源没更新则返回304码，浏览器收到304码就会更新资源的过期时间并直接从之前disk/memory缓存中拿到当前资源，换言之如果资源没过期，那么浏览器就会跳过向服务器校验资源这一步并直接去拿memory/disk缓存获取。
@@ -1048,7 +1032,7 @@ Django框架默认带有STP功能：
 
 - 5）加载到的资源缓存到硬盘和内存，并更新资源的过期时间/Etag/Last-Modified。
 
-`Service Worker Cache`具有较高的优先级，数据控制更为复杂，操作自由度最高；`Memory Cache`更多的强调了一种缓存存储方式和浏览器内存缓存策略；`HTTP Cache`相对于`Memory Cache`根据存储方式的不同也能叫做`Disk Cache`，它依赖于整个HTTP缓存校验流程(强缓存和协商缓存)，并通过校验来最终确定何时从缓存读取，何时从服务器更新资源；Push Cache资料较少，应用得不多，暂时只做介绍。
+&nbsp;&nbsp;&nbsp;&nbsp; `Service Worker Cache`具有较高的优先级，数据控制更为复杂，操作自由度最高；`Memory Cache`更多的强调了一种缓存存储方式和浏览器内存缓存策略；`HTTP Cache`相对于`Memory Cache`根据存储方式的不同也能叫做`Disk Cache`，它依赖于整个HTTP缓存校验流程(强缓存和协商缓存)，并通过校验来最终确定何时从缓存读取，何时从服务器更新资源；Push Cache资料较少，应用得不多，暂时只做介绍。
 
 ##### 1. Service-Worker Cache(优先级最高)
 
@@ -1086,27 +1070,27 @@ Django框架默认带有STP功能：
 &nbsp;&nbsp;&nbsp;&nbsp; __iii.__ __no-cache__：为资源设置了 no-cache 后，每一次发起请求都不会再去询问浏览器的缓存情况，而是直接向服务端去确认该资源是否过期，直接进行`协商缓存`。   
 &nbsp;&nbsp;&nbsp;&nbsp; __iv.__ __no-store__：不使用任何缓存策略，每次请求都直接从服务器获取，并在浏览器客户端不进行资源缓存。   
 
-- \> cache-control和expires并存  
+- \> cache-control 和 expires 并存  
 &nbsp;&nbsp;&nbsp;&nbsp; expires的优先级更高，当cache-control与 expires同时出现时，以cache-control为准，不过考虑向下兼容性可以选择同时使用两种缓存策略。
 
 2）协商缓存
 
 &nbsp;&nbsp;&nbsp;&nbsp; 协商缓存依赖于服务端与浏览器之间的通信，在第一次获取资源时浏览器会存储HTTP请求的response headers字段：Last-Modified / Etag，当强缓存未命中的时候，它的值作为浏览器和服务器通信时携带的标志位用于判断资源是否过期，如果服务器判断资源过期的话就会重新下载资源，并更新相应标志位。如果判断资源未更新的话，会返回304状态码，浏览器就会复用客户端缓存资源。
 
-- \> Last-Modified和If-Modified-Since方式  
+- \> Last-Modified 和 If-Modified-Since 方式  
 &nbsp;&nbsp;&nbsp;&nbsp; `Last-Modified`为随服务器端HTTP响应头部返回的时间戳标志，表示一个资源最近一次被更新的时间，客户端请求资源时添加上request headers字段`If-Modified-Since`(值与Last-Modified相同)用于服务器做校验判断资源是否更新，`Last-Modified: Wed, 13 Jan 2021 15:34:55 GMT`。  
 使用 Last-Modified 存在一些弊端：  
 &nbsp;&nbsp;&nbsp;&nbsp; __i. 命中失误1：__ 当我们更新了服务器的某个资源文件，但其实际内容并未发生变化，其相应的资源更新时间戳会改变，浏览器端在服务端文件并未发生改变的情况下，仅仅通过时间戳这种判断方式也会导致资源被完全重新下载。  
 &nbsp;&nbsp;&nbsp;&nbsp; __ii. 命中失误2：__ If-Modified-Since 只能检查到以秒为最小计量单位的时间差，感知不到1s以内的文件改动的情况，这会导致一些浏览器缓存更新不及时的情况。
 
-- \> Etag和If-None-Match方式  
+- \> Etag 和 If-None-Match 方式  
 &nbsp;&nbsp;&nbsp;&nbsp; `Etag`就是为了弥补`Last-Modified`的弊端而产生的新的协商缓存方式。Etag为随服务器端HTTP请求头部返回的资源唯一标志，例如：`ETag: W/"2a3b-1602480f459"`，它根据资源内容而生成，可以精确感知资源的变动情况，即使多次更新，只要内容不变，Etag值也是不会变化的。浏览器下一次请求此资源时，request headers里就会带上一个值相同的名为`if-None-Match`的字段用于服务器对此资源做对比，`If-None-Match: W/"2a3b-1602480f459"`。
 
 - \> `Etag`在感知文件变化上比`Last-Modified`更加准确，优先级也更高，不过`Etag`的生成会消耗掉部分服务器的性能，它可以作为一种辅助协商缓存方式与前者相互配合使用。当`Etag`和`Last-Modified`同时存在时，以`Etag`为准。
 
 ##### 4. Push Cache(优先级最低)
 
-&nbsp;&nbsp;&nbsp;&nbsp; Push Cache 是指 HTTP2 在 server push 阶段存在的缓存。这块的知识比较新，资料比较少。
+&nbsp;&nbsp;&nbsp;&nbsp; Push Cache 是指 HTTP2 在 server push 阶段存在的缓存：
 
 - Push Cache 是缓存的最后一道防线。浏览器只有在 Memory Cache、HTTP Cache 和 Service Worker Cache 均未命中的情况下才会去询问 Push Cache。
 - Push Cache 是一种存在于会话阶段的缓存，当 session 终止时，缓存也随之释放。
