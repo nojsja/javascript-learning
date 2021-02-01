@@ -57,7 +57,11 @@
       - [1. 网络层面](#1-网络层面)
       - [2. 渲染层面](#2-渲染层面)
     - [➣ Javascript性能优化方面](#-javascript性能优化方面)
+      - [网络层面](#网络层面)
+      - [渲染层面](#渲染层面)
     - [➣ React性能优化方面](#-react性能优化方面)
+      - [网络层面](#网络层面-1)
+      - [渲染层面](#渲染层面-1)
     - [➣ webpack性能优化方面](#-webpack性能优化方面)
     - [➣ 服务器性能优化方面](#-服务器性能优化方面)
     - [➣ 弱网环境下页面首屏如何快速加载](#-弱网环境下页面首屏如何快速加载)
@@ -968,7 +972,7 @@ EventEmitter.prototype.emit = function(type) {
     }
   ```
 
-- 3）压缩HTML/CSS/Js代码资源  
+- 3）压缩HTML/CSS代码资源  
 &nbsp;&nbsp;&nbsp;&nbsp; 代码资源中存在很多无用的空格和符号等，去除他们带来的效益是可观的，另一方面压缩资源也能起到源代码保护的作用。现代前端工程化框架一般继承了此类压缩插件，比如webpack框架的`uglifyjs`插件。
 
 - 4）压缩图片/音视频等多媒体资源  
@@ -980,21 +984,103 @@ EventEmitter.prototype.emit = function(type) {
 - 6）避免空的 src 和 href 值  
 &nbsp;&nbsp;&nbsp;&nbsp; 当link标签的href属性为空、script标签的src属性为空的时候，浏览器渲染的时候会把当前页面的URL作为它们的属性值，从而把页面的内容加载进来作为它们的值。
 
+- 7）避免使用`@import`来引入css，这种语法会阻止多个css文件的并行下载，被`@import`引入的css文件会在引入它的css文件下载并渲染好之后才开始下载渲染自身。并且`@import`引入的css文件的下载顺序会被打乱，排列在`@import`之后的JS文件会先于`@import`下载。
+
 ##### 2. 渲染层面
 
 - 1）减少页面的回流和重绘
   - 使用CSS3属性`transform`来实现元素位移
-  - 使用`position: fixed/absolute`让容易造成回流的元素脱离文档流
+  - 让动画效果应用到`position: fixed/absolute`的元素上，原理是让其脱离文档流
   - 向界面插入大量dom节点时先将dom元素添加到虚拟dom操作节点`DocumentFragment`上，最后再将虚拟节点实际添加到界面上。
   - 避免直接使用JS操作dom元素的style样式，可以使用class一次性改变dom样式类。
   - 将会引起页面回流、重绘的操作尽量放到DOM树的后面，减少级联反应。
+  - 使用CSS3动画Animation来实现一些复杂元素的动画效果，原理是利用了硬件加速
+  - 读取一些容易引起回流的元素属性注意使用变量缓存
+  ```html
+  <!-- 几何属性相关 -->
+  elem.offsetLeft, elem.offsetTop, elem.offsetWidth, elem.offsetHeight, elem.offsetParent
+  elem.clientLeft, elem.clientTop, elem.clientWidth, elem.clientHeight elem.getClientRects(), elem.getBoundingClientRect()
+  <!-- 滚动相关 -->
+  elem.scrollBy(), elem.scrollTo()
+  elem.scrollIntoView(), elem.scrollIntoViewIfNeeded()
+  elem.scrollWidth, elem.scrollHeight
+  elem.scrollLeft, elem.scrollTop 除了读取，设置也会触发
+  ...
+  ```
 - 2）减少DOM结构的层级
 - 3）尽量不使用`table`布局和`iframe`内联网页
-- 4）CSS选择器的使用策略
+  ```js
+  /* table布局 */
+  table布局不灵活，不利于css样式定制
+  table布局渲染性能较低，可能触发多次重绘
+  table布局不利于html语义化
 
+  /* iframe */
+  iframe会阻塞主页面的onload事件
+  iframe和主页面共享HTTP连接池，而浏览器对相同域的连接有限制，所以会影响页面的并行加载
+  iframe不利于网页布局
+  iframe对移动端不友好
+  iframe的反复重新加载可能导致一些浏览器的内存泄露
+  iframe中的数据传输复杂
+  iframe不利于SEO
+  ```
+- 4）CSS选择器的使用策略
+  ```js
+  浏览器是从选择器的右边到左边读取，选择器最右边的部分被称为关键选择器，与CSS选择器规则的效率相关。
+
+  效率排序如下：
+  内联样式 > ID 选择器 > 类选择器 = 属性选择器 = 伪类选择器 > 标签选择器 = 伪元素选择器
+
+  要点：
+  - 关键选择器避免使用通用选择器*，其查询开销较大
+  - 使用ID/Class选择器时尽量使其独立，因为无用的上层规则(标签、类名)只会增加查找时间，ID/Class已经具有单独筛选元素的能力
+  - 避免使用子选择器，尤其是将其与标签、通配符组合使用，性能开销较大
+  - 利用CSS元素属性继承的特性，是多个元素复用多一种规则
+  - 移除无匹配样式，否则会造成无用的样式解析和匹配，同时增大CSS文件体积
+  ```
+- 5）flex布局的性能比`inline-block`和`float`布局都要好。
+- 6）css的书写顺序也会对其解析渲染性能造成影响
+  浏览器从上到下开始解析一段css规则，将容易造成回流、重绘的属性放在上部可以让渲染引擎更高效地工作，可以按照下列顺序来进行书写，使用编辑器的`csslint`插件可以辅助完成这一过程：
+  - 定位属性
+  ```css
+  position  display  float  left  top  right  bottom 
+  overflow  clear  z-index
+  ```
+  - 几何属性
+  ```css
+  width  height  padding  border  margin   background
+  ```
+  - 文字样式
+  ```css
+  font-family   font-size   font-style   font-weight   font-varient  color
+  ```
+  - 文本属性
+  ```css
+  text-align   vertical-align   text-wrap   text-transform   text-indent    text-decoration   letter-spacing    word-spacing    white-space   text-overflow
+  ```
+  - CSS3中新增属性
+  ```css
+  content   box-shadow   border-radius  transform
+  ```
 #### ➣ Javascript性能优化方面
 
+##### 网络层面
+
+- 1）压缩JS代码资源  
+&nbsp;&nbsp;&nbsp;&nbsp; 代码资源中存在很多无用的空格和符号等，去除他们带来的效益是可观的，另一方面压缩资源也能起到源代码保护的作用。现代前端工程化框架一般继承了此类压缩插件，比如webpack框架的`uglifyjs`插件。
+
+##### 渲染层面
+
+- 1）使用函数节流和函数去抖处理一些函数的高频触发调用  
+  &nbsp;&nbsp;&nbsp;&nbsp; 在面对一些需要进行调用控制的函数高频触发场景时，可能有人会对何时使用节流何时使用去抖产生疑问。这里通过一个特性进行简单区分：如果你需要保留短时间内高频触发的最后一次结果时，那么使用去抖函数，如果你需要对函数的调用次数进行限制，以最佳的调用间隔时间保持函数的持续调用而不关心是否是最后一次调用结果时，请使用节流函数。 
+  - 节流`throttle`
+  - 去抖`debounce`
+
 #### ➣ React性能优化方面
+
+##### 网络层面
+
+##### 渲染层面
 
 #### ➣ webpack性能优化方面
 
