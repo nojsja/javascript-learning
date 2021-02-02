@@ -1072,9 +1072,64 @@ EventEmitter.prototype.emit = function(type) {
 ##### 渲染层面
 
 - 1）使用函数节流和函数去抖处理一些函数的高频触发调用  
-  &nbsp;&nbsp;&nbsp;&nbsp; 在面对一些需要进行调用控制的函数高频触发场景时，可能有人会对何时使用节流何时使用去抖产生疑问。这里通过一个特性进行简单区分：如果你需要保留短时间内高频触发的最后一次结果时，那么使用去抖函数，如果你需要对函数的调用次数进行限制，以最佳的调用间隔时间保持函数的持续调用而不关心是否是最后一次调用结果时，请使用节流函数。 
+  &nbsp;&nbsp;&nbsp;&nbsp; 在面对一些需要进行调用控制的函数高频触发场景时，可能有人会对何时使用节流何时使用去抖产生疑问。这里通过一个特性进行简单区分：如果你需要保留短时间内高频触发的最后一次结果时，那么使用去抖函数，如果你需要对函数的调用次数进行限制，以最佳的调用间隔时间保持函数的持续调用而不关心是否是最后一次调用结果时，请使用节流函数。  
+  &nbsp;&nbsp;&nbsp;&nbsp; 比如echarts图常常需要在窗口resize之后重新使用数据渲染，但是直接监听resize事件可能导致短时间内渲染函数被触发多次。我们可以使用函数去抖的思想，监听resize事件后在监听器函数里获取参数再使用参数调用事先初始化好了的throttle函数，保证resize过程结束后能触发一次实际的echarts重渲染即可。
   - 节流`throttle`
+  ```js
+  function throttle(fn, time) {
+    let canRun = true;
+
+    return function() {
+      if (canRun) {
+        canRun = false;
+        setTimeout(() => {
+          fn.apply(this, arguments);
+          canRun = true;
+        }, time);
+      }
+    };
+  }
+  ```
   - 去抖`debounce`
+  ```js
+  function debounce(fn, time) {
+    let timer;
+
+    return function() {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        fn.apply(this, arguments);
+      }, time);
+    };
+  }
+  ```
+
+- 2）Js实现动画时使用`requestAnimationFrame`替代定时器  
+&nbsp;&nbsp;&nbsp;&nbsp; `window.requestAnimationFrame()`告诉浏览器你希望执行一个动画，并且要求浏览器在下次重绘之前(每帧之前)调用指定的回调函数更新动画。该方法需要传入一个回调函数作为参数，该回调函数会在浏览器下一次重绘之前执行。  
+&nbsp;&nbsp;&nbsp;&nbsp; 设置的回调函数在被调用时会被传入触发的时间戳，在同一个帧中的多个回调函数，它们每一个都会接受到一个相同的时间戳，即使在计算上一个回调函数的工作负载期间已经消耗了一些时间。我们可以记录前后多个时间戳来控制元素动画的速度和启停。  
+&nbsp;&nbsp;&nbsp;&nbsp; 如果通过定时器`setTimeout/setInterval`来控制帧动画的话，可能导致帧动画的触发函数恰好在浏览器渲染帧之间被触发，产生卡帧和丢帧的情况。
+```js
+const element = document.querySelector('#target');
+let start;
+
+function step(timestamp) {
+  if (start === undefined)
+    start = timestamp;
+  const elapsed = timestamp - start;
+
+  //这里使用`Math.min()`确保元素刚好停在200px的位置。
+  element.style.transform = 'translateX(' + Math.min(0.1 * elapsed, 200) + 'px)';
+
+  if (elapsed < 2000) { // 在两秒后停止动画
+    window.requestAnimationFrame(step);
+  }
+}
+
+window.requestAnimationFrame(step);
+```
+
+- 3）使用`IntersectionObserver`API实现图片懒加载
+
 
 #### ➣ React性能优化方面
 
