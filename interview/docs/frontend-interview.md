@@ -411,7 +411,6 @@ function shallowClone(data) {
         })
     }
 
-
     const intersectionObserver = new IntersectionObserver(function(items, observer) {
         items.forEach(function(item) {
             if(item.isIntersecting) {
@@ -1106,30 +1105,206 @@ EventEmitter.prototype.emit = function(type) {
 
 - 2）Js实现动画时使用`requestAnimationFrame`替代定时器  
 &nbsp;&nbsp;&nbsp;&nbsp; `window.requestAnimationFrame()`告诉浏览器你希望执行一个动画，并且要求浏览器在下次重绘之前(每帧之前)调用指定的回调函数更新动画。该方法需要传入一个回调函数作为参数，该回调函数会在浏览器下一次重绘之前执行。  
-&nbsp;&nbsp;&nbsp;&nbsp; 设置的回调函数在被调用时会被传入触发的时间戳，在同一个帧中的多个回调函数，它们每一个都会接受到一个相同的时间戳，即使在计算上一个回调函数的工作负载期间已经消耗了一些时间。我们可以记录前后多个时间戳来控制元素动画的速度和启停。  
-&nbsp;&nbsp;&nbsp;&nbsp; 如果通过定时器`setTimeout/setInterval`来控制帧动画的话，可能导致帧动画的触发函数恰好在浏览器渲染帧之间被触发，产生卡帧和丢帧的情况。
+&nbsp;&nbsp;&nbsp;&nbsp; 设置的回调函数在被调用时会被传入触发的时间戳，在同一个帧中的多个回调函数，它们每一个都会接受到一个相同的时间戳，即使在计算上一个回调函数的工作负载期间已经消耗了一些时间，我们可以记录前后时间戳差值来控制元素动画的速度和启停。  
+&nbsp;&nbsp;&nbsp;&nbsp; 如果换用过定时器`setTimeout/setInterval`来控制帧动画的话，一般我们采用60帧进行动画绘制，所以设置的定时时间就应该是`1000 / 60 = 17ms`。不过由于定时器本身只是把回调函数放入了`宏任务队列`，其精确度受到主进程代码执行栈影响，可能导致帧动画的回调函数在浏览器的一次渲染过程中才被触发(理想情况是渲染前调用回调函数获得计算值，渲染时执行计算值绘制)，因此本应在当前帧呈现的绘制效果被延迟到了下一帧，产生丢帧卡顿的情况。  
+&nbsp;&nbsp;&nbsp;&nbsp; 这里让我们使用`requestAnimationFrame`来实现一个动画处理类作为例子，使用方式如下：  
 ```js
-const element = document.querySelector('#target');
-let start;
+var anime = new Animation();
+anime.setTarget('#animationTarget');
+// 右下角移动50px
+anime.push('#animationTarget', { x: 50, y: 50, duration: 1000, func: 'easeIn' });
+// 右上角移动50px
+anime.push('#animationTarget', { x: -50, y: -50, duration: 500, func: 'linear' });
+```
+预览图：
+![](https://upload-images.jianshu.io/upload_images/3019242-fd0258e13313da1f.gif)
+```js
+/**
+ * [tween 缓动算法]
+ * @param {[Number]}  time [动画已经消耗的时间]
+ * @param {[String]}  start [目标开始的位置]
+ * @param {[String]}  distance [目标开始位置和结束位置的距离]
+ * @param {[Number]}  duration [动画总持续时间]
+ */
+var tween = {
+  linear: function( time, start, distance, duration ) { return distance*time/duration + start; },
+  easeIn: function( time, start, distance, duration ) { return distance * ( time /= duration ) * time + start; },
+  strongEaseIn: function(time, start, distance, duration) { return distance * ( time /= duration ) * time * time * time * time + start; },
+  strongEaseOut: function(time, start, distance, duration) { return distance * ( ( time = time / duration - 1) * time * time * time * time + 1 ) + start; },
+  sinEaseIn: function( time, start, distance, duration ) { return distance * ( time /= duration) * time * time + start; },
+  sinEaseOut: function(time,start,distance,duration){ return distance * ( ( time = time / duration - 1) * time * time + 1 ) + start; },
+};
 
-function step(timestamp) {
-  if (start === undefined)
-    start = timestamp;
-  const elapsed = timestamp - start;
 
-  //这里使用`Math.min()`确保元素刚好停在200px的位置。
-  element.style.transform = 'translateX(' + Math.min(0.1 * elapsed, 200) + 'px)';
+/* ------------------- 动画控制类 ------------------- */
+function Animation() {
+  this.store = {};
+};
 
-  if (elapsed < 2000) { // 在两秒后停止动画
-    window.requestAnimationFrame(step);
+/* ------------------- 初始化处理元素 ------------------- */
+Animation.prototype.setTarget = function (selector) {
+  var element = document.querySelector(selector);
+
+  if (element) {
+    // element.style.position = 'relative';
+    this.store[selector] = {
+      selector: selector,
+      element: document.querySelector(selector),
+      status: 'pending',
+      queue: [],
+      timeStart: '',
+      positionStart: { x: '', y: '' },
+      positionEnd: { x: '', y: '' },
+    };
   }
-}
+};
 
-window.requestAnimationFrame(step);
+/**
+ * [start 开始动画]
+ * @param  {[String]} selector [选择器]
+ * @param  {[type]} func     [缓动动画]
+ */
+Animation.prototype.start = function (selector, func) {
+  var that = this;
+  var target = this.store[selector];
+  target.status = 'running';
+  // 帧调用函数
+  that.update({x: 0, y: 0}, selector);
+};
+
+/**
+ * [update 更新位置]
+ * @param  {[type]} selector [description]
+ */
+Animation.prototype.update =  function (position, selector) {
+  var target = this.store[selector],
+    that = this,
+    timeUsed,
+    positionX, positionY;
+  //
+  if (!target || !target.queue.length) {
+    target.status = 'pending';
+    return;
+  };
+
+  // reset position
+  target.element.style.left = position.x + 'px';
+  target.element.style.top = position.y + 'px';
+
+  // position
+  target.positionStart = { x: position.x, y: position.y };
+  target.positionEnd = { x: position.x + target.queue[0].x, y: position.y + target.queue[0].y };
+  // time
+  target.timeStart = null;
+
+  // 递归调用
+  var callback = function (time) {
+    if (target.timeStart === null) target.timeStart = time; // 动画开始时间
+    timeUsed = time - target.timeStart;
+    // 当前动画完成
+    if (timeUsed >= target.queue[0].duration) {
+      target.queue.shift();
+      that.step(target.element, target.positionEnd.x, target.positionEnd.y);
+      target.status = 'running';
+      // var position = target.element.getBoundingClientRect();
+      var position = {
+        x: parseInt(target.element.style.left),
+        y: parseInt(target.element.style.top),
+      };
+      // 下一个动画
+      that.update(position, selector);
+      return;
+    }
+    positionX = target.queue[0].func(
+      timeUsed,
+      target.positionStart.x,
+      target.positionEnd.x - target.positionStart.x,
+      target.queue[0].duration,
+    );
+    positionY = target.queue[0].func(
+      timeUsed,
+      target.positionStart.y,
+      target.positionEnd.y - target.positionStart.y,
+      target.queue[0].duration,
+    );
+    that.step(target.element, positionX, positionY);
+
+    requestAnimationFrame(callback);
+  };
+
+  requestAnimationFrame(callback);
+};
+
+/**
+ * [step dom操作]
+ * @param  {[DOM]} element [dom 元素]
+ * @param  {[Number]} x        [x坐标]
+ * @param  {[Number]} y        [y坐标]
+ */
+Animation.prototype.step = function (element, x, y) {
+  element.style.left = x + 'px';
+  element.style.top = y + 'px';
+};
+
+/**
+ * [push 加入动画队列]
+ * @param  {[String]} selector [dom选择器]
+ * @param  {[Object]} conf     [位置数据]
+ */
+Animation.prototype.push = function (selector, conf) {
+  if (this.store[selector]) {
+    this.store[selector].queue.push({
+      x: conf.x,
+      y: conf.y,
+      duration: conf.duration || 1000,
+      func: tween[conf.func] || tween['linear'],
+    });
+  }
+};
+
+/* ------------------- 动画出队列 ------------------- */
+Animation.prototype.pop = function (selector) {
+  if (this.store[selector]) {
+    this.store[selector].queue.pop();
+  }
+};
+
+/* ------------------- 清空动画队列 ------------------- */
+Animation.prototype.clear = function (selector) {
+  if (this.store[selector]) {
+    this.store[selector].queue.length = 1;
+  }
+};
 ```
 
-- 3）使用`IntersectionObserver`API实现图片懒加载
+- 3）使用`IntersectionObserver`API来替代`scroll`事件监听元素位置变化
+```js
+(function lazyload() {
 
+  var imagesToLoad = document.querySelectorAll('image[data-src]');
+
+  function loadImage(image) {
+    image.src = image.getAttribute('data-src');
+    image.addEventListener('load', function() {
+      image.removeAttribute('data-src');
+    });
+  }
+
+  var intersectionObserver = new IntersectionObserver(function(items, observer) {
+    items.forEach(function(item) {
+      if (item.intersecting) {
+        loadImage(item.target);
+        observer.unobserve(item.target);
+      }
+    });
+  });
+
+  imagesToLoad.forEach(function(image) {
+    intersectionObserver.observe(image);
+  });
+  
+})();
+```
 
 #### ➣ React性能优化方面
 

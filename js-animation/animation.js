@@ -109,11 +109,12 @@ Animation.prototype.update =  function (position, selector) {
     y: position.y + target.queue[0].y,
   };
   // time
-  target.timeStart = new Date().getTime();
+  target.timeStart = null;
 
   // 递归调用
-  var callback = function () {
-    timeUsed = new Date().getTime() - target.timeStart;
+  var callback = function (time) {
+    if (target.timeStart === null) target.timeStart = time;
+    timeUsed = time - target.timeStart;
     // 当前动画完成
     if (timeUsed >= target.queue[0].duration) {
       target.queue.shift();
