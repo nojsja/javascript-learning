@@ -1065,12 +1065,14 @@ EventEmitter.prototype.emit = function(type) {
 
 ##### 网络层面
 
-- 1）压缩JS代码资源  
+1）压缩JS代码资源  
+
 &nbsp;&nbsp;&nbsp;&nbsp; 代码资源中存在很多无用的空格和符号等，去除他们带来的效益是可观的，另一方面压缩资源也能起到源代码保护的作用。现代前端工程化框架一般继承了此类压缩插件，比如webpack框架的`uglifyjs`插件。
 
 ##### 渲染层面
 
-- 1）使用函数节流和函数去抖处理一些函数的高频触发调用  
+1）使用函数节流和函数去抖处理一些函数的高频触发调用  
+
   &nbsp;&nbsp;&nbsp;&nbsp; 在面对一些需要进行调用控制的函数高频触发场景时，可能有人会对何时使用节流何时使用去抖产生疑问。这里通过一个特性进行简单区分：如果你需要保留短时间内高频触发的最后一次结果时，那么使用去抖函数，如果你需要对函数的调用次数进行限制，以最佳的调用间隔时间保持函数的持续调用而不关心是否是最后一次调用结果时，请使用节流函数。  
   &nbsp;&nbsp;&nbsp;&nbsp; 比如echarts图常常需要在窗口resize之后重新使用数据渲染，但是直接监听resize事件可能导致短时间内渲染函数被触发多次。我们可以使用函数去抖的思想，监听resize事件后在监听器函数里获取参数再使用参数调用事先初始化好了的throttle函数，保证resize过程结束后能触发一次实际的echarts重渲染即可。
   - 节流`throttle`
@@ -1103,7 +1105,8 @@ EventEmitter.prototype.emit = function(type) {
   }
   ```
 
-- 2）Js实现动画时使用`requestAnimationFrame`替代定时器  
+2）Js实现动画时使用`requestAnimationFrame`替代定时器  
+
 &nbsp;&nbsp;&nbsp;&nbsp; `window.requestAnimationFrame()`告诉浏览器你希望执行一个动画，并且要求浏览器在下次重绘之前(每帧之前)调用指定的回调函数更新动画。该方法需要传入一个回调函数作为参数，该回调函数会在浏览器下一次重绘之前执行。  
 &nbsp;&nbsp;&nbsp;&nbsp; 设置的回调函数在被调用时会被传入触发的时间戳，在同一个帧中的多个回调函数，它们每一个都会接受到一个相同的时间戳，即使在计算上一个回调函数的工作负载期间已经消耗了一些时间，我们可以记录前后时间戳差值来控制元素动画的速度和启停。  
 &nbsp;&nbsp;&nbsp;&nbsp; 如果换用过定时器`setTimeout/setInterval`来控制帧动画的话，一般我们采用60帧进行动画绘制，所以设置的定时时间就应该是`1000 / 60 = 17ms`。不过由于定时器本身只是把回调函数放入了`宏任务队列`，其精确度受到主进程代码执行栈影响，可能导致帧动画的回调函数在浏览器的一次渲染过程中才被触发(理想情况是渲染前调用回调函数获得计算值，渲染时执行计算值绘制)，因此本应在当前帧呈现的绘制效果被延迟到了下一帧，产生丢帧卡顿的情况。  
@@ -1277,7 +1280,47 @@ Animation.prototype.clear = function (selector) {
 };
 ```
 
-- 3）使用`IntersectionObserver`API来替代`scroll`事件监听元素位置变化
+3）使用`IntersectionObserver`API来替代`scroll`事件实现元素相交检测  
+
+以下是一些需要用到相交检测的场景：  
+  - 图片懒加载 -- 当图片滚动到可见时才进行加载
+  - 内容无限滚动 -- 用户滚动到接近滚动容器底部时直接加载更多数据，而无需用户操作翻页，给用户一种网页可以无限滚动的错觉
+  - 检测广告的曝光情况——为了计算广告收益，需要知道广告元素的曝光情况
+  - 在用户看见某个区域时执行任务、播放视频
+
+&nbsp;&nbsp;&nbsp;&nbsp; 以内容无限滚动为例，古老的相交检测方案就是使用`scroll`事件监听滚动容器，在监听器函数中获取滚动元素的几何属性判断元素是否已经滚动到底部。我们知道`scrollTop`等属性的获取和设置都会导致页面回流，并且如果界面需要绑定多个监听函数到`scroll`事件进行类似操作的时候，页面性能会大打折扣：
+```js
+/* 滚动监听 */
+  onScroll = () => {
+    const { 
+      scrollTop, scrollHeight, clientHeight
+    } = document.querySelector('#target');
+    
+    /* 已经滚动到底部 */
+    // scrollTop(向上滚动的高度)；clientHeight(容器可视总高度)；scrollHeight(容器的总内容长度)
+    if (scrollTop + clientHeight === scrollHeight) { /* do something ... */ }
+  }
+```
+&nbsp;&nbsp;&nbsp;&nbsp; 因此在处理相交检测的问题时我们应该在考虑兼容性的情况下尽可能使用`IntersectionObserver` API，浏览器会自行优化多个元素的相交管理。IntersectionObserver API 允许你配置一个回调函数，当以下情况发生时会被调用：
+  - 每当目标(target)元素与设备视窗或者其他指定元素发生交集的时候执行。设备视窗或者其他元素我们称它为根元素或根(root)。
+  - Observer第一次监听目标元素的时候
+
+&nbsp;&nbsp;&nbsp;&nbsp; 创建一个 IntersectionObserver对象，并传入相应参数和回调用函数，该回调函数将会在目标(target)元素和根(root)元素的交集大小超过阈值(threshold)规定的大小时候被执行：
+```js
+let options = {
+    root: document.querySelector('#scrollArea'),
+    rootMargin: '0px', // 指定根(root)元素的外边距
+    threshold: 1.0, // 表示子元素完全和容器元素相交
+}
+
+const observer = new IntersectionObserver(callback, options);
+observer.observe(document.querySelector('#scrollTarget'));
+```
+
+&nbsp;&nbsp;&nbsp;&nbsp; **配置项1：** 通常需要关注文档最接近的可滚动祖先元素的交集更改，如果元素不是可滚动元素的后代，则默认为设备视窗。如果要观察相对于根(root)元素的交集，请指定根(root)元素为null。  
+&nbsp;&nbsp;&nbsp;&nbsp; **配置项2：** 目标(target)元素与根(root)元素之间的交叉度是交叉比(intersection ratio)。这是目标(target)元素相对于根(root)的交集百分比的表示，它的取值在0.0和1.0之间。  
+&nbsp;&nbsp;&nbsp;&nbsp; **配置项3：** 根(root)元素的外边距。类似于 CSS 中的  margin 属性，比如 "10px 20px 30px 40px" (top, right, bottom, left)。如果有指定root参数，则rootMargin也可以使用百分比来取值。该属性值是用作root元素和target发生交集时候的计算交集的区域范围，使用该属性可以控制root元素每一边的收缩或者扩张。默认值为0。  
+这里我们再以一个实际案例来进行展示，即图片懒加载方案：
 ```js
 (function lazyload() {
 
@@ -1292,7 +1335,16 @@ Animation.prototype.clear = function (selector) {
 
   var intersectionObserver = new IntersectionObserver(function(items, observer) {
     items.forEach(function(item) {
-      if (item.intersecting) {
+      /* 所有属性：
+        item.boundingClientRect - 目标元素的几何边界信息
+        item.intersectionRatio - 相交比 intersectionRect/boundingClientRect
+        item.intersectionRect -  描述根和目标元素的相交区域
+        item.isIntersecting - true(相交开始)，false(相交结束)
+        item.rootBounds - 描述根元素
+        item.target - 目标元素
+        item.time - 时间原点(网页在窗口加载完成时的时间点)到交叉被触发的时间的时间戳
+      */
+      if (item.isIntersecting) {
         loadImage(item.target);
         observer.unobserve(item.target);
       }
@@ -1305,6 +1357,8 @@ Animation.prototype.clear = function (selector) {
   
 })();
 ```
+
+4）使用`IntersectionObserver`API来替代`scroll`事件实现元素相交检测  
 
 #### ➣ React性能优化方面
 
