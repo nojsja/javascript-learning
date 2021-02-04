@@ -270,7 +270,7 @@ Function.prototype.myApply = function(context, args) {
 
 ```
 #### ➣ 实现对象new操作
-```sh
+```js
 function New(func) {
   var empty = Object.create(null);
   var args = Array.prototype.slice.call(arguments, 1);
@@ -280,7 +280,7 @@ function New(func) {
 }
 ```
 #### ➣ Js实现继承
-```sh
+```js
 function Inherit (parent, child) {
   function Empty() {};
   Empty.prototype = parent.prototype;
@@ -1110,7 +1110,7 @@ EventEmitter.prototype.emit = function(type) {
 &nbsp;&nbsp;&nbsp;&nbsp; `window.requestAnimationFrame()`告诉浏览器你希望执行一个动画，并且要求浏览器在下次重绘之前(每帧之前)调用指定的回调函数更新动画。该方法需要传入一个回调函数作为参数，该回调函数会在浏览器下一次重绘之前执行。  
 &nbsp;&nbsp;&nbsp;&nbsp; 设置的回调函数在被调用时会被传入触发的时间戳，在同一个帧中的多个回调函数，它们每一个都会接受到一个相同的时间戳，即使在计算上一个回调函数的工作负载期间已经消耗了一些时间，我们可以记录前后时间戳差值来控制元素动画的速度和启停。  
 &nbsp;&nbsp;&nbsp;&nbsp; 如果换用过定时器`setTimeout/setInterval`来控制帧动画的话，一般我们采用60帧进行动画绘制，所以设置的定时时间就应该是`1000 / 60 = 17ms`。不过由于定时器本身只是把回调函数放入了`宏任务队列`，其精确度受到主进程代码执行栈影响，可能导致帧动画的回调函数在浏览器的一次渲染过程中才被触发(理想情况是渲染前调用回调函数获得计算值，渲染时执行计算值绘制)，因此本应在当前帧呈现的绘制效果被延迟到了下一帧，产生丢帧卡顿的情况。  
-&nbsp;&nbsp;&nbsp;&nbsp; 这里让我们使用`requestAnimationFrame`来实现一个动画处理类作为例子，使用方式如下：  
+&nbsp;&nbsp;&nbsp;&nbsp; 这里让我们使用`requestAnimationFrame`来实现一个[动画处理类](https://github.com/nojsja/javascript-learning/blob/master/js-animation/animation.js)作为例子，使用方式如下：  
 ```js
 var anime = new Animation();
 anime.setTarget('#animationTarget');
@@ -1411,11 +1411,244 @@ self.onmessage = function(e) {
   - 预取数据：为了优化您的网站或Web应用程序并缩短数据加载时间，您可以利用Web Workers预先加载和存储一些数据，以便稍后在需要时使用它。
   - PWA进式Web应用程序：这种应用程序中即使网络连接不稳定，它们也必须快速加载。这意味着数据必须存储在本地浏览器中，这是IndexDB或类似的API进场的地方。为了在不阻塞UI线程的情况下使用，工作必须在Web Workers中完成。
 
+5）一些编码方面的优化建议  
+  - 一些长列表数据的遍历使用`for`循环替代`forEach`。  
+  &nbsp;&nbsp;&nbsp;&nbsp; for循环能通过关键字`break`实现循环中断，forEach首先性能不如for，其次在处理一些需要条件断开的循环时比较麻烦(可以包裹try catch，然后throw error断开)。如果是数组类型的数据遍历的话，也可以使用`array.every(item => { if (...) return false; else do something; })`来实现条件断开。
+  - 尽量不要在全局作用域声明过多变量  
+  &nbsp;&nbsp;&nbsp;&nbsp; 全局变量存在于全局上下文，全局上下文是作用域链的顶端，当通过作用域链进行变量查找的时候，会延长查找时间。全局执行上下文会一直存在于上下文执行栈，直到程序推出，这样会影响GC垃圾回收。如果局部作用域中定义了同名变量，会遮蔽或者污染全局。  
+  &nbsp;&nbsp;&nbsp;&nbsp; 可以使用单例模式来封装一系列逻辑(运用了闭包的原理)，并通过一个公用的变量名暴露给作用域中的其它模块使用，同时也提高了代码的内聚性：
+  ```js
+  /* bad */
+  const workData = {};
+  function workA() { /* do something ... */ }
+  function workB() { /* do something ... */ }
+  function workC() { /* do something ... */ }
+
+  /* good */
+  const work = (function (initParams) {
+    const workData = {};
+    function workA() { /* do something ... */ }
+    function workB() { /* do something ... */ }
+    function workC() { /* do something ... */ }
+
+    return {
+      doWorkA: workA,
+      doWorkB: workB,
+      doWorkC: workC,
+      workSeries: function() {
+        this.doWorkB();
+        this.doWorkC();
+      }
+    };
+  })(initParams);
+
+  work.doWorkA();
+  work.workSeries();
+  ```
+  - 使用`switch`和`map`的方式处理需要大量逻辑判断的情况  
+  &nbsp;&nbsp;&nbsp;&nbsp; 连续的`if`判断中在到达目标条件之前需要经过多个条件判断，而map和switch方式都能够通过条件直接找到对应的处理逻辑。
+  ```js
+  /* bad */
+  if (condition === 'a')
+    // do something
+  else if (condition === 'b')
+    // do something
+  else
+  ...
+
+  /* good */
+  switch (condition) {
+    case 'a':
+      // do something ...
+    break;
+    case 'b':
+      // do something ...
+    break;
+    ...
+    default:
+      break;
+  }
+  
+  const conditionMap = {
+    a: function() { /* do something */ },
+    b: function() { /* do something */ },
+    ...
+  };
+  conditionMap[condition]();
+  ```
+  - 定义构造函数时使用原型声明对象的公用方法  
+  &nbsp;&nbsp;&nbsp;&nbsp; 我们在`new`一个对象时，js所做的就是创建一个空对象，并把此对象作为构造函数的context来执行(参考call调用逻辑)，执行后空对象上就被复制了构造函数的的属性和方法，然后js会把构造函数的原型绑定到对象的`__proto__`属性上，最后构造函数将对象返回给我们使用。  
+  &nbsp;&nbsp;&nbsp;&nbsp; 从以上可以看出，如果我们直接把一些function逻辑写入构造函数的话，在对象创建的时候每个function都会在新对象上被创建一次，消耗额外的资源，且违反了程序复用原则。建议将function放入构造函数的原型，那么对象就能通过原型链查找来使用这个方法，而不是在对象自身上重新复制一个一模一样的逻辑。
+  ```js
+  /* bad */
+  function Structure(attr) {
+    this.attr = attr;
+    this.getAttr = (function() {
+      return this.attr;
+    }).bind(this);
+  }
+  var obj = new Structure('obj1');
+  obj.getAttr(); // from obj itself
+
+  /* good */
+  function Structure(attr) {
+    this.attr = attr;
+  }
+  Structure.prototype.getAttr = function() {
+    return this.attr;
+  }
+  var obj = new Structure('obj1');
+  obj.getAttr(); // from obj prototype chain
+  ```
+
 #### ➣ React性能优化方面
 
 ##### 网络层面
 
+1）React jsx/js文件压缩  
+
+2）使用`React.lazy`和`React.Suspense`实现代码分割和懒加载  
+&nbsp;&nbsp;&nbsp;&nbsp; React开发的应用通常会借用`webpack`这类项目打包器将编写的各个模块代码和引入的依赖库的代码打包成一个单独的JS文件，有些未做CSS样式分离优化的项目甚至连样式表都和JS文件打包在一起，然后在页面加载的HTML文件中需要下载了这一整个JS文件后之后才能进去到页面构建阶段。对于中小型项目还好，简单的首屏优化就能将资源压缩到足够小，但是一些大型项目可能存在很多子项目，如果不对代码做分割然后按子项目模块加载的话，在首屏我们浏览器需要下载整个项目的依赖文件，导致加载时间过长。  
+&nbsp;&nbsp;&nbsp;&nbsp; 使用`React.lazy`可以分割子项目代码并根据当前页面路由来动态加载页面依赖文件，尽管并没有减少应用整体的代码体积，但你可以避免加载用户永远不需要的代码，并在初始加载的时候减少所需加载的代码量。
+
+注意：搭配`Babel`进行代码编译时需要安装额外的babel插件以提供动态加载功能：
+```json
+{
+  "presets": [...],
+  "plugins": [
+    "dynamic-import-webpack",
+    ...
+  ]
+}
+```
+
+- React.lazy 函数能让你像渲染常规组件一样处理动态引入的组件：  
+  它接受一个函数，这个函数需要动态调用 import()。它必须返回一个 Promise，该 Promise 需要 resolve 一个 defalut export 的 React 组件。
+  ```js
+  /* 使用前 */
+  import OtherComponent from './OtherComponent';
+  /* 使用后，代码将会在组件首次渲染时，自动导入包含 OtherComponent 组件的包 */
+  const OtherComponent = React.lazy(() => import('./OtherComponent'));
+
+  /* -------------- OtherComponent.js -------------- */
+  export default function() { return (<span>other</span>) };
+  ```
+- 使用 React.Suspense 提供一个组件加载时的占位组件：  
+  ```js
+  import React, { Suspense } from 'react';
+
+  const OtherComponent = React.lazy(() => import('./OtherComponent'));
+
+  function mainComponent() {
+    return (
+      <Suspense fallback={<div>Loading...</div>}>
+        <section>
+          <OtherComponent />
+          <AnotherComponent />
+        </section>
+      </Suspense>
+    )
+  }
+  ```
+
+- 使用异常捕获组件避免模块加载失败时让整个应用崩溃
+  ```js
+  /* -------------- mainComponent.js -------------- */
+  function MyComponent() {
+    return (
+      <MyErrorBoundary>
+        <Suspense fallback={<div>Loading...</div>}>
+          <OtherComponent />
+        </Suspense>
+      </MyErrorBoundary>
+    )
+  }
+
+  /* -------------- ErrorBoundary.js -------------- */
+  class ErrorBoundary extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = { hasError: false };
+    }
+
+    static getDerivedStateFromError(error) {
+      // 更新 state 使下一次渲染能够显示降级后的 UI
+      return { hasError: true };
+    }
+
+    componentDidCatch(error, errorInfo) {
+      logErrorToMyService(error, errorInfo); // 可以选择将错误日志上报给服务器
+    }
+
+    render() {
+      if (this.state.hasError)
+        return <h1>Something went wrong.</h1>; // 你可以自定义降级后的 UI 并渲染
+      return this.props.children; // 正常渲染子组件
+    }
+  }
+  ```
+- 代码分割搭配 React-Router 同样适用
+  ```js
+  import React, { Suspense, lazy } from 'react';
+  import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+
+  const Home = lazy(() => import('./routes/Home'));
+
+  const App = () => (
+    <Router>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Switch>
+          <Route exact path="/" component={Home}/>
+        </Switch>
+      </Suspense>
+    </Router>
+  );
+  ```
+
+3）使用`React.Fragment`来避免非必要DOM层级的引入  
+&nbsp;&nbsp;&nbsp;&nbsp; React通常要求我们在编写一个组件时返回单个container组件包裹的DOM结构，而不允许直接返回多个未包裹的子组件，如果不使用Fragment就必须额外添加一层DOM节点，比如：
+```js
+/* bad */
+class myComponent extends React.Component {
+  render() {
+    return (
+      <div>
+        <td>1</td>
+        <td>2</td>
+      </div>
+    )
+  }
+}
+```
+额外添加的`div`增加了无用的DOM层级，且会造成`table`组件无法正确渲染(tr/td之间多了一层div)。
+使用Fragment后最终所有`td`标签都会被直接添加到上层的`tr`标签下，同时也不会产生多余层级：
+```js
+/* good */
+class myComponent extends React.Component {
+  render() {
+    return (
+      <React.Fragment>
+        <td>1</td>
+        <td>2</td>
+      </React.Fragment>
+    )
+  }
+}
+```
+
 ##### 渲染层面
+
+1）使用`shouldComponentUpdate`避免不必要渲染  
+
+2）使用`React.PureComponnet`编写数据结构简单的展示组件  
+
+3）使用`React.memo`缓存和复用具有昂贵渲染结果的组件  
+
+4）使用Context避免组件树中逐层传递props  
+
+5）优化组件分割策略来处理长列表组件的渲染  
+
+6）使用虚拟化长列表来渲染长列表组件  
 
 #### ➣ webpack性能优化方面
 
