@@ -1358,7 +1358,58 @@ observer.observe(document.querySelector('#scrollTarget'));
 })();
 ```
 
-4）使用`IntersectionObserver`API来替代`scroll`事件实现元素相交检测  
+4）使用`Web-Workers`在后台运行CPU密集型任务  
+&nbsp;&nbsp;&nbsp;&nbsp; Web Worker 允许你在后台线程中运行脚本。如果你有一些高强度的任务，可以将它们分配给 Web Worker，这些 WebWorker 可以在不干扰用户界面的情况下运行它们。创建后，Web Worker 可以将消息发布到该代码指定的事件处理程序来与 JavaScript 代码通信，反之亦然。  
+&nbsp;&nbsp;&nbsp;&nbsp; 一个简单的专用worker示例，我们在主进程代码中创建一个worker实例，然后向实例发送一个数字，worker接受到消息后拿到数字进行一次`斐波那契函数`运算，并发送运算结果给主线程：
+```js
+/* -------------- main.js -------------- */
+var myWorker = new Worker("fibonacci.js");
+worker.onmessage = function (e) {
+  console.log('The result of fibonacci.js: ', e.data);
+};
+worker.postMessage(100);
+
+/* -------------- fibonacci.js -------------- */
+function fibonacci(n) {
+  if (n > 1)
+    return fibonacci(n - 2) + fibonacci(n - 1);
+  return n;
+}
+
+self.onmessage = function(e) {
+  self.postMessage(fibonacci(Number(e.data)));
+}
+```
+
+- Worker的常见类型
+  - **专用Worker：** 一个专用worker仅仅能被生成它的脚本所使用。
+  - **共享Worker：** 一个共享worker可以被多个脚本使用——即使这些脚本正在被不同的window、iframe或者worker访问。
+  - **Service Workers：** 一般作为web应用程序、浏览器和网络（如果可用）之前的代理服务器。它们旨在（除开其他方面）创建有效的离线体验，拦截网络请求，以及根据网络是否可用采取合适的行动并更新驻留在服务器上的资源。他们还将允许访问推送通知和后台同步API。
+  - **Chrome Workers：** 一种仅适用于firefox的worker。如果您正在开发附加组件，希望在扩展程序中使用worker且有在你的worker中访问  js-ctypes 的权限，你可以使用Chrome Workers。
+  - **Audio Workers：** 音频worker使得在web worker上下文中直接完成脚本化音频处理成为可能。
+
+- Worker中可以使用的函数和接口  
+ 你可以在web worker中使用大多数的标准javascript特性，包括：
+  - Navigator
+  - Location(只读)
+  - XMLHttpRequest
+  - Array, Date, Math, and String
+  - setTimeout/setInterval
+  - Cache & IndexedDB
+
+- 关于线程安全  
+&nbsp;&nbsp;&nbsp;&nbsp; Worker接口会生成真正的操作系统级别的线程，然而，对于 web worker 来说，与其他线程的通信点会被很小心的控制，这意味着你很难引起并发问题。你没有办法去访问非线程安全的组件或者是 DOM，此外你还需要通过序列化对象来与线程交互特定的数据。所以你要是不费点劲儿，还真搞不出错误来。
+
+- 内容安全策略  
+&nbsp;&nbsp;&nbsp;&nbsp; 有别于创建它的document对象，worker有它自己的执行上下文。因此普遍来说，worker并不受限于创建它的document（或者父级worker）的内容安全策略。举个例子，假设一个document有如下头部声明：`Content-Security-Policy: script-src 'self'`，这个声明有一部分作用在于禁止脚本代码使用eval()方法。然而，如果脚本代码创建了一个worker，在worker中却是可以使用eval()的。  
+&nbsp;&nbsp;&nbsp;&nbsp; 为了给worker指定内容安全策略，必须为发送worker代码的请求本身加上一个`内容安全策略`。有一个例外情况，即worker脚本的使用dataURL或者blob创建的话，worker会继承创建它的document或者worker的内容安全策略。
+
+- 一些使用场景
+  - 在一些不采用`websockets`架构的应用中使用传统的轮询方式定时获取接口数据以供前端脚本实现一些界面和数据自动更新功能
+  - 光线追踪：光线追踪是一种通过将光线追踪为像素来生成图像的渲染技术。光线追踪使用CPU密集型数学计算来模拟光线路径。这个想法是模拟反射，折射，材质等一些效果。所有这些计算逻辑都可以添加到Web Worker中以避免阻塞UI线程。
+  - 加密：由于对个人和敏感数据的监管日益严格，端到端加密越来越受欢迎。加密可能是一件非常耗时的事情，特别是如果有很多数据必须经常加密（例如在将数据发送到服务器之前）。这是一个非常好的场景，可以使用Web Worker。
+  - 预取数据：为了优化您的网站或Web应用程序并缩短数据加载时间，您可以利用Web Workers预先加载和存储一些数据，以便稍后在需要时使用它。
+  - PWA进式Web应用程序：这种应用程序中即使网络连接不稳定，它们也必须快速加载。这意味着数据必须存储在本地浏览器中，这是IndexDB或类似的API进场的地方。为了在不阻塞UI线程的情况下使用，工作必须在Web Workers中完成。
 
 #### ➣ React性能优化方面
 
