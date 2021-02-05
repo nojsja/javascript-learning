@@ -1639,8 +1639,98 @@ class myComponent extends React.Component {
 ##### 渲染层面
 
 1）使用`shouldComponentUpdate`避免不必要渲染  
+&nbsp;&nbsp;&nbsp;&nbsp; 当一个React组件内部state或外部传入props更新时，会触发组件的重新渲染，开发者可以在`shouldComponentUpdate`生命周期中通过对比传入的即将被更新的state和props来决定组件是否要重新渲染，函数默认返回true，即触发渲染：
+```js
+class CounterButton extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {count: 1};
+  }
 
-2）使用`React.PureComponnet`编写数据结构简单的展示组件  
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      this.props.color !== nextProps.color ||
+      this.state.count !== nextState.count
+    ) return true;
+    
+    return false;
+  }
+
+  render() {
+    return (
+      <button
+        color={this.props.color}
+        onClick={() => this.setState(state => ({count: state.count + 1}))}>
+        Count: {this.state.count}
+      </button>
+    );
+  }
+}
+```
+&nbsp;&nbsp;&nbsp;&nbsp; 其实这里有个被很多开发者忽略的情况，那就是可能当前组件的props/state并没有发生改变，但是由于其父组件的重新渲染，导致当前组件也被迫进入了重新渲染阶段。这时候为组件添加`shouldComponentUpdate`生命周期函数进行数据比较就显得尤为重要了，特别是当组件的DOM结构复杂、嵌套层次很深，重新渲染的性能消耗昂贵的时候。  
+&nbsp;&nbsp;&nbsp;&nbsp; 有时候一个组件所需的数据结构很复杂，比如用于展示当前目录层级的资源树组件，其依赖的数据采用树形结构，树形组件一般采用递归的渲染方式，组件的渲染更新操作昂贵。因此我们可以考虑在这类组件的`shouldComponentUpdate`生命周期中使用深比较函数来对更新前后的属性数据进行一次递归比较，以判断当前资源树组件是否需要进行更新：
+```js
+/**
+ * [deepComparison 深比较]
+ * @param  {[type]} data [any]
+ * @return {[type]}      [boolean]
+ */
+function deepComparison(data1, data2) {
+  const { hasOwnProperty } = Object.prototype;
+  const { toString } = Object.prototype;
+
+  // 获取变量类型
+  const getType = (d) => {
+    if (d === null) return 'null';
+    if (d !== d) return 'nan';
+    if (typeof d === 'object') {
+      if (toString.call(d) === '[object Date]') return 'date';
+      if (toString.call(d) === '[object RegExp]') return 'regexp';
+      return 'object';
+    }
+    return (typeof d).toLowerCase();
+  };
+
+  // 基本类型比较
+  const is = (d1, d2, type) => {
+    if (type === 'nan') return true;
+    if (type === 'date' || type === 'regexp') return d1.toString() === d2.toString();
+    return (d1 === d2);
+  };
+
+  // 递归比较
+  const compare = (d1, d2) => {
+    var type1 = getType(d1);
+    var type2 = getType(d2);
+    var index;
+
+    if (type1 !== type2) return false;
+
+    if (type1 === 'object') {
+      var keys1 = Object.keys(d1);
+      var keys2 = Object.keys(d2);
+      if (keys1.length !== keys2.length) {
+        return false;
+      }
+      for (let i = 0; i < keys1.length; i += 1) {
+        index = keys2.indexOf(keys1[i]);
+        if (
+          (index === -1) ||
+          !compare(d1[keys1[i]], d2[keys2[index]])) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    return is(d1, d2, type1);
+  };
+
+  return compare(data1, data2);
+}
+```
+
+2）使用`React.PureComponnet`对数据结构简单的展示组件进行浅比较  
 
 3）使用`React.memo`缓存和复用具有昂贵渲染结果的组件  
 
