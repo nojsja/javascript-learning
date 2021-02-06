@@ -1667,8 +1667,9 @@ class CounterButton extends React.Component {
   }
 }
 ```
-&nbsp;&nbsp;&nbsp;&nbsp; 其实这里有个被很多开发者忽略的情况，那就是可能当前组件的props/state并没有发生改变，但是由于其父组件的重新渲染，导致当前组件也被迫进入了重新渲染阶段。这时候为组件添加`shouldComponentUpdate`生命周期函数进行数据比较就显得尤为重要了，特别是当组件的DOM结构复杂、嵌套层次很深，重新渲染的性能消耗昂贵的时候。  
-&nbsp;&nbsp;&nbsp;&nbsp; 有时候一个组件所需的数据结构很复杂，比如用于展示当前目录层级的资源树组件，其依赖的数据采用树形结构，树形组件一般采用递归的渲染方式，组件的渲染更新操作昂贵。因此我们可以考虑在这类组件的`shouldComponentUpdate`生命周期中使用深比较函数来对更新前后的属性数据进行一次递归比较，以判断当前资源树组件是否需要进行更新：
+&nbsp;&nbsp;&nbsp;&nbsp; **适用情况：** 当前组件的props/state并没有发生改变，但是由于其父组件的重新渲染，导致当前组件也被迫进入了重新渲染阶段。这时候为组件添加`shouldComponentUpdate`生命周期函数进行数据比较就显得尤为重要了，特别是当组件的DOM结构复杂、嵌套层次很深，重新渲染的性能消耗昂贵的时候。  
+&nbsp;&nbsp;&nbsp;&nbsp; **滥用情况：** 并非所有组件都需要被添加此生命周期用于数据比较，因为比较这一过程本身也是需要消耗性能的，如果一个组件的state/props本来就会经常更新，那么这个组件久无需使用`scp`进行优化  
+&nbsp;&nbsp;&nbsp;&nbsp; **深比较函数：** 有时候一个组件所需的数据结构很复杂，比如用于展示当前目录层级的资源树组件，其依赖的数据采用树形结构，树形组件一般采用递归的渲染方式，组件的渲染更新操作昂贵。因此我们可以考虑在这类组件的`scp`生命周期中使用深比较函数来对更新前后的属性数据进行一次递归比较，以判断当前资源树组件是否需要进行更新：
 ```js
 /**
  * [deepComparison 深比较]
@@ -1729,16 +1730,155 @@ function deepComparison(data1, data2) {
   return compare(data1, data2);
 }
 ```
+&nbsp;&nbsp;&nbsp;&nbsp; **最佳实践：** 深比较函数其实消耗的性能很大，特别是当数据层级很深的时候，函数的递归需要创建和销毁多个执行上下文，可能数据比较本身所消耗的性能就多于一次渲染了。因此大部分情况下使用`immutable`不可变数据结构+`shallowEqual`做浅比较是比较理想的选择。
 
-2）使用`React.PureComponnet`对数据结构简单的展示组件进行浅比较  
+2）使用`PureComponnet`实现简单展示组件的自动浅比较  
+&nbsp;&nbsp;&nbsp;&nbsp; 上文提到`scu`生命周期中我们可以通过自定义prop/state比较函数来来控制组件是否需要重新渲染，最后得出了`immutable`不可变数据+shallowEqual是最佳实践。其实React已经给我们提供了一种自带浅比较函数的组件类型即`React.PureComponnet`，它适用于一些数据类型简单的展示组件，当我们给这些React组件传入相同的 props 和 state时，render() 函数会渲染相同的内容，那么在这些情况下使用 React.PureComponent 可提高性能：
+```js
+class SimpleCounter extends React.PureComponnet {
+  state = { count: 0 }
 
-3）使用`React.memo`缓存和复用具有昂贵渲染结果的组件  
+  render(props) {
+    return (
+      <div
+        onClick={() => this.setState({ count: (this.state.count+1) })}
+        style={{color: this.props.color}}
+      >count:${this.state.count}</div>
+    )
+  }
+}
+```
+&nbsp;&nbsp;&nbsp;&nbsp; **适用情况** 和 **滥用情况** 与`scp`生命周期大致相同，不过需要额外注意：  
+- React.PureComponent仅作对象的浅层比较，如果对象中包含复杂的数据结构，则有可能因为无法检查深层的差别，产生错误的比对结果。
+- 我们可以仅仅在props 和 state 较为简单时，才使用 React.PureComponent。
+- 另一种处理方式就是在深层数据结构发生变化时调用 forceUpdate() 来确保组件被正确地更新。
+- 当然也可以使用[ immutable.js ](https://immutable-js.github.io/immutable-js/)框架来处理数据结构，可以加快不可变对象加速嵌套数据的比较。一种简单的处理方式是在state数据需要更新时我们手动进行对象引用的更新：
+```js
+class SimpleDisplay extends React.PureComponent {
+  state = {
+    list: ['a', 'b']
+  }
 
-4）使用Context避免组件树中逐层传递props  
+  insertItem = () => {
+    const { list } = this.state;
+    /* bad - 组件不会更新 */
+    list.push('c');
+    this.setState({ list });
+
+    /* good - 重新更新list变量的引用 */
+    this.setState({ list: [...list, 'c'] });
+    // or
+    this.setState({ list: a.concat('c') });
+
+  }
+
+  render() {
+    return (
+      <div onClick={this.insertItem}>
+      { this.state.list.join('/') }
+      </div>
+    )
+  }
+}
+```
+
+3）使用`React.memo`缓存和复用组件的渲染结果  
+&nbsp;&nbsp;&nbsp;&nbsp; `React.memo()`为高阶组价，如果组件在相同 props 的情况下渲染相同的结果(state的更新依然会导致重新渲染)，那么你可以通过将其包装在 React.memo 中调用，以此通过记忆组件渲染结果的方式来提高组件的性能表现。这意味着在这种情况下，React 将跳过渲染组件的操作并直接复用最近一次渲染的结果。  
+&nbsp;&nbsp;&nbsp;&nbsp; 默认情况下其只会对复杂对象做浅层对比，如果你想要控制对比过程，那么请将自定义的比较函数通过第二个参数传入来实现：
+```js
+function MyComponent(props) {
+  /* 使用 props 渲染 */
+}
+function areEqual(prevProps, nextProps) {
+  /*
+  如果把 nextProps 与 prevProps 的比较结果一致则返回 true，
+  否则返回 false，这一点与shoudComponentUpdate表现相反，且areEqual
+  中无法对组件内部state进行比较
+  */
+}
+export default React.memo(MyComponent, areEqual);
+```
+**不建议**使用`React.memo()`的情况：  
+- 如果组件经常接收不同的属性props对象来更新的话，那么缓存上一次渲染结果这一过程毫无意义，且增加了额外的性能支出。
+- 此方法仅作为性能优化的方式而存在，不要依赖它来“阻止”渲染，因为这会产生 bug。
+  
+**建议**使用`React.memo()`的情况：
+- 一个组件经常会以相同的props更新，比如父组件的其它部分更新导致的当前子组件非必要渲染
+- 常常用于将函数组件转变为具有`memorized`缓存特性的组件，组件内部可以使用`useState`hook进行内部状态管理，对组件的自更新没有影响。
+- 如果一个组件包含大量复杂的`dom`结构，重新渲染的性能消耗较大的话可以考虑使用`React.memo`包裹，避免很多不必要的渲染情况，在props不变的情况下让react能直接复用上次的渲染结果。
+
+
+4）使用Context来共享全局数据  
+&nbsp;&nbsp;&nbsp;&nbsp; Context 设计目的是为了共享那些对于一个组件树而言是“全局”的数据，例如当前认证的用户、主题或首选语言，使用 context, 我们可以避免通过中间元素来逐级传递 props。举个例子，在下面的代码中，我们通过一个 “theme” 属性手动调整一个按钮组件的样式：
+```js
+/* -------------- context.js -------------- */
+const theme = {
+  light: { color: 'black', backgroundColor: 'white' },
+  dark: { color: 'white', backgroundColor: 'black' }
+}
+
+// 为当前的 theme 创建一个 context（“light”为默认值）。
+export default const ThemeContext = React.createContext(theme.light);
+
+/* -------------- App.js -------------- */
+// Context 可以让我们无须明确地传遍每一个组件，就能将值深入传递进组件树。
+const ThemeContext = require('./context.js');
+class App extends React.Component {
+  render() {
+    // 使用一个 Provider 来将当前的 theme 传递给以下的组件树。
+    // 无论多深，任何组件都能读取这个值。
+    // 在这个例子中，我们将 “dark” 作为当前的值传递下去，当Provider不指定当前值时
+    // createContext中传入的默认值会生效
+    return (
+      <ThemeContext.Provider value="dark">
+        <Toolbar />
+      </ThemeContext.Provider>
+    );
+  }
+}
+
+/* -------------- Toolbar.js -------------- */
+
+// 中间的组件再也不必指明往下传递 theme 了。
+function Toolbar() {
+  return (
+    <div>
+      <ThemedButton />
+    </div>
+  );
+}
+
+/* -------------- ThemedButton.js -------------- */
+const ThemeContext = require('./context.js');
+class ThemedButton extends React.Component {
+  // 指定 contextType 读取当前的 theme context。
+  // React 会往上找到最近的 theme Provider，然后使用它的值。
+  // 在这个例子中，当前的 theme 值为 “dark”。
+  static contextType = ThemeContext;
+  render() {
+    return <Button theme={this.context} />;
+  }
+}
+```
+&nbsp;&nbsp;&nbsp;&nbsp; 对于不需要订阅context更新来重新渲染界面的情况，上面的代码示例已经足够应付，如果想要接收动态变化的context值来响应式更新界面，则需要使用`Context.Consumer`API，它内部包裹一个返回dom组件的function函数，传递给函数的 value 值等价于组件树上方离这个 context 最近的 Provider 提供的 value 值。如果没有对应的 Provider，value 参数等同于传递给 createContext() 的 默认值：
+```js
+...
+render() {
+  return (
+    <MyContext.Consumer>
+      { value => <span>{value}</span>/* 基于 context 值进行渲染*/ }
+    </MyContext.Consumer>
+  )
+}
+```
+**注意：** Context 主要应用场景在于很多不同层级的组件需要访问同样一些的数据。请谨慎使用，因为这会使得组件的复用性变差。
 
 5）优化组件分割策略来处理长列表组件的渲染  
 
-6）使用虚拟化长列表来渲染长列表组件  
+6）正确理解组件key的使用策略  
+
+
+7）使用虚拟化长列表来渲染长列表组件  
 
 #### ➣ webpack性能优化方面
 
