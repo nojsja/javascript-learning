@@ -1730,7 +1730,7 @@ function deepComparison(data1, data2) {
   return compare(data1, data2);
 }
 ```
-&nbsp;&nbsp;&nbsp;&nbsp; **最佳实践：** 深比较函数其实消耗的性能很大，特别是当数据层级很深的时候，函数的递归需要创建和销毁多个执行上下文，可能数据比较本身所消耗的性能就多于一次渲染了。因此大部分情况下使用`immutable`不可变数据结构+`shallowEqual`做浅比较是比较理想的选择。
+&nbsp;&nbsp;&nbsp;&nbsp; **最佳实践：** 深比较函数其实消耗的性能很大，特别是当数据层级很深的时候，函数的递归需要创建和销毁多个执行上下文，可能数据比较本身所消耗的性能就多于一次渲染了。因此大部分情况下使用`immutable`不可变数据结构(对象每次更新都返回一个全新的对象，对象的引用发生变化) + `shallowEqual`做浅比较是比较理想的选择。
 
 2）使用`PureComponnet`实现简单展示组件的自动浅比较  
 &nbsp;&nbsp;&nbsp;&nbsp; 上文提到`scu`生命周期中我们可以通过自定义prop/state比较函数来来控制组件是否需要重新渲染，最后得出了`immutable`不可变数据+shallowEqual是最佳实践。其实React已经给我们提供了一种自带浅比较函数的组件类型即`React.PureComponnet`，它适用于一些数据类型简单的展示组件，当我们给这些React组件传入相同的 props 和 state时，render() 函数会渲染相同的内容，那么在这些情况下使用 React.PureComponent 可提高性能：
@@ -1807,7 +1807,6 @@ export default React.memo(MyComponent, areEqual);
 - 常常用于将函数组件转变为具有`memorized`缓存特性的组件，组件内部可以使用`useState`hook进行内部状态管理，对组件的自更新没有影响。
 - 如果一个组件包含大量复杂的`dom`结构，重新渲染的性能消耗较大的话可以考虑使用`React.memo`包裹，避免很多不必要的渲染情况，在props不变的情况下让react能直接复用上次的渲染结果。
 
-
 4）使用Context来共享全局数据  
 &nbsp;&nbsp;&nbsp;&nbsp; Context 设计目的是为了共享那些对于一个组件树而言是“全局”的数据，例如当前认证的用户、主题或首选语言，使用 context, 我们可以避免通过中间元素来逐级传递 props。举个例子，在下面的代码中，我们通过一个 “theme” 属性手动调整一个按钮组件的样式：
 ```js
@@ -1874,11 +1873,148 @@ render() {
 **注意：** Context 主要应用场景在于很多不同层级的组件需要访问同样一些的数据。请谨慎使用，因为这会使得组件的复用性变差。
 
 5）优化组件分割策略来处理长列表组件的渲染  
+&nbsp;&nbsp;&nbsp;&nbsp; 有时候我们需要渲染一些拥有很多子组件的的列表组件，比如一个展示当前目录下有哪些文件的`FileList`组件，它包含很多子组件`FileListItem`，如下。想象我们在使用 input 组件获取输入值更新 state 得时候，同时也不可避免的触发了同一个render函数下`FileListItem`组件的重新渲染，即使从父级传入的 files 数组未发生任任何改变：
+```js
+class FileList extends Component {
+  state = {
+    value: null
+  }
 
-6）正确理解组件key的使用策略  
+  onChange = (e) => this.setState({ value: e.target.value })
 
+  render() {
+    return (
+      <div>
+        <input value={this.state.value} onChange={this.onChange}></input>
+        <div>
+          {
+            this.props.files.map((file) => {
+              return <FileListItem key={file.name} name={file.name} />;
+            })
+          }
+        </div>
+      </div>
+    );
+  }
+}
 
-7）使用虚拟化长列表来渲染长列表组件  
+```
+&nbsp;&nbsp;&nbsp;&nbsp; 这时候我们就可以考虑在设计组件结构时将 `files.map()`这部分的逻辑完全抽离到一个完整的子组件内，否则前面提到的`shouldComponentUpdate`、`PureComponent`、`memo`等优化方法都将无法施展。我们无法直接在`FileList`组件内针对 files 数组未改变的情况下做任何优化，因为 input 组件的每次状态更新都会让 `FileList` 组件的每一个部分都重新渲染一遍，优化的组件结构如下：
+```jsx
+/* -------------- FileList.js -------------- */
+class FileList extends Component {
+  state = { value: null }
+
+  onChange = (e) => this.setState({ value: e.target.value })
+
+  render() {
+    return (
+      <>
+        <input value={this.state.value} onChange={this.onChange}></input>
+        <FileListItemContainer files={this.props.files} />
+      </>
+    );
+  }
+}
+
+/* -------------- FileListItemContainer.js -------------- */
+export default React.memo(function({ files }) {
+  return (
+    <div>
+      {
+        files.map((file) => {
+          return <FileListItem key={file.name} name={file.name} />;
+        });
+      }
+    </div>
+  );
+});
+```
+
+6）正确理解组件 key 的使用策略  
+&nbsp;&nbsp;&nbsp;&nbsp; 要想理解 React组件 key 的设计理念我们得先简单了解一下React进行DOM树 diff 的过程，我们都知道Js脚本直接操作网页DOM元素时会造成重绘和回流等`低效渲染`，因此React的DOM树 diff 过程针对的是更新前后两颗虚拟的DOM树，虚拟DOM树并不是真实的DOM节点，而是一种描述页面DOM元素结构的树形数据结构，每个虚拟树节点存储了一个DOM元素的属性和样式等信息。React 需要基于这两棵树之间的差别来判断如何有效率的更新 UI 以保证当前 UI 与最新的树保持同步。为了提高树diff的效率，于是 React 在以下两个假设的基础之上提出了一套复杂度为 O(n) 的启发式算法：
+- 两个不同类型的元素会产生出不同的树(比如 img 和 span 被看做完全不同的两个节点)
+- 开发者可以通过 key 属性来暗示哪些子元素在不同的渲染下能保持稳定
+
+&nbsp;&nbsp;&nbsp;&nbsp; 如果两次渲染同一位置的某个元素的类型改变，例如从 span 变成了 image，那么不用多说这个组件和其子组件都会先被卸载，同时触发卸载前组件的生命周期`componentWillUnmount`，然后将新的DOM节点渲染添加到页面上，新的组件实例将执行 `componentWillMount`、`componentDidMount` 等周期方法，所有跟之前的树所关联的 state 也会被销毁。  
+
+&nbsp;&nbsp;&nbsp;&nbsp; 如果两次渲染组件的类型未改变，React 将更新该组件实例的 props 以跟最新的元素保持一致，并且调用该实例的 `componentWillReceiveProps`、`componentWillUpdate` 以及 `componentDidUpdate` 方法。下一步，React 会调用 `render()`方法并递归式的比较其子节点的并收集其产生的差异。想象我们在子元素列表末尾新增元素时：
+```js
+<ul>
+  <li>first</li>
+  <li>second</li>
+</ul>
+/* 插入third */
+<ul>
+  <li>first</li>
+  <li>second</li>
+  <li>third</li>
+</ul>
+```
+React 会先匹配到两颗虚拟DOM树对应的 `first`节点，然后匹配到两棵树的 `second` 节点，最后发现在`second`之后出现了一个全新的节点，dom渲染时就会插入第三个元素 `<li>third</li>` 到`second`之后，其更新开销会比较小。  
+
+&nbsp;&nbsp;&nbsp;&nbsp; 但是也有一种比较坏的情况，当我们将`third`节点插入到列表头时，React在 diff 过程中发现所有子节点都发生了变化(整体位置发生了相对改变)，React 不会意识到应该保留`first`和`second`，而是会重建每一个子元素，这种情况会带来性能问题：
+```jsx
+<ul>
+  <li>first</li>
+  <li>second</li>
+</ul>
+/* 插入third */
+<ul>
+  <li>third</li>
+  <li>first</li>
+  <li>second</li>
+</ul>
+```
+&nbsp;&nbsp;&nbsp;&nbsp; 为了解决以上问题，React 支持 `key` 属性。当子元素拥有 key 时，React 使用 key 来匹配原有树上的子元素以及最新树上的子元素，相当于每个子节点都有了ID，因此能够游刃有余的判断哪些节点需要重建，而哪些节点只需要进行简单的位置移动即可。比如上个例子中React根据组件的Key就能识别我们只需要新建`third`节点并将它插入到first节点之前就能满足要求，而不需要将列表元素都重建一遍。  
+
+对组件key的**误解和乱用：**
+- 页面中的所有组件key都不能重复 => 错！我们只需要保证同一列表层级的组件key不重复即可，当有重复key时可能会导致React在多次渲染时结果错乱。
+- 使用`Math.random()`函数来随机产生key值 => 大错特错！这样子做了之后，每次渲染key值都会变化，会引起所有使用了key的组件都会被卸载重建一次，性能优化效果为负。
+- key值只能用于列表组件 => 错！我们可以给任意一个组件添加key值，比如我们想让某个组件在props/state完全没改变的情况下触发其重建更新，那么就可以给予它两个阶段不同的key值。一个例子是用于重置Antd Form表单状态，让其在某些特殊情况下以之前的默认值重新挂载(触发表单更改后其默认值无法恢复)。
+
+7）使用虚拟化渲染技术来优化超长列表组件  
+&nbsp;&nbsp;&nbsp;&nbsp; 有时候项目中要求我们在不使用分页的情况下渲染一个超长的列表组件，比如一个文件上传列表里面的每个文件上传任务，我们同时添加成千上万个上传任务，然后并行上传几个，操作者同时也能通过列表的上下滚动来查看每个上传任务的状态。这种变态数量级的界面元素展示+本就不简单的上传流程控制，必然导致我们的界面会有一定程度的卡顿。  
+&nbsp;&nbsp;&nbsp;&nbsp; 一个解决方案就是可以采用懒加载技术来实现当滚动到任务列表底部时加载其余的一小部分任务列表元素，这样虽然解决了初次渲染时耗费时间过长的问题，不过随着滚动到底部加载的任务条目越来越多，界面的渲染负载也会越来越大。这种情况下采用虚拟化滚动技术来进行优化就显得很有必要了。  
+&nbsp;&nbsp;&nbsp;&nbsp; 虚拟列表是一种根据滚动容器元素的可视区域高度来渲染长列表数据中某一个部分数据的技术。这里需要简单了解一下其原理，如果要直接使用的话可以考虑这两个热门的虚拟滚动库 [react-window](https://react-window.now.sh/) 和 [react-virtualized](https://bvaughn.github.io/react-virtualized/)。
+
+首先清楚虚拟化滚动技术中的几个**关键元素**：
+
+![vitual-scroll](./images/vitual-scroll.png)
+
+- i. 滚动容器元素：一般情况下，滚动容器元素是 window 对象。然而，我们可以通过布局的方式，在某个页面中任意指定一个或者多个滚动容器元素。只要某个元素能在内部产生横向或者纵向的滚动，那这个元素就是滚动容器元素。
+- ii. 可滚动区域：滚动容器元素的内部内容区域。假设有 100 条数据，每个列表项的高度是 50，那么可滚动的区域的高度就是 100 * 50。可滚动区域当前的具体高度值一般可以通过(滚动容器)元素的 scrollHeight 属性获取。用户可以通过滚动来改变列表在可视区域的显示部分。
+- iii. 可视区域：滚动容器元素的视觉可见区域。如果容器元素是 window 对象，可视区域就是浏览器的视口大小(即视觉视口)；如果容器元素是某个 div 元素，其高度是 300，右侧有纵向滚动条可以滚动，那么视觉可见的区域就是可视区域。
+
+&nbsp;&nbsp;&nbsp;&nbsp; 先来说明如何在只渲染少量可视元素的情况下，还能让滚动条的长度和位置显示正确：
+- i. 首先明确滚动容器内容的总高度=`列表元素高度 * 列表元素总个数`，容器可视高度固定，通过设置css `overflow: scroll` 就能显示滚动条。
+- ii. 滚动容器的可视高度固定，那么可视区域能显示的列表元素个数=`容器可视高度/列表元素高度`，这些少量的元素不足以撑起容器元素的进行滚动，滚动容器滚动条高度仍然会为0。因此我们通过设置容器元素`paddingTop+paddingBottom`(startOffset+endOffset)来让容器元素内容总高度正确显示，这里`padding+可视高度=容器内容总高度`。
+```jsx
+...
+render() {
+  return (
+    <div
+      style={{
+        paddingTop: `${startOffset}px`,
+        paddingBottom: `${endOffset}px`
+      }}
+      className='wrapper'
+    >
+      { /* render list */ }
+    </div>
+  )
+}
+```
+- iii. 容器能正确显示滚动高度了，那么如何让我们在滚动的时候能知道应该显示哪些元素呢？一个巧妙的方法就是根据当前滚动条的`scrollTop`(滚动容器的固有属性：能够向上滚动的高度值，可以直接获取)计算首个应该渲染的元素的索引`startIndex`以及最后需要渲染的元素的索引`endIndex`，然后再根据两个索引分别计算paddingTop和paddingBottom即可：
+  - startIndex = Math.ceil(scrollTop / 滚动元素高度)
+  - 可视元素个数 = 可视区域高度 / 滚动元素高度
+  - endIndex = startIndex + 可视区域元素个数
+  - 当前渲染元素renderItems = data.slice(startIndex, endIndex)
+  - paddingTop = startIndex * 滚动元素高度
+  - paddingBottom = (this.data.length - this.endIndex) * 滚动元素高度
+
+&nbsp;&nbsp;&nbsp;&nbsp; 以上为简化的描述模型，实际实现时还要考虑：缓存已经加载的列表元素的位置信息、列表元素的高度是否可变、增加缓冲元素来减少白屏情况(缓冲元素就是预加载的几个接近视口可显示元素的上下部分其它元素)、容易元素resize后的处理等。
+
 
 #### ➣ webpack性能优化方面
 
