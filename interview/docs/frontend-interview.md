@@ -3,6 +3,79 @@
 ### Contents
 -----------
 
+- [前端重难点攻坚指南(updating)](#%E5%89%8D%E7%AB%AF%E9%87%8D%E9%9A%BE%E7%82%B9%E6%94%BB%E5%9D%9A%E6%8C%87%E5%8D%97updating)
+- [### Contents](#contents)
+- [### I. 面试阶段分析](#i-%E9%9D%A2%E8%AF%95%E9%98%B6%E6%AE%B5%E5%88%86%E6%9E%90)
+- [### II. 个人介绍](#ii-%E4%B8%AA%E4%BA%BA%E4%BB%8B%E7%BB%8D)
+    - [➣ 重点](#%E2%9E%A3-%E9%87%8D%E7%82%B9)
+    - [➣ 描述在上一家公司的工作经历](#%E2%9E%A3-%E6%8F%8F%E8%BF%B0%E5%9C%A8%E4%B8%8A%E4%B8%80%E5%AE%B6%E5%85%AC%E5%8F%B8%E7%9A%84%E5%B7%A5%E4%BD%9C%E7%BB%8F%E5%8E%86)
+    - [➣ 范例](#%E2%9E%A3-%E8%8C%83%E4%BE%8B)
+    - [➣ 项目经历介绍](#%E2%9E%A3-%E9%A1%B9%E7%9B%AE%E7%BB%8F%E5%8E%86%E4%BB%8B%E7%BB%8D)
+- [### III. 要点：HTML/CSS](#iii-%E8%A6%81%E7%82%B9htmlcss)
+    - [➣ BFC及其应用](#%E2%9E%A3-bfc%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8)
+    - [➣ 两列布局实现](#%E2%9E%A3-%E4%B8%A4%E5%88%97%E5%B8%83%E5%B1%80%E5%AE%9E%E7%8E%B0)
+    - [➣ 1px问题](#%E2%9E%A3-1px%E9%97%AE%E9%A2%98)
+    - [➣ 浮动布局相关](#%E2%9E%A3-%E6%B5%AE%E5%8A%A8%E5%B8%83%E5%B1%80%E7%9B%B8%E5%85%B3)
+    - [➣ 位图和矢量图的区别](#%E2%9E%A3-%E4%BD%8D%E5%9B%BE%E5%92%8C%E7%9F%A2%E9%87%8F%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB)
+- [### IV. 要点：Javascript](#iv-%E8%A6%81%E7%82%B9javascript)
+    - [➣ js类型的判断](#%E2%9E%A3-js%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%88%A4%E6%96%AD)
+    - [➣ 实现Call和Apply](#%E2%9E%A3-%E5%AE%9E%E7%8E%B0call%E5%92%8Capply)
+    - [➣ 实现对象new操作](#%E2%9E%A3-%E5%AE%9E%E7%8E%B0%E5%AF%B9%E8%B1%A1new%E6%93%8D%E4%BD%9C)
+    - [➣ Js实现继承](#%E2%9E%A3-js%E5%AE%9E%E7%8E%B0%E7%BB%A7%E6%89%BF)
+    - [➣ 手写深拷贝和浅拷贝](#%E2%9E%A3-%E6%89%8B%E5%86%99%E6%B7%B1%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B5%85%E6%8B%B7%E8%B4%9D)
+    - [➣ ES6新增特性](#%E2%9E%A3-es6%E6%96%B0%E5%A2%9E%E7%89%B9%E6%80%A7)
+    - [➣ 移动端点击穿透问题](#%E2%9E%A3-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E7%82%B9%E5%87%BB%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98)
+    - [➣ 图片懒加载具体实现方案和思路](#%E2%9E%A3-%E5%9B%BE%E7%89%87%E6%87%92%E5%8A%A0%E8%BD%BD%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E5%92%8C%E6%80%9D%E8%B7%AF)
+    - [➣ 函数防抖和节流实现](#%E2%9E%A3-%E5%87%BD%E6%95%B0%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81%E5%AE%9E%E7%8E%B0)
+    - [➣ Js/Node的事件循环(宏任务、微任务)](#%E2%9E%A3-jsnode%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E5%AE%8F%E4%BB%BB%E5%8A%A1%E5%BE%AE%E4%BB%BB%E5%8A%A1)
+    - [➣ 页面加载会触发哪些事件](#%E2%9E%A3-%E9%A1%B5%E9%9D%A2%E5%8A%A0%E8%BD%BD%E4%BC%9A%E8%A7%A6%E5%8F%91%E5%93%AA%E4%BA%9B%E4%BA%8B%E4%BB%B6)
+    - [➣ document.ready和window.onload的区别](#%E2%9E%A3-documentready%E5%92%8Cwindowonload%E7%9A%84%E5%8C%BA%E5%88%AB)
+    - [➣ 闭包Closure](#%E2%9E%A3-%E9%97%AD%E5%8C%85closure)
+    - [➣ 函数式编程思想的体现](#%E2%9E%A3-%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E7%9A%84%E4%BD%93%E7%8E%B0)
+    - [➣ vue双向绑定实现原理](#%E2%9E%A3-vue%E5%8F%8C%E5%90%91%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)
+    - [➣ Vue2.0与Vue3.0双向绑定，proxy实现](#%E2%9E%A3-vue20%E4%B8%8Evue30%E5%8F%8C%E5%90%91%E7%BB%91%E5%AE%9Aproxy%E5%AE%9E%E7%8E%B0)
+    - [➣ React-Fiber原理和生命周期使用详解](#%E2%9E%A3-react-fiber%E5%8E%9F%E7%90%86%E5%92%8C%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3)
+    - [➣ React虚拟dom以及diff算法](#%E2%9E%A3-react%E8%99%9A%E6%8B%9Fdom%E4%BB%A5%E5%8F%8Adiff%E7%AE%97%E6%B3%95)
+    - [➣ Babel源码](#%E2%9E%A3-babel%E6%BA%90%E7%A0%81)
+    - [➣ React SetState原理](#%E2%9E%A3-react-setstate%E5%8E%9F%E7%90%86)
+    - [➣ 前端错误监控方法](#%E2%9E%A3-%E5%89%8D%E7%AB%AF%E9%94%99%E8%AF%AF%E7%9B%91%E6%8E%A7%E6%96%B9%E6%B3%95)
+    - [➣ 实现一个EventEmitter类，支持事件的on,off,emit,once,setMaxListeners。](#%E2%9E%A3-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AAeventemitter%E7%B1%BB%E6%94%AF%E6%8C%81%E4%BA%8B%E4%BB%B6%E7%9A%84onoffemitoncesetmaxlisteners)
+    - [➣ 如何自己实现一个单点登录系统](#%E2%9E%A3-%E5%A6%82%E4%BD%95%E8%87%AA%E5%B7%B1%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E5%8D%95%E7%82%B9%E7%99%BB%E5%BD%95%E7%B3%BB%E7%BB%9F)
+    - [➣ 使用ES5实现Promise](#%E2%9E%A3-%E4%BD%BF%E7%94%A8es5%E5%AE%9E%E7%8E%B0promise)
+- [### V. 要点：Node.js](#v-%E8%A6%81%E7%82%B9nodejs)
+    - [➣ 谈谈node子进程child_process和实际使用场景](#%E2%9E%A3-%E8%B0%88%E8%B0%88node%E5%AD%90%E8%BF%9B%E7%A8%8Bchildprocess%E5%92%8C%E5%AE%9E%E9%99%85%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF)
+    - [➣ node是IO密集型体现在哪里](#%E2%9E%A3-node%E6%98%AFio%E5%AF%86%E9%9B%86%E5%9E%8B%E4%BD%93%E7%8E%B0%E5%9C%A8%E5%93%AA%E9%87%8C)
+- [### VI. 要点：设计模式](#vi-%E8%A6%81%E7%82%B9%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F)
+- [### VII. 要点：前端工具](#vii-%E8%A6%81%E7%82%B9%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7)
+    - [➣ 打包gulp/webpack/rollup一些区别](#%E2%9E%A3-%E6%89%93%E5%8C%85gulpwebpackrollup%E4%B8%80%E4%BA%9B%E5%8C%BA%E5%88%AB)
+    - [➣ ts自己的看法，和应用](#%E2%9E%A3-ts%E8%87%AA%E5%B7%B1%E7%9A%84%E7%9C%8B%E6%B3%95%E5%92%8C%E5%BA%94%E7%94%A8)
+    - [➣ webpack loader和plugin区别](#%E2%9E%A3-webpack-loader%E5%92%8Cplugin%E5%8C%BA%E5%88%AB)
+    - [➣ webpack中循环引用问题，a里面引用了b，b里面引用了a](#%E2%9E%A3-webpack%E4%B8%AD%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8%E9%97%AE%E9%A2%98a%E9%87%8C%E9%9D%A2%E5%BC%95%E7%94%A8%E4%BA%86bb%E9%87%8C%E9%9D%A2%E5%BC%95%E7%94%A8%E4%BA%86a)
+- [### VIII. 要点：前端性能优化](#viii-%E8%A6%81%E7%82%B9%E5%89%8D%E7%AB%AF%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96)
+    - [➣ webpack性能优化方面](#%E2%9E%A3-webpack%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%96%B9%E9%9D%A2)
+    - [➣ 服务器性能优化方面](#%E2%9E%A3-%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%96%B9%E9%9D%A2)
+    - [➣ 弱网环境下页面首屏如何快速加载](#%E2%9E%A3-%E5%BC%B1%E7%BD%91%E7%8E%AF%E5%A2%83%E4%B8%8B%E9%A1%B5%E9%9D%A2%E9%A6%96%E5%B1%8F%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E5%8A%A0%E8%BD%BD)
+- [### IX. 要点：操作系统和网络](#ix-%E8%A6%81%E7%82%B9%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%92%8C%E7%BD%91%E7%BB%9C)
+    - [➣ 常见的网页攻击方式，如何防范](#%E2%9E%A3-%E5%B8%B8%E8%A7%81%E7%9A%84%E7%BD%91%E9%A1%B5%E6%94%BB%E5%87%BB%E6%96%B9%E5%BC%8F%E5%A6%82%E4%BD%95%E9%98%B2%E8%8C%83)
+      - [1. XSS：跨站脚本攻击(Cross-site scripting)](#1-xss%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%AC%E6%94%BB%E5%87%BBcross-site-scripting)
+      - [2. XSRF：跨站请求伪造(Cross-site request forgery)](#2-xsrf%E8%B7%A8%E7%AB%99%E8%AF%B7%E6%B1%82%E4%BC%AA%E9%80%A0cross-site-request-forgery)
+    - [➣ 跨域的基本概念和解决方法，在项目中的实际应用](#%E2%9E%A3-%E8%B7%A8%E5%9F%9F%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95%E5%9C%A8%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8)
+    - [➣ 强缓存和协商缓存，缓存的应用，如何用在页面性能优化上](#%E2%9E%A3-%E5%BC%BA%E7%BC%93%E5%AD%98%E5%92%8C%E5%8D%8F%E5%95%86%E7%BC%93%E5%AD%98%E7%BC%93%E5%AD%98%E7%9A%84%E5%BA%94%E7%94%A8%E5%A6%82%E4%BD%95%E7%94%A8%E5%9C%A8%E9%A1%B5%E9%9D%A2%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%8A)
+    - [爬虫方面问题，反爬如何实现，针对反爬的实现(IP代理等）](#%E7%88%AC%E8%99%AB%E6%96%B9%E9%9D%A2%E9%97%AE%E9%A2%98%E5%8F%8D%E7%88%AC%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E9%92%88%E5%AF%B9%E5%8F%8D%E7%88%AC%E7%9A%84%E5%AE%9E%E7%8E%B0ip%E4%BB%A3%E7%90%86%E7%AD%89)
+    - [➣ 进程和线程区别](#%E2%9E%A3-%E8%BF%9B%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8B%E5%8C%BA%E5%88%AB)
+    - [➣ cpu调度算法](#%E2%9E%A3-cpu%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95)
+    - [➣ 2台计算机底层之间如何通信 socket IO通信实现](#%E2%9E%A3-2%E5%8F%B0%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%BA%95%E5%B1%82%E4%B9%8B%E9%97%B4%E5%A6%82%E4%BD%95%E9%80%9A%E4%BF%A1-socket-io%E9%80%9A%E4%BF%A1%E5%AE%9E%E7%8E%B0)
+    - [➣ cookie中常见的字段](#%E2%9E%A3-cookie%E4%B8%AD%E5%B8%B8%E8%A7%81%E7%9A%84%E5%AD%97%E6%AE%B5)
+    - [➣ 同源策略](#%E2%9E%A3-%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5)
+    - [➣ http中一些常见的响应头和请求头，有什么应用](#%E2%9E%A3-http%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%B8%B8%E8%A7%81%E7%9A%84%E5%93%8D%E5%BA%94%E5%A4%B4%E5%92%8C%E8%AF%B7%E6%B1%82%E5%A4%B4%E6%9C%89%E4%BB%80%E4%B9%88%E5%BA%94%E7%94%A8)
+    - [➣ 简单请求和非简单请求区别](#%E2%9E%A3-%E7%AE%80%E5%8D%95%E8%AF%B7%E6%B1%82%E5%92%8C%E9%9D%9E%E7%AE%80%E5%8D%95%E8%AF%B7%E6%B1%82%E5%8C%BA%E5%88%AB)
+    - [➣ http2.0 http3.0作了哪些优化](#%E2%9E%A3-http20-http30%E4%BD%9C%E4%BA%86%E5%93%AA%E4%BA%9B%E4%BC%98%E5%8C%96)
+    - [➣ https建立连接过程](#%E2%9E%A3-https%E5%BB%BA%E7%AB%8B%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B)
+    - [➣ 计算机网络中，http地址，在7层协议中，如何一步步向下解析，从应用层到最底层的物理层，每一层处理的事情](#%E2%9E%A3-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B8%ADhttp%E5%9C%B0%E5%9D%80%E5%9C%A87%E5%B1%82%E5%8D%8F%E8%AE%AE%E4%B8%AD%E5%A6%82%E4%BD%95%E4%B8%80%E6%AD%A5%E6%AD%A5%E5%90%91%E4%B8%8B%E8%A7%A3%E6%9E%90%E4%BB%8E%E5%BA%94%E7%94%A8%E5%B1%82%E5%88%B0%E6%9C%80%E5%BA%95%E5%B1%82%E7%9A%84%E7%89%A9%E7%90%86%E5%B1%82%E6%AF%8F%E4%B8%80%E5%B1%82%E5%A4%84%E7%90%86%E7%9A%84%E4%BA%8B%E6%83%85)
+- [### X. 要点：Leetcode算法刷题](#x-%E8%A6%81%E7%82%B9leetcode%E7%AE%97%E6%B3%95%E5%88%B7%E9%A2%98)
+    - [➣ 考察重点](#%E2%9E%A3-%E8%80%83%E5%AF%9F%E9%87%8D%E7%82%B9)
+    - [➣ 推荐作者和资源](#%E2%9E%A3-%E6%8E%A8%E8%8D%90%E4%BD%9C%E8%80%85%E5%92%8C%E8%B5%84%E6%BA%90)
+
 ### I. 面试阶段分析
 ----------
 
@@ -27,14 +100,26 @@
 ...
 
 #### ➣ 描述在上一家公司的工作经历
-在前一个公司，我们使用React/Mobx/Node.js/Electron等技术，我主要负责一个存储集群产品的前端开发迭代、中间层维护和通用打包脚本编写这些。也曾担任过一个SMB客户端产品主要开发工作，负责项目搭建、架构优化以及多文件分片上传模块编写。
+&nbsp;&nbsp;&nbsp;&nbsp; 在前一个公司，我们使用React/Mobx/Node.js/Electron等技术，我主要负责一个存储集群产品的前端开发迭代、中间层维护和通用打包脚本编写这些。也曾担任过一个SMB客户端产品主要开发工作，负责项目搭建、架构优化以及多文件分片上传模块编写。
 
 #### ➣ 范例
-面试官，你好，我叫xx，毕业于xx大学xx专业，三年工作经验。在前一个公司主要负责一个存储集群产品的前端开发、中间层维护和通用打包脚本编写这些，也担任过一个SMB客户端产品主要开发工作，负责项目搭建、架构优化以及多文件分片上传模块编写。  
+&nbsp;&nbsp;&nbsp;&nbsp; 面试官，你好，我叫xx，毕业于xx大学xx专业，三年工作经验。在前一个公司主要负责一个存储集群产品的前端开发、中间层维护和通用打包脚本编写这些，也担任过一个SMB客户端产品主要开发工作，负责项目搭建、架构优化以及多文件分片上传模块编写。  
 自己比较擅长从日常工作中分析总结，制定对某类问题的解决方法，编写效率工具。  
 在技术方面比较熟悉React/Node开发，对前端客户端技术Electron也有涉猎，平时会更新技术博客和Github。
 
 #### ➣ 项目经历介绍
+
+1. 公司项目(列举重点)
+   - 超融合项目的共同构建 - nodejs中间层搭建、项目初始化流程的界面实现、新老界面通信工具编写：之前的老项目使用 php/jquery 技术栈，因为老项目和重构项目需要一起对外出货，所以我们团队考虑将老项目页面和基于react技术的重构项目页面使用iframe组合起来，老项目内嵌在iframe内，并且通过设置cookie 的作用域为根层级实现登录信息cookie共享。即使共享了cookie，新老界面也需要一定的通信机制进行状态同步和通知接口调用等等，我们使用了iframe的`postMessage`API进行通信，我着手编写了这个通信工具，在老界面监听window的`message`事件，并判断其是否来自加载当前iframe页面的父页面，如果是的话就提取出其携带的数据data和操作action执行一些操作，比如：设置当前界面的cookie信息、请求父页面切换路由、请求父页面登出、请求父页面发送通知等等。
+   - 前端迭代子项目 - 对象存储AWS服务管理：主要功能是基于Ceph的S3对象存储服务的用户管理、桶管理、桶详情设置等。我主要负责前期预研、原生S3接口的请求发送工具编写、对象存储桶管理和桶设置编写等。其中node中间层的接口请求工具需要使用用户的ak/sk信息进行URL签名，进行前台和后端json/xml数据的相互转换以及请求返回错误处理和请求头hash字段自动添加等。界面方面除了桶管理部分的桶创建、列举功能，还参与了桶详情中桶的配额、权限、生命周期、写保护等功能的编写。
+   - 前端迭代子项目 - 对象存储数据湖：集成之前对象存储服务的部分桶功能，能够列举所有监听的桶，桶详情新增了为桶设置元数据模板数据树功能，同时后端接入了ES数据库进行单个集群内已经监听的桶内的的对象数据进行条件搜索，数据搜索详情界面同时也能打开单个数据对象进行预览、下载、权限设置、模板元数据设置、标签设置等等。
+   - Electron客户端项目 - 集群SMB共享客户端：SMB服务是集群提供的一个文件共享服务，客户端主要功能是添加多个远端集群节点、用户能够登录某个集群、列举集群的所有共享文件夹并查看每一级的文件和目录、能够设置文件和目录等的访问权限、删除文件、上传多个文件和文件夹到某一层级的目录、上传任务列表的显示等等。我主要负责Electron项目的搭建和架构设计、打包流程实现和优化、多文件上传任务管理模块的整体实现、登录流程的实现以及其它模块的Electron代码编写等。
+   - 前端项目的RPM打包：我们所有的代码不需要线上部署，运行在本地集群内，前后端所有模块最终都会被打包成多个RPM包，并集成为一个Linux ISO镜像，服务器集群运行CentOS操作系统，安装好这个ISO镜像后基础环境就搭建好了。我负责的打包流程可以描述为：先将前端项目使用webpack打包成静态文件后将其上传到gitlab仓库，然后登录Linux虚拟机进入打包脚本目录运行一个一键打包命令比如：`bash dbuilder-v3 --webpath /root/github/dview --version 1.0.1 --release 1002 --target arm64 --alias feature01`即可进行打包。一键打包脚本由我编写，主要负责git仓库的拉取更新、将所需的中间层代码和前端dist静态文件复制到特定的打包目录、使用脚本传入的参数对rpm包`spec`打包配置文件进行动态配置、显示打包流程信息、以及将最后打包好的rpm文件放入一个特殊的目录等等，运行命令后所有操作按序自动完成。
+
+2. 个人项目(列举亮点项目)
+   - [electronux](https://github.com/nojsja/electronux) 一个基于Electron客户端技术，使用React、Node、Mobx、Shell脚本等技术开发的Linux电脑管家，可以实现Ubuntu系统下一些自用软件的一键安装和卸载、开机自启应用定制、垃圾清理、系统信息查看等功能。这Electron技术的早期实践项目，亮点是Node.js执行Shell外部脚本和调用子进程运行操作系统命令的实践，实现了根据Node.js子进程中命令执行情况来为用户自动输入密码的功能，原理是监听子进程输出流的错误信息，当错误信息中包含某个自定义的特殊字符串时，说明当前执行的命令正在请求用户输入密码，我们将内存中存入的密码信息以输入流的形式写入子进程即可触发子进程中命令的密码自动填充。
+   - [electron-re](https://github.com/nojsja/electron-re) 一个用于Electron项目中的多进程创建、管理和监控的工具，已经发布到NPM仓库。Electron中通常不能把过度占用CPU的代码放入主进程，因此`electron-re`实现了一个不显示界面的Service进程类用于创建一个或多个Service实例从而将占用CPU的代码放入其中，并且`electron-re`提供了一个公用工具`MessageChannel`用于子进程、主进程、Service进程之间的通信；除此之外`electron-re`中简单实现了一个不依赖于Electron运行时的子进程池类`ChildProcessPool`和子进程中使用的进程事务中心`ProcessHost`，前者用于创建一个子进程池实例来负责多个子进程的创建和协调，后者可以简化子进程和进程池实例的数据传输过程。工具还提供了一个进程状态UI管理界面，可以用于展示Electron子进程、Electron主进程、进程池子进程的进程号、进程标识、CPU/Memory占用趋势，也可用于Electron子进程的devtools工具快速开启、进程的一键Kill等功能。
+   - [EditableTree](https://github.com/nojsja/react-nojsja/tree/master/components/EditableTree) 一个基于Antd开发的可编辑树组件，已经发布到NPM仓库，可实现树形数据的各个层级增删查改、yaml数据转化为多个树节点、树深度限制、自定义树层级是否可编辑、可删除等功能。开发这个组件的目的主要是为了弥补Antd中树组件不可任意编辑的问题，以满足业务需求。
 
 ### III. 要点：HTML/CSS
 ----------
