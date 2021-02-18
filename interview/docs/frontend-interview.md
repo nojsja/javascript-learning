@@ -12,11 +12,17 @@
     - [➣ 范例](#%E2%9E%A3-%E8%8C%83%E4%BE%8B)
     - [➣ 项目经历介绍](#%E2%9E%A3-%E9%A1%B9%E7%9B%AE%E7%BB%8F%E5%8E%86%E4%BB%8B%E7%BB%8D)
 - [### III. 要点：HTML/CSS](#iii-%E8%A6%81%E7%82%B9htmlcss)
+    - [➣ position各个属性的作用](#%E2%9E%A3-position%E5%90%84%E4%B8%AA%E5%B1%9E%E6%80%A7%E7%9A%84%E4%BD%9C%E7%94%A8)
+    - [➣ display各个属性作用](#%E2%9E%A3-display%E5%90%84%E4%B8%AA%E5%B1%9E%E6%80%A7%E4%BD%9C%E7%94%A8)
+      - [1. 外部显示](#1-%E5%A4%96%E9%83%A8%E6%98%BE%E7%A4%BA)
+      - [2. 内部显示](#2-%E5%86%85%E9%83%A8%E6%98%BE%E7%A4%BA)
+      - [3. 内部表现](#3-%E5%86%85%E9%83%A8%E8%A1%A8%E7%8E%B0)
     - [➣ BFC及其应用](#%E2%9E%A3-bfc%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8)
     - [➣ 两列布局实现](#%E2%9E%A3-%E4%B8%A4%E5%88%97%E5%B8%83%E5%B1%80%E5%AE%9E%E7%8E%B0)
     - [➣ 1px问题](#%E2%9E%A3-1px%E9%97%AE%E9%A2%98)
     - [➣ 浮动布局相关](#%E2%9E%A3-%E6%B5%AE%E5%8A%A8%E5%B8%83%E5%B1%80%E7%9B%B8%E5%85%B3)
     - [➣ 位图和矢量图的区别](#%E2%9E%A3-%E4%BD%8D%E5%9B%BE%E5%92%8C%E7%9F%A2%E9%87%8F%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB)
+    - [opacity: 0、visibility: hidden、display: none 的异同](#opacity-0visibility-hiddendisplay-none-%E7%9A%84%E5%BC%82%E5%90%8C)
 - [### IV. 要点：Javascript](#iv-%E8%A6%81%E7%82%B9javascript)
     - [➣ js类型的判断](#%E2%9E%A3-js%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%88%A4%E6%96%AD)
     - [➣ 实现Call和Apply](#%E2%9E%A3-%E5%AE%9E%E7%8E%B0call%E5%92%8Capply)
@@ -124,36 +130,123 @@
 ### III. 要点：HTML/CSS
 ----------
 
+#### ➣ position各个属性的作用
+- **static(默认值)**：浏览器会按照源码的顺序，决定每个元素的位置，这称为"正常的页面流"。
+- **relative**：表示元素相对于默认位置（即static时的位置）进行偏移，即定位基点是元素的默认位置。需要搭配top、bottom、left、right这四个属性一起使用，用来指定偏移的方向和距离，例如`top: 20px;`表示`元素从默认位置向下偏移20px`。
+- **fixed**：表示元素相对于视口（viewport，浏览器窗口）进行偏移，即定位基点是浏览器窗口。这会导致元素的位置不随页面滚动而变化，好像固定在网页上一样。例如`top:0`表示元素在视口顶部。
+- **absolute**：absolute表示，相对于上级元素（一般是父元素）进行偏移，即定位基点是父元素。不过定位基点（一般是父元素）不能是static定位，否则定位基点就会变成整个网页的根元素html，另外，absolute定位也必须搭配top、bottom、left、right这四个属性一起使用。
+- **sticky**：sticky跟前面四个属性值都不一样，它会产生动态效果，很像relative和fixed的结合：一些时候是relative定位（定位基点是自身默认位置），另一些时候自动变成fixed定位（定位基点是视口），需要搭配`top、bottom、left、right`使用。它的具体规则是，当页面滚动，父元素开始脱离视口时（即部分不可见），只要与sticky元素的距离达到生效门槛，relative定位自动切换为fixed定位；等到父元素完全脱离视口时（即完全不可见），fixed定位自动切换回relative定位。
+
+#### ➣ display各个属性作用
+
+<details>
+<summary>点击展开查看</summary>
+
+
+&nbsp;&nbsp;&nbsp;&nbsp; display属性可以设置元素的内部和外部显示类型，元素的外部显示类型将决定该元素在流式布局中的表现，例如块级或内联元素，元素的内部显示类型可以控制其子元素的布局，例如grid或flex。目前所有浏览器都支持display属性，但是对于属性值的兼容性仍需注意。
+
+##### 1. 外部显示
+&nbsp;&nbsp;&nbsp;&nbsp; 这些值指定了元素的外部显示类型，实际上就是其在流式布局中的角色，即在流式布局中的表现。
+
+- display: **none**  
+display: none;是CSS1规范，无兼容性问题，该属性值表示此元素不会被显示，依照词义是真正隐藏元素，使用这个属性，被隐藏的元素不占据任何空间，用户交互操作例如点击事件都不会生效，读屏软件也不会读到元素的内容，这个元素的任何子元素也会同时被隐藏。当使用该属性将元素从显示状态切换为隐藏状态时，元素不占据原本的空间，会触发浏览器的重绘与回流。为这个属性添加过渡动画是无效的，他的任何不同状态值之间的切换总是会立即生效。这种方式产生的效果就像元素完全不存在，但在DOM中依然可以访问到这个元素，也可以通过DOM来操作它。
+
+- display: **block**  
+display: block;是CSS1规范，无兼容性问题，该属性值表示此元素将显示为块级元素，此元素前后会带有换行符，元素独占一行，封闭后自动换行，默认宽度为100%，可以指定宽度和高度，内外边距对于四个方向有效。
+
+- display: **inline**  
+display: inline;是CSS1规范，无兼容性问题，该属性值表示此元素会被显示为内联元素，元素会生成一个或多个内联元素框，这些框不会在自身之前或之后产生换行符，在正常流中，如果有空间，则下一个元素将在同一行上，元素排在一行，封闭后不会自动换行，不能指定高度与宽度，可以使用line-height来指定行高，外边距对于水平方向有效，垂直方向无效，内边距对于水平方向和垂直方向正常有效，对其他元素无任何影响。
+
+- display: **inline-block**  
+display: inline-block;是CSS2规范，无兼容性问题，该属性值表示此元素将显示为内联块元素，该元素生成一个块元素框，该框将随周围的内容一起流动，就好像它是单个内联框一样，与被替换的元素非常相似，它等效于内联流根inline flow-root，可以指定宽度和高度，内外边距对于四个方向有效元素排在一行，但是在回车后会有空白缝隙。
+
+- display: **run-in**  
+display: run-in;是CSS2规范，绝大部分浏览器都不兼容，目前这是个实验性属性值，不应该用作生产环境，该属性值表示此元素会根据上下文决定对象是内联对象还是块级对象，如果它后一个元素是block那么它会变成inline并和后一个元素并排，如果它后一个元素是inline那么它会变成block。
+
+##### 2. 内部显示
+&nbsp;&nbsp;&nbsp;&nbsp; 这些关键字指定了元素的内部显示类型，它们定义了该元素内部内容的布局方式，需要假定该元素为非替换元素。
+
+- display: **flow-root**  
+display: flow-root;是CSS3规范，兼容性一般，该属性值表示此元素会生成一个块元素盒子，该元素盒子可建立一个新的块格式化上下文BFC，定义格式化根所在的位置。
+
+- display: **table**  
+display: table;是CSS2规范，兼容性良好，该属性值表示此元素会作为块级表格来显示，类似`<table>`，表格前后带有换行符。
+
+- display: **flex**  
+display: flex;是CSS3规范，目前主流浏览器都已支持，是布局的首选方案，该属性值表示此元素会作为弹性盒子显示，在外部表现为block，内部作为弹性盒子使用，弹性布局可以为盒状模型提供最大的灵活性。在兼容移动端浏览器的方案上，有可能需要使用display:-webkit-box;，也就是内核前缀-box，同样都是弹性盒子，由于各阶段草案命名的原因，其命名从box更改为flex，flex是新的规范属性，此外flex并不能完全替代box，使用这两种方式在实际布局中会存在差异。
+
+- display: **grid**  
+display: grid;是CSS3规范，目前主流浏览器都已支持，该属性值表示将元素分为一个个网格，然后利用这些网格组合做出各种各样的布局。Grid布局与Flex布局有一定的相似性，都可以指定容器内部多个成员的位置。不同之处在于，Flex布局是轴线布局，只能指定成员针对轴线的位置，可以看作是一维布局。Grid布局则是将容器划分成行和列，产生单元格，然后指定成员所在的单元格，可以看作是二维布局。
+
+- display: **inline-table**  
+display: inline-table;是CSS2规范，兼容性良好，该属性值与display: table;在元素内部表现相同，在元素外部显示表现为inline。
+
+- display: **inline-flex**  
+display: inline-flex;是CSS3规范，目前主流浏览器都已支持，该属性值与display: flex;在元素内部表现相同，在元素外部显示表现为inline。
+
+- display: **inline-grid**  
+display: inline-grid;是CSS3规范，目前主流浏览器都已支持，该属性值与display: grid;在元素内部表现相同，在元素外部显示表现为inline。
+
+- display: **list-item**  
+display: list-item;是CSS1规范，无兼容性问题，该属性值表示将元素的外部显示类型变为block盒模型，并将内部显示类型变为多个list-item inline盒模型。
+
+##### 3. 内部表现
+&nbsp;&nbsp;&nbsp;&nbsp; table布局模型有着相对复杂的内部结构，因此它们的子元素可能扮演着不同的角色，这一类关键字就是用来定义这些内部显示类型，并且只有在这些特定的布局模型中才有意义。
+
+- display: **table-row-group**  
+display: table-row-group;是CSS2规范，兼容性良好，该属性值表示此元素会作为一个或多个行的分组来显示，类似于`<tbody>`。
+
+- display: **table-header-group**  
+display: table-header-group;是CSS2规范，兼容性良好，该属性值表示此元素会作为一个或多个行的分组来显示，类似于`<thead>`。
+
+- display: **table-footer-group**  
+display: table-footer-group;是CSS2规范，兼容性良好，该属性值表示此元素会作为一个或多个行的分组来显示，类似于`<tfoot>`。
+
+- display: **table-row**  
+display: table-row;是CSS2规范，兼容性良好，该属性值表示此元素会作为一个表格行显示，类似于`<tr>`。
+
+- display: **table-column-group**  
+display: table-column-group;是CSS2规范，兼容性良好，该属性值表示此元素会作为一个或多个列的分组来显示，类似于`<colgroup>`。
+
+- display: **table-column**  
+display: table-column;是CSS2规范，兼容性良好，该属性值表示此元素会作为一个单元格列显示，类似于`<col>`。
+
+- display: **table-cell**  
+display: table-cell;是CSS2规范，兼容性良好，该属性值表示此元素会作为一个表格单元格显示，类似于`<td>和<th>`。
+
+- display: **table-caption**  
+display: table-caption;是CSS2规范，兼容性良好，该属性值表示此元素会作为一个表格标题显示，类似于`<caption>`。
+
+</details>
+
 #### ➣ BFC及其应用
-```sh
 1) BFC 就是块级格式上下文，是页面盒模型布局中的一种 CSS 渲染模式，
 相当于一个独立的容器，里面的元素和外部的元素相互不影响。创建 BFC 的方式有：
-  html 根元素
-　float 浮动
-  overflow 不为 visiable
-  position值不为static，relative
-  display 为Table布局、Flex布局、inline-block、Grid布局
+   - html 根元素
+   - float 浮动
+   - overflow 为 hidden、auto、scroll
+   - position值为fixed、absolute、sticky
+   - display 为Table布局、Flex布局、inline-block、Grid布局
 
 2) BFC 主要的作用是：
-  清除浮动（不会和浮动元素重叠）
-  防止同一 BFC 容器中的相邻元素间的外边距重叠问题
-  多列布局
+   - 清除浮动（不会和浮动元素重叠）
+   - 防止同一 BFC 容器中的相邻元素间的外边距重叠问题
+   - 多列布局
 
 3) BFC 表现
-  内部的Box会在垂直方向上一个接一个放置
-  Box垂直方向的距离由margin决定，属于同一个BFC的两个相邻Box的margin会发生重叠
-  每个元素的 margin box 的左边，与包含块 border box 的左边相接触
-  BFC的区域不会与float box重叠
-  BFC是页面上的一个隔离的独立容器，容器里面的子元素不会影响到外面的元素
-  计算BFC的高度时，浮动元素也会参与计算
+   - 内部的Box会在垂直方向上一个接一个放置
+   - Box垂直方向的距离由margin决定，属于同一个BFC的两个相邻Box的margin会发生重叠
+   - 每个元素的 margin box 的左边，与包含块 border box 的左边相接触
+   - BFC的区域不会与float box重叠
+   - BFC是页面上的一个隔离的独立容器，容器里面的子元素不会影响到外面的元素
+   - BFC可以正确包含浮动元素，计算BFC的高度时，浮动元素也会参与计算
 
-```
 #### ➣ 两列布局实现
-```sh
 1) 使用float浮动元素同时设置元素宽度为100/列数 %
 2) 使用inline-block实现方式同1
 2) 使用css属性column-count实现
-```
+3) 使用flex布局
+
 #### ➣ 1px问题
 1. 涉及到css像素比 device pixel/css pixel = devicePixelRatio(DPR)  
 2. 解决方法一  
@@ -194,18 +287,27 @@
 在浮动容器元素后使用伪元素：
 ```css
   .container:after {
-    content: '.';
+    content: '';
     height: 0;
     display: block;
     clear: both;
   }
 ```
 4. 撑起浮动容器元素的方法三  
-利用BFC特性，设置浮动容器元素的`overflow`不为visible
+利用BFC特性，设置浮动容器元素的`overflow`为scroll、auto、hidden
 
 #### ➣ 位图和矢量图的区别
 1. 位图也叫像素图，每个点可以用二进制描述颜色和亮度信息，色彩表现丰富，占用空间大，缩放失真
 2. 矢量图使用计算机指令绘制而成，由点线面构成，色彩不丰富，占用空间小，缩放不失真
+
+####  opacity: 0、visibility: hidden、display: none 的异同
+&nbsp;&nbsp;&nbsp;&nbsp; 这几个属性它们都能让元素不可见
+
+- 结构： display:none: 会让元素完全从渲染树中消失，渲染的时候不占据任何空间, 不能点击， visibility: hidden:不会让元素从渲染树消失，渲染元素继续占据空间，只是内容不可见，不能点击 opacity: 0: 不会让元素从渲染树消失，渲染元素继续占据空间，只是内容不可见，可以点击
+
+- 继承： display: none和opacity: 0：是非继承属性，子孙节点消失由于元素从渲染树消失造成，通过修改子孙节点属性无法显示。 visibility: hidden：是继承属性，子孙节点消失由于继承了hidden，通过设置visibility: visible;可以让子孙节点显式。
+
+- 性能： displa:none : 修改元素会造成文档回流,读屏器不会读取，性能消耗较大；visibility:hidden: 修改元素只会造成本元素的重绘, 性能消耗较少，读屏器能读取；；opacity: 0 ： 修改元素会造成重绘，性能消耗较少，读屏器能读取。
 
 ### IV. 要点：Javascript
 ----------
@@ -270,11 +372,18 @@ Function.prototype.myApply = function(context, args) {
 #### ➣ 实现对象new操作
 ```js
 function New(func) {
-  var empty = Object.create(null);
-  var args = Array.prototype.slice.call(arguments, 1);
-  func.apply(empty, args);
+  if (Object.prototype.toString.call(func) !== '[object Function]')
+    throw new Error('params of theNew must be a function!');
+  
+  var empty, args, res;
+
+  empty = new Object();
+  args = Array.prototype.slice.call(arguments, 1);
+
+  res = func.apply(empty, args);
   empty.__proto__ = func.prototype;
-  return empty;
+
+  return res || empty;
 }
 ```
 #### ➣ Js实现继承
@@ -455,8 +564,6 @@ function throttle(fn, time) {
 #### ➣ Js/Node的事件循环(宏任务、微任务)
 
 #### ➣ 页面加载会触发哪些事件
-<details>
-<summary>点击展开查看</summary>
 
 1. document readystatechange事件  
 readyState 属性描述了文档的加载状态，在整个加载过程中document.readyState会不断变化，每次变化都会触发readystatechange事件。事件使用`document.onreadystatechange`进行监听。  
@@ -494,7 +601,7 @@ document.onreadystatechange = function () {
   }
 }
 ```
-</details>
+
 
 #### ➣ document.ready和window.onload的区别  
 ```sh
@@ -502,8 +609,6 @@ ready事件在DOM结构绘制完成之后就会执行，这样能确保就算有
 load事件必须等到网页中所有内容全部加载完毕之后才被执行，如果一个网页中有大量的图片的话，则就会出现这种情况：网页文档已经呈现出来，但由于网页数据还没有完全加载完毕，导致load事件不能够即时被触发。
 ```
 #### ➣ 闭包Closure  
-<details>
-<summary>点击展开查看</summary>
 
 1. 执行上下文  
 函数每次执行，都会生成一个执行上下文内部对象(可理解为函数作用域)，这个上下文对象会保存函数中所有的变量值和该函数内部定义的函数的引用。函数每次执行时对应的执行上下文都是独一无二的，正常情况下函数执行完毕执行上下文就会被销毁。  
@@ -527,8 +632,6 @@ counterA();     // 1
 counterA();     // 2
 
 ```
-
-</details>
 
 #### ➣ 函数式编程思想的体现
 
@@ -772,9 +875,6 @@ Django框架默认带有STP功能：
 
 ### X. 要点：Leetcode算法刷题
 --------------
-
-<details>
-<summary>点击展开查看</summary>
 
 #### ➣ 考察重点
 
