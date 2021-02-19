@@ -66,6 +66,7 @@
     - [➣ Babel源码](#%E2%9E%A3-babel%E6%BA%90%E7%A0%81)
     - [➣ React SetState原理](#%E2%9E%A3-react-setstate%E5%8E%9F%E7%90%86)
     - [➣ 前端错误监控方法](#%E2%9E%A3-%E5%89%8D%E7%AB%AF%E9%94%99%E8%AF%AF%E7%9B%91%E6%8E%A7%E6%96%B9%E6%B3%95)
+    - [➣ 发布订阅模式和观察者模式区别](#%E2%9E%A3-%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F%E5%92%8C%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F%E5%8C%BA%E5%88%AB)
     - [➣ 实现一个EventEmitter类，支持事件的on,off,emit,once,setMaxListeners。](#%E2%9E%A3-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AAeventemitter%E7%B1%BB%E6%94%AF%E6%8C%81%E4%BA%8B%E4%BB%B6%E7%9A%84onoffemitoncesetmaxlisteners)
     - [➣ 如何自己实现一个单点登录系统](#%E2%9E%A3-%E5%A6%82%E4%BD%95%E8%87%AA%E5%B7%B1%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E5%8D%95%E7%82%B9%E7%99%BB%E5%BD%95%E7%B3%BB%E7%BB%9F)
     - [➣ 使用ES5实现Promise](#%E2%9E%A3-%E4%BD%BF%E7%94%A8es5%E5%AE%9E%E7%8E%B0promise)
@@ -868,6 +869,13 @@ counterA();     // 2
 
 #### ➣ 前端错误监控方法
 
+#### ➣ 发布订阅模式和观察者模式区别
+- 在观察者模式中，观察者是知道Subject的，Subject一直保持对观察者进行记录。然而，在发布订阅模式中，发布者和订阅者不知道对方的存在。它们只有通过消息代理进行通信。
+- 在发布订阅模式中，组件是松散耦合的，正好和观察者模式相反。
+- 可以理解为观察者模式没中间商赚差价，发布订阅模式，有中间商赚差价。
+- 观察者模式大多数时候是同步的，比如当事件触发，Subject就会去调用观察者的方法。而发布-订阅模式大多数时候是异步的（使用消息队列）。
+- 观察者模式需要在单个应用程序地址空间中实现，而发布-订阅更像交叉应用模式。
+
 #### ➣ 实现一个EventEmitter类，支持事件的on,off,emit,once,setMaxListeners。
 <details>
 <summary>点击展开查看</summary>
@@ -876,7 +884,6 @@ counterA();     // 2
 function EventEmitter() {
   this.maxListeners = 100;
   this.listeners = {};
-  this.onceMap = {};
 }
 
 EventEmitter.prototype.setMaxListeners = function(num) {
@@ -888,35 +895,37 @@ EventEmitter.prototype.setMaxListeners = function(num) {
 EventEmitter.prototype.on = function(type, func) {
   if (!type || !func instanceof Function) return;
   if (this.listeners[type]) {
-    if (this.listeners[type].length > this.maxListeners) 
+    if (this.listeners[type].length === this.maxListeners) 
       return console.error('The max listeners limitation: ', this.maxListeners);
     this.listeners[type].push(func);
   } else {
     this.listeners[type] = [func];
   }
-  this.onceMap[type] = false;
 }
 
 EventEmitter.prototype.once = function(type, func) {
   if (!type || !func instanceof Function) return;
-  this.on(type, func);
-  this.onceMap[type] = true;
+  var that = this;
+  var callback = function(...args) {
+    func(...args);
+    that.off(type, callback);
+  };
+  this.on(type, callback);
 }
 
 EventEmitter.prototype.off = function(type, func) {
   if (!type || !func) return;
   if (this.listeners[type]) {
-    this.listeners[type] =
-      this.listeners[type].filter(function(fn) { return fn !== func; });
+    var index = this.listeners[type].indexOf(func);
+    (index !== -1) && this.listeners[type].splice(index, 1);
   }
 }
 
 EventEmitter.prototype.emit = function(type) {
+  var args = [].slice.call(arguments, 1);
   (this.listeners[type] || []).forEach(function(fn) {
-    fn();
+    fn(...args);
   });
-  if (this.onceMap[type]) delete this.listeners[type];
-  delete this.onceMap[type];
 }
 ```
 </details>
