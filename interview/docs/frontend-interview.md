@@ -18,22 +18,43 @@
       - [2. 内部显示](#2-%E5%86%85%E9%83%A8%E6%98%BE%E7%A4%BA)
       - [3. 内部表现](#3-%E5%86%85%E9%83%A8%E8%A1%A8%E7%8E%B0)
     - [➣ BFC及其应用](#%E2%9E%A3-bfc%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8)
+    - [➣ grid布局](#%E2%9E%A3-grid%E5%B8%83%E5%B1%80)
+      - [1. 容器元素](#1-%E5%AE%B9%E5%99%A8%E5%85%83%E7%B4%A0)
+      - [2. 子元素](#2-%E5%AD%90%E5%85%83%E7%B4%A0)
+    - [➣ flex布局](#%E2%9E%A3-flex%E5%B8%83%E5%B1%80)
+      - [1. 容器元素](#1-%E5%AE%B9%E5%99%A8%E5%85%83%E7%B4%A0-1)
+      - [2. 子元素](#2-%E5%AD%90%E5%85%83%E7%B4%A0-1)
     - [➣ 两列布局实现](#%E2%9E%A3-%E4%B8%A4%E5%88%97%E5%B8%83%E5%B1%80%E5%AE%9E%E7%8E%B0)
     - [➣ 1px问题](#%E2%9E%A3-1px%E9%97%AE%E9%A2%98)
     - [➣ 浮动布局相关](#%E2%9E%A3-%E6%B5%AE%E5%8A%A8%E5%B8%83%E5%B1%80%E7%9B%B8%E5%85%B3)
     - [➣ 位图和矢量图的区别](#%E2%9E%A3-%E4%BD%8D%E5%9B%BE%E5%92%8C%E7%9F%A2%E9%87%8F%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB)
     - [opacity: 0、visibility: hidden、display: none 的异同](#opacity-0visibility-hiddendisplay-none-%E7%9A%84%E5%BC%82%E5%90%8C)
 - [### IV. 要点：Javascript](#iv-%E8%A6%81%E7%82%B9javascript)
+    - [➣ Map/WeakMap/Set/WeakSet区别](#%E2%9E%A3-mapweakmapsetweakset%E5%8C%BA%E5%88%AB)
+      - [1. Set](#1-set)
+      - [2. WeakSet](#2-weakset)
+      - [3. Map](#3-map)
+      - [4. WeakMap](#4-weakmap)
     - [➣ js类型的判断](#%E2%9E%A3-js%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%88%A4%E6%96%AD)
     - [➣ 实现Call和Apply](#%E2%9E%A3-%E5%AE%9E%E7%8E%B0call%E5%92%8Capply)
     - [➣ 实现对象new操作](#%E2%9E%A3-%E5%AE%9E%E7%8E%B0%E5%AF%B9%E8%B1%A1new%E6%93%8D%E4%BD%9C)
+    - [Js实现bind函数](#js%E5%AE%9E%E7%8E%B0bind%E5%87%BD%E6%95%B0)
     - [➣ Js实现继承](#%E2%9E%A3-js%E5%AE%9E%E7%8E%B0%E7%BB%A7%E6%89%BF)
     - [➣ 手写深拷贝和浅拷贝](#%E2%9E%A3-%E6%89%8B%E5%86%99%E6%B7%B1%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B5%85%E6%8B%B7%E8%B4%9D)
     - [➣ ES6新增特性](#%E2%9E%A3-es6%E6%96%B0%E5%A2%9E%E7%89%B9%E6%80%A7)
     - [➣ 移动端点击穿透问题](#%E2%9E%A3-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E7%82%B9%E5%87%BB%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98)
     - [➣ 图片懒加载具体实现方案和思路](#%E2%9E%A3-%E5%9B%BE%E7%89%87%E6%87%92%E5%8A%A0%E8%BD%BD%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E5%92%8C%E6%80%9D%E8%B7%AF)
     - [➣ 函数防抖和节流实现](#%E2%9E%A3-%E5%87%BD%E6%95%B0%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81%E5%AE%9E%E7%8E%B0)
-    - [➣ Js/Node的事件循环(宏任务、微任务)](#%E2%9E%A3-jsnode%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E5%AE%8F%E4%BB%BB%E5%8A%A1%E5%BE%AE%E4%BB%BB%E5%8A%A1)
+    - [➣ 浏览器上的线程和进程](#%E2%9E%A3-%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%8A%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B)
+      - [1. 浏览器包含下面几种进程：](#1-%E6%B5%8F%E8%A7%88%E5%99%A8%E5%8C%85%E5%90%AB%E4%B8%8B%E9%9D%A2%E5%87%A0%E7%A7%8D%E8%BF%9B%E7%A8%8B)
+      - [2. 浏览器渲染进程是多线程的，包括以下线程：](#2-%E6%B5%8F%E8%A7%88%E5%99%A8%E6%B8%B2%E6%9F%93%E8%BF%9B%E7%A8%8B%E6%98%AF%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%8C%85%E6%8B%AC%E4%BB%A5%E4%B8%8B%E7%BA%BF%E7%A8%8B)
+    - [➣ Js事件循环(宏任务、微任务)](#%E2%9E%A3-js%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E5%AE%8F%E4%BB%BB%E5%8A%A1%E5%BE%AE%E4%BB%BB%E5%8A%A1)
+    - [➣ 从输入URL到页面渲染完成发生了什么](#%E2%9E%A3-%E4%BB%8E%E8%BE%93%E5%85%A5url%E5%88%B0%E9%A1%B5%E9%9D%A2%E6%B8%B2%E6%9F%93%E5%AE%8C%E6%88%90%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88)
+    - [➣ tcp协议三次握手和四次挥手](#%E2%9E%A3-tcp%E5%8D%8F%E8%AE%AE%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B)
+      - [1. 三次握手讲解](#1-%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E8%AE%B2%E8%A7%A3)
+    - [2. 为什么http建立连接需要三次握手，不是两次或四次?](#2-%E4%B8%BA%E4%BB%80%E4%B9%88http%E5%BB%BA%E7%AB%8B%E8%BF%9E%E6%8E%A5%E9%9C%80%E8%A6%81%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E4%B8%8D%E6%98%AF%E4%B8%A4%E6%AC%A1%E6%88%96%E5%9B%9B%E6%AC%A1)
+    - [3. TCP关闭连接过程](#3-tcp%E5%85%B3%E9%97%AD%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B)
+    - [4. 为什么要四次挥手？](#4-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B)
     - [➣ 页面加载会触发哪些事件](#%E2%9E%A3-%E9%A1%B5%E9%9D%A2%E5%8A%A0%E8%BD%BD%E4%BC%9A%E8%A7%A6%E5%8F%91%E5%93%AA%E4%BA%9B%E4%BA%8B%E4%BB%B6)
     - [➣ document.ready和window.onload的区别](#%E2%9E%A3-documentready%E5%92%8Cwindowonload%E7%9A%84%E5%8C%BA%E5%88%AB)
     - [➣ 闭包Closure](#%E2%9E%A3-%E9%97%AD%E5%8C%85closure)
@@ -241,11 +262,64 @@ display: table-caption;是CSS2规范，兼容性良好，该属性值表示此�
    - BFC是页面上的一个隔离的独立容器，容器里面的子元素不会影响到外面的元素
    - BFC可以正确包含浮动元素，计算BFC的高度时，浮动元素也会参与计算
 
+#### ➣ grid布局
+&nbsp;&nbsp;&nbsp;&nbsp; 讲到布局，我们就会想到 flex 布局，甚至有人认为竟然有 flex 布局了，似乎没有必要去了解 Grid 布局。但 flex 布局和 Grid 布局有实质的区别，那就是 flex 布局是一维布局，Grid 布局是二维布局。flex 布局一次只能处理一个维度上的元素布局，一行或者一列。Grid 布局是将容器划分成了“行”和“列”，产生了一个个的网格，我们可以将网格元素放在与这些行和列相关的位置上，从而达到我们布局的目的。
+
+##### 1. 容器元素
+
+- 需要设置：`display: grid;`
+- **grid-template-columns**：属性定义每一列的列宽。比如`100px 100px 100px`指定三列，列宽100px，也可使用百分比单位；搭配`repeat`函数可以简化书写：`repeat(3, 33.33%);`。repeat重复某种模式也是可以的，比如：`repeat(2, 100px 20px 80px)`；如果要实现不固定列数，自动填充的话使用`auto-fill`即可，会根据列宽和容器动态宽度自动进行计算：`repeat(auto-fill, 100px)`；为了方便表示列宽度之间的比例关系，可以使用fr关键字，比如两列的宽度分别为1fr和2fr，就表示后者是前者的两倍，分别占1/3和2/3，`grid-template-columns: 1fr 2fr`。fr和px可混用，`150px 1fr 2fr`；使用auto关键字表示由浏览器自己决定长度：`grid-template-columns: 100px auto 100px;`。
+- **grid-template-rows**：属性定义每一行的行高，用法同上。
+- **grid-gap**：grid-row-gap和grid-columns-gap的合并简写形式，表示行间距和列间距，只写一个值表示两个值相同。
+- **grid-template-areas**：网格布局允许指定"区域"（area），一个区域由单个或多个单元格组成，下面代码先划分出9个单元格，然后将其定名为a到i的九个区域，分别对应这九个单元格。：
+```css
+.container {
+  display: grid;
+  grid-template-columns: 100px 100px 100px;
+  grid-template-rows: 100px 100px 100px;
+  grid-template-areas: 'a b c'
+                       'd e f'
+                       'g h i';
+}
+```
+- **grid-auto-flow**：划分网格以后，容器的子元素会按照顺序，自动放置在每一个网格。默认的放置顺序是"先行后列"，即先填满第一行，再开始放入第二行。这个顺序由grid-auto-flow属性决定，默认值是row，即"先行后列"。也可以将它设成column，变成"先列后行"。还可以设成`row dense`和`column dense`，这两个值主要用于，某些项目指定位置以后，剩下的项目尽可能紧密填满，尽量不出现空格。
+- **justify-items**: 属性设置单元格中内容的水平位置（左中右）：`start | end | center | stretch(拉伸);`。
+- **align-items**: 属性设置单元格内容的垂直位置（上中下）：`start | end | center | stretch;`。
+- **justify-content**：属性指定整个内容区域在容器里面的水平位置（左中右）：`start | end | center | stretch | space-around(item间隔均分) | space-between | space-evenly(边框和item完全平均分布);`。
+- **align-content**：属性指定整个内容区域的垂直位置（上中下）：`start | end | center | stretch | space-around(item间隔均分) | space-between | space-evenly(边框和item完全平均分布);`。
+
+##### 2. 子元素
+
+- **grid-area**：属性指定项目放在哪一个区域，与`grid-template-area`搭配使用：`grid-area: e;`。
+- **justify-self**：属性设置单元格内容的水平位置（左中右），跟justify-items属性的用法完全一致，但只作用于单个项目：`start | end | center | stretch;`。
+- **align-self**：属性设置单元格内容的垂直位置（上中下），跟align-items属性的用法完全一致，也是只作用于单个项目：`start | end | center | stretch;`。
+
+#### ➣ flex布局
+
+##### 1. 容器元素
+
+- 需要设置：`display: flex;`
+- flex-direction：属性决定主轴的方向（即项目的排列方向）： `row(默认) | row-reverse | column | column-reverse`。
+- flex-wrap：决定items在一条轴线排不下时如何换行，`nowrap | wrap | wrap-reverse(换行，第一行在下方)`
+- flex-flow：flex-direction + flex-wrap 简写形式。
+- justify-content：items在主轴上的对齐方式：`flex-start | flex-end | center | space-between | space-around(元素间隔均匀)`。
+- align-items：定义items在交叉轴上如何对齐：`flex-start | flex-end | center | baseline(第一行文本基线) | stretch(拉伸)`。
+- align-content：定义了多根主轴线的对齐方式，如果项目只有一根轴线，该属性不起作用：`flex-start | flex-end | center | space-between | space-around | stretch`。
+
+##### 2. 子元素
+
+- order：定义item的排列顺序，数值越小，排列越靠前，默认为0。
+- flex-grow：定义item的放大比例，默认为0，即如果存在剩余空间，也不放大。
+- flex-shrink：定义了item的缩小比例，默认为1，即如果空间不足，该项目将缩小。
+- flex-basis：属性定义了在分配多余空间之前，item占据的主轴空间（main size）。根据这个属性，计算主轴是否有多余空间。它的默认值为auto，即项目的本来大小。
+- flex：属性是flex-grow, flex-shrink 和 flex-basis的简写，默认值为`0 1 auto`。该属性有两个快捷值：auto (`1 1 auto`) 和 none (`0 0 auto`)。
+- align-self：align-self属性允许单个item有与其他item不一样的对齐方式，可覆盖align-items属性。默认值为auto，表示继承父元素的align-items属性，如果没有父元素，则等同于stretch。
+
 #### ➣ 两列布局实现
 1) 使用float浮动元素同时设置元素宽度为100/列数 %
 2) 使用inline-block实现方式同1
 2) 使用css属性column-count实现
-3) 使用flex布局
+3) 使用flex布局、grid布局
 
 #### ➣ 1px问题
 1. 涉及到css像素比 device pixel/css pixel = devicePixelRatio(DPR)  
@@ -311,6 +385,55 @@ display: table-caption;是CSS2规范，兼容性良好，该属性值表示此�
 
 ### IV. 要点：Javascript
 ----------
+
+#### ➣ Map/WeakMap/Set/WeakSet区别
+
+##### 1. Set
+  - 成员唯一、无序且不重复，可以为对象或基本类型
+  - 属性：size
+  - [value, value]，键值与键名是一致的（或者说只有键值，没有键名）
+  - 操作方法：
+  ```js
+  add(value)：新增，相当于 array里的push
+  delete(value)：存在即删除集合中value
+  has(value)：判断集合中是否存在 value
+  clear()：清空集合
+  ```
+  - 可以遍历：
+  ```js
+  keys()：返回一个包含集合中所有键的迭代器
+  values()：返回一个包含集合中所有值得迭代器
+  entries()：返回一个包含Set对象中所有元素得键值对迭代器
+  forEach((v, k) => (), thisArg)：用于对集合成员执行callbackFn操作，如果提供了 thisArg 参数，回调中的this会是这个参数，没有返回值
+  ```
+##### 2. WeakSet
+  - 成员都是对象
+  - 成员都是弱引用，可以被垃圾回收机制回收，可以用来保存DOM节点，不容易造成内存泄漏
+  - 不能遍历，方法有add、delete、has
+##### 3. Map
+  - 本质上是键值对的集合，类似集合
+  - 可以遍历，方法很多可以跟各种数据格式转换
+  - 属性：size
+  - 操作方法：
+  ```js
+    set(key, value)：向字典中添加新元素
+    get(key)：通过键查找特定的数值并返回
+    has(key)：判断字典中是否存在键key
+    delete(key)：通过键 key 从字典中移除对应的数据
+    clear()：将这个字典中的所有元素删除
+  ```
+  - 遍历方法：
+  ```js
+    Keys()：将字典中包含的所有键名以迭代器形式返回
+    values()：将字典中包含的所有数值以迭代器形式返回
+    entries()：返回所有成员的迭代器
+    forEach((v, k, map) => ())：遍历字典的所有成员
+
+  ```
+##### 4. WeakMap
+  - 只接受对象作为键名（null除外），不接受其他类型的值作为键名
+  - 键名是弱引用，键值可以是任意的，键名所指向的对象可以被垃圾回收，此时键名是无效的
+  - 不能遍历，方法有get、set、has、delete
 
 #### ➣ js类型的判断
 ```js
@@ -386,6 +509,19 @@ function New(func) {
   return res || empty;
 }
 ```
+
+#### Js实现bind函数
+```js
+Function.prototype.myBind = function(context) {
+  var that = this;
+  var args = Array.prototype.slice.call(arguments, 1);
+
+  return function() {
+    return that.apply(context, args.concat(Array.from(arguments)));
+  }
+}
+```
+
 #### ➣ Js实现继承
 ```js
 function Inherit (parent, child) {
@@ -561,8 +697,89 @@ function throttle(fn, time) {
   }
 }
 ```
-#### ➣ Js/Node的事件循环(宏任务、微任务)
 
+#### ➣ 浏览器上的线程和进程
+
+##### 1. 浏览器包含下面几种进程：
+   - Browser 进程：浏览器的主进程（负责协调、主控），只有一个。
+   - 第三方插件进程：每种类型的插件对应一个进程，仅当使用该插件时才创建。
+   - GPU 进程：最多一个，用于 3D 绘制等。
+   - 浏览器渲染进程（浏览器内核）（Renderer 进程，内部是多线程的）：默认每个 Tab 页面一个进程，互不影响。
+
+##### 2. 浏览器渲染进程是多线程的，包括以下线程：
+
+- GUI 渲染线程  
+负责渲染浏览器界面，解析 HTML，CSS，构建 DOM 树和 RenderObject 树，布局和绘制等。
+当界面需要重绘（Repaint）或由于某种操作引发回流(reflow)时，该线程就会执行
+GUI 渲染线程与 JS 引擎线程是互斥的，当 JS 引擎执行时 GUI 线程会被挂起（相当于被冻结了），GUI 更新会被保存在一个队列中等到 JS 引擎空闲时立即被执行。
+
+- JS 引擎线程  
+也称为 JS 内核，负责处理 Javascript 脚本程序。（例如 V8 引擎）
+JS 引擎线程负责解析 Javascript 脚本，运行代码。
+JS 引擎一直等待着任务队列中任务的到来，然后加以处理，一个 Tab 页（renderer 进程）中无论什么时候都只有一个 JS 线程在运行 JS 程序
+同样注意，GUI 渲染线程与 JS 引擎线程是互斥的，所以如果 JS 执行的时间过长，这样就会造成页面的渲染不连贯，导致页面渲染加载阻塞。
+
+- 事件触发线程  
+归属于浏览器而不是 JS 引擎，用来控制事件循环（可以理解，JS 引擎自己都忙不过来，需要浏览器另开线程协助）
+当 JS 引擎执行代码块如 setTimeOut 时（也可来自浏览器内核的其他线程, 如鼠标点击、AJAX 异步请求等），会将对应任务添加到事件线程中
+当对应的事件符合触发条件被触发时，该线程会把事件添加到待处理队列的队尾，等待 JS 引擎的处理
+注意，由于 JS 的单线程关系，所以这些待处理队列中的事件都得排队等待 JS 引擎处理（当 JS 引擎空闲时才会去执行）
+
+- 定时触发器线程  
+传说中的 setInterval 与 setTimeout 所在线程
+浏览器定时计数器并不是由 JavaScript 引擎计数的, （因为 JavaScript 引擎是单线程的, 如果处于阻塞线程状态就会影响记计时的准确）
+因此通过单独线程来计时并触发定时（计时完毕后，添加到事件队列中，等待 JS 引擎空闲后执行）
+注意，W3C 在 HTML 标准中规定，规定要求 setTimeout 中低于 4ms 的时间间隔算为 4ms。
+
+- 异步 http 请求线程  
+在 XMLHttpRequest 在连接后是通过浏览器新开一个线程请求
+将检测到状态变更时，如果设置有回调函数，异步线程就产生状态变更事件，将这个回调再放入事件队列中。再由 JavaScript 引擎执行。
+
+从输入 URL 到页面渲染完成发生了什么
+
+#### ➣ Js事件循环(宏任务、微任务)
+![](./images/EventLoop.png)
+
+&nbsp;&nbsp;&nbsp;&nbsp; 每次执行栈执行的代码就是一个宏任务（包括每次从事件队列中获取一个事件回调并放到执行栈中执行）
+再检测本次循环中是否寻在微任务，存在的话就依次从微任务的任务队列中读取执行完所有的微任务，再读取宏任务的任务队列中的任务执行，再执行所有的微任务，如此循环。JS 的执行顺序就是每次事件循环中的宏任务-微任务。
+
+- 第一次事件循环，整段代码作为宏任务进入主线程执行
+- 同步代码被直接推到执行栈执行，遇到异步代码就挂起交由其他线程执行(执行完会往事件队列塞回调)
+- 同步代码执行完，读取微任务队列，若有执行所有微任务，微任务清空
+- 页面渲染
+- 从事件队列面里取一个宏任务塞入执行栈执行
+如此反复
+
+#### ➣ 从输入URL到页面渲染完成发生了什么
+
+- 用户输入url ，通过DNS解析成请求目的IP地址
+- 浏览器与服务器建立连接（tcp 协议、三次握手），服务端处理请求返回html代码块
+- 浏览器拿到返回的html，解析 html 成 dom 树、解析 css 成 cssobj
+- dom 树、cssobj 结合成 render 树
+- JS 根据 render 树进行计算、布局、重绘
+- GPU 合成，输出到屏幕
+
+#### ➣ tcp协议三次握手和四次挥手
+![](./images/tcp.png)
+##### 1. 三次握手讲解
+- 客户端发送位码为syn＝1,随机产生seq确认号到服务器，服务器由SYN=1知道客户端要求建立联机（客户端：我要连接你）
+- 服务器收到请求后要确认联机信息，向A发送ack number=(客户端的seq+1),syn=1,ack=1,随机产生seq=7654321的包（服务器：好的，你来连吧）
+- 客户端收到后检查ack number是否正确，即第一次发送的seq number+1,以及位码ack是否为1，若正确，客户端会再发送ack number=(服务器的seq+1),ack=1，服务器收到后确认seq值与ack=1则连接建立成功。（客户端：好的，我来了）
+#### 2. 为什么http建立连接需要三次握手，不是两次或四次?
+答：三次握手之所以是三次是保证client和server均让对方知道自己的接收和发送能力没问题而保证的最小次数，两次不安全，四次浪费资源。
+
+#### 3. TCP关闭连接过程
+- Client向Server发送FIN包，表示Client主动要关闭连接，然后进入FIN_WAIT_1状态，等待Server返回ACK包。此后Client不能再向Server发送数据，但能读取数据。
+- Server收到FIN包后向Client发送ACK包，然后进入CLOSE_WAIT状态，此后Server不能再读取数据，但可以继续向Client发送数据。
+- Client收到Server返回的ACK包后进入FIN_WAIT_2状态，等待Server发送FIN包。
+-Server完成数据的发送后，将FIN包发送给Client，然后进入LAST_ACK状态，等待Client返回ACK包，此后Server既不能读取数据，也不能发送数据。
+- Client收到FIN包后向Server发送ACK包，然后进入TIME_WAIT状态，接着等待足够长的时间（2MSL）以确保Server接收到ACK包，最后回到CLOSED状态，释放网络资源。
+- Server收到Client返回的ACK包后便回到CLOSED状态，释放网络资源。
+
+#### 4. 为什么要四次挥手？
+&nbsp;&nbsp;&nbsp;&nbsp; TCP是全双工信道，何为全双工就是客户端与服务端建立两条通道，通道1:客户端的输出连接服务端的输入；通道2:客户端的输入连接服务端的输出。两个通道可以同时工作：客户端向服务端发送信号的同时服务端也可以向客户端发送信号。所以关闭双通道的时候就是这样：
+- 客户端：我要关闭输入通道了。 服务端：好的，你关闭吧，我这边也关闭这个通道。
+- 服务端：我也要关闭输入通道了。 客户端：好的你关闭吧，我也把这个通道关闭。
 #### ➣ 页面加载会触发哪些事件
 
 1. document readystatechange事件  
@@ -664,7 +881,7 @@ function EventEmitter() {
 
 EventEmitter.prototype.setMaxListeners = function(num) {
   if (typeof num !== 'number' || !Number.isInteger(num) || num <= 0)
-    throw new Error('setMaxListeners #### ➣ param num must be a positive integer!');
+    throw new Error('setMaxListeners: param num must be a positive integer!');
   this.maxListeners = num;
 }
 
