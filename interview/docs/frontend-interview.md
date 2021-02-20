@@ -28,7 +28,7 @@
     - [➣ 1px问题](#%E2%9E%A3-1px%E9%97%AE%E9%A2%98)
     - [➣ 浮动布局相关](#%E2%9E%A3-%E6%B5%AE%E5%8A%A8%E5%B8%83%E5%B1%80%E7%9B%B8%E5%85%B3)
     - [➣ 位图和矢量图的区别](#%E2%9E%A3-%E4%BD%8D%E5%9B%BE%E5%92%8C%E7%9F%A2%E9%87%8F%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB)
-    - [opacity: 0、visibility: hidden、display: none 的异同](#opacity-0visibility-hiddendisplay-none-%E7%9A%84%E5%BC%82%E5%90%8C)
+    - [➣ opacity: 0、visibility: hidden、display: none 的异同](#%E2%9E%A3-opacity-0visibility-hiddendisplay-none-%E7%9A%84%E5%BC%82%E5%90%8C)
 - [### IV. 要点：Javascript](#iv-%E8%A6%81%E7%82%B9javascript)
     - [➣ Map/WeakMap/Set/WeakSet区别](#%E2%9E%A3-mapweakmapsetweakset%E5%8C%BA%E5%88%AB)
       - [1. Set](#1-set)
@@ -59,6 +59,8 @@
     - [➣ document.ready和window.onload的区别](#%E2%9E%A3-documentready%E5%92%8Cwindowonload%E7%9A%84%E5%8C%BA%E5%88%AB)
     - [➣ 闭包Closure](#%E2%9E%A3-%E9%97%AD%E5%8C%85closure)
     - [➣ 函数式编程思想的体现](#%E2%9E%A3-%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E7%9A%84%E4%BD%93%E7%8E%B0)
+    - [➣ 函数柯里化：add(1)(2)(3) == 6](#%E2%9E%A3-%E5%87%BD%E6%95%B0%E6%9F%AF%E9%87%8C%E5%8C%96add123--6)
+    - [➣ 函数柯里化2：curry函数](#%E2%9E%A3-%E5%87%BD%E6%95%B0%E6%9F%AF%E9%87%8C%E5%8C%962curry%E5%87%BD%E6%95%B0)
     - [➣ vue双向绑定实现原理](#%E2%9E%A3-vue%E5%8F%8C%E5%90%91%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)
     - [➣ Vue2.0与Vue3.0双向绑定，proxy实现](#%E2%9E%A3-vue20%E4%B8%8Evue30%E5%8F%8C%E5%90%91%E7%BB%91%E5%AE%9Aproxy%E5%AE%9E%E7%8E%B0)
     - [➣ React-Fiber原理和生命周期使用详解](#%E2%9E%A3-react-fiber%E5%8E%9F%E7%90%86%E5%92%8C%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3)
@@ -68,6 +70,7 @@
     - [➣ 前端错误监控方法](#%E2%9E%A3-%E5%89%8D%E7%AB%AF%E9%94%99%E8%AF%AF%E7%9B%91%E6%8E%A7%E6%96%B9%E6%B3%95)
     - [➣ 发布订阅模式和观察者模式区别](#%E2%9E%A3-%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F%E5%92%8C%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F%E5%8C%BA%E5%88%AB)
     - [➣ 实现一个EventEmitter类，支持事件的on,off,emit,once,setMaxListeners。](#%E2%9E%A3-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AAeventemitter%E7%B1%BB%E6%94%AF%E6%8C%81%E4%BA%8B%E4%BB%B6%E7%9A%84onoffemitoncesetmaxlisteners)
+    - [➣ 实现ajax并发请求控制](#%E2%9E%A3-%E5%AE%9E%E7%8E%B0ajax%E5%B9%B6%E5%8F%91%E8%AF%B7%E6%B1%82%E6%8E%A7%E5%88%B6)
     - [➣ 如何自己实现一个单点登录系统](#%E2%9E%A3-%E5%A6%82%E4%BD%95%E8%87%AA%E5%B7%B1%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E5%8D%95%E7%82%B9%E7%99%BB%E5%BD%95%E7%B3%BB%E7%BB%9F)
     - [➣ 使用ES5实现Promise](#%E2%9E%A3-%E4%BD%BF%E7%94%A8es5%E5%AE%9E%E7%8E%B0promise)
 - [### V. 要点：Node.js](#v-%E8%A6%81%E7%82%B9nodejs)
@@ -375,7 +378,7 @@ display: table-caption;是CSS2规范，兼容性良好，该属性值表示此�
 1. 位图也叫像素图，每个点可以用二进制描述颜色和亮度信息，色彩表现丰富，占用空间大，缩放失真
 2. 矢量图使用计算机指令绘制而成，由点线面构成，色彩不丰富，占用空间小，缩放不失真
 
-####  opacity: 0、visibility: hidden、display: none 的异同
+#### ➣ opacity: 0、visibility: hidden、display: none 的异同
 &nbsp;&nbsp;&nbsp;&nbsp; 这几个属性它们都能让元素不可见
 
 - 结构： display:none: 会让元素完全从渲染树中消失，渲染的时候不占据任何空间, 不能点击， visibility: hidden:不会让元素从渲染树消失，渲染元素继续占据空间，只是内容不可见，不能点击 opacity: 0: 不会让元素从渲染树消失，渲染元素继续占据空间，只是内容不可见，可以点击
@@ -557,8 +560,6 @@ child.print();
 child.p_print();
 ```
 #### ➣ 手写深拷贝和浅拷贝
-<details>
-<summary>点击展开查看</summary>
 
 ```js
 /* 深拷贝 */
@@ -621,7 +622,6 @@ function shallowClone(data) {
 }
 
 ```
-</details>
 
 #### ➣ ES6新增特性
 
@@ -853,6 +853,54 @@ counterA();     // 2
 
 #### ➣ 函数式编程思想的体现
 
+#### ➣ 函数柯里化：add(1)(2)(3) == 6
+```js
+function add(num) {
+  var sum = 0;
+
+  function sumLogic(num) {
+    sum += num;
+    return sumLogic;
+  }
+
+  sumLogic.toString = function() {
+    return sum;
+  }
+
+  return sumLogic;
+}
+```
+
+#### ➣ 函数柯里化2：curry函数
+1. 实现效果：
+```js
+function sum(a, b, c) {
+  return a + b + c;
+}
+
+let curriedSum = curry(sum);
+
+alert( curriedSum(1, 2, 3) ); // 6，仍然可以被正常调用
+alert( curriedSum(1)(2,3) ); // 6，对第一个参数的柯里化
+alert( curriedSum(1)(2)(3) ); // 6，全柯里化
+```
+
+2. 实现curry函数
+```js
+function curry(func) {
+  return function core() {
+    var args = [].slice.call(arguments);
+    if (args.length >= func.length) {
+      return func.apply(this, args);
+    } else {
+      return function() {
+        return core.apply(this, args.concat(Array.from(arguments)));
+      };
+    }
+  };
+}
+```
+
 #### ➣ vue双向绑定实现原理
 
 #### ➣ Vue2.0与Vue3.0双向绑定，proxy实现
@@ -877,8 +925,6 @@ counterA();     // 2
 - 观察者模式需要在单个应用程序地址空间中实现，而发布-订阅更像交叉应用模式。
 
 #### ➣ 实现一个EventEmitter类，支持事件的on,off,emit,once,setMaxListeners。
-<details>
-<summary>点击展开查看</summary>
 
 ```js
 function EventEmitter() {
@@ -928,7 +974,75 @@ EventEmitter.prototype.emit = function(type) {
   });
 }
 ```
-</details>
+
+#### ➣ 实现ajax并发请求控制
+简化版：
+```js
+/**
+  * multiAjaxRequest [批量并发异步请求]
+  * @author nojsja
+  * @param  {[Array]} urls [所有待请求接口地址]
+  * @param  {[Array]} maxNum [最大并发数量]
+  */
+function multiAjaxRequest(urls=[], maxNum=0) {
+  const length = urls.length;
+  const result = new Array(length).fill(false);
+  let index = 0;
+
+  function sendRequest(url) {
+    console.log('send');
+    const ajax = new XMLHttpRequest();
+    ajax.open('POST', url, true);
+    ajax.send();
+    return new Promise((resolve, reject) => {
+      ajax.onreadystatechange((ev) => {
+        if (ajax.readyState === 4) {
+          if (ajax.status === 200) {
+            resolve({
+              code: 200,
+              result: ajax.responseText
+            });
+          } else {
+            resolve({
+              code: ajax.status,
+              result: ajax.responseText
+            });
+          }
+        }
+      });
+    })
+  }
+
+  return new Promise((resolve, reject) => {
+
+    function next() {
+      const current = index++;
+      const url = urls[current];
+      console.log(current);
+      
+      sendRequest(url)
+      .then(res => {
+        result[current] = res.code === 200 ? res.result : false;
+        if (current >= length - 1) {
+          if (urls.includes(false)) return reject(result);
+          resolve(result);
+        } else {
+          next();
+        }
+      })
+    }
+  
+    while(index < maxNum) {
+      if (urls[i]) {
+        next();
+      } else {
+        break;
+      }
+    }
+  });
+
+}
+```
 
 #### ➣ 如何自己实现一个单点登录系统
 
@@ -969,6 +1083,8 @@ EventEmitter.prototype.emit = function(type) {
 #### ➣ ts自己的看法，和应用
 
 #### ➣ webpack loader和plugin区别
+1. loader，它是一个转换器，将A文件进行编译成B文件，比如：将A.less转换为A.css，单纯的文件转换过程。
+2. plugin是一个扩展器，它丰富了webpack本身，针对是loader结束后，webpack打包的整个过程，它并不直接操作文件，而是基于事件机制工作，会监听webpack打包过程中的某些节点，执行广泛的任务
 
 #### ➣ webpack中循环引用问题，a里面引用了b，b里面引用了a
 
@@ -985,6 +1101,7 @@ EventEmitter.prototype.emit = function(type) {
 [ >> 文章链接](https://nojsja.gitee.io/blogs/2021/02/07/%E5%89%8D%E7%AB%AF%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97-1/)
 
 #### ➣ webpack性能优化方面
+
 
 #### ➣ 服务器性能优化方面
 
