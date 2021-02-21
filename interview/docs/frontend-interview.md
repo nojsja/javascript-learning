@@ -41,6 +41,12 @@
     - [Js实现bind函数](#js%E5%AE%9E%E7%8E%B0bind%E5%87%BD%E6%95%B0)
     - [➣ Js实现继承](#%E2%9E%A3-js%E5%AE%9E%E7%8E%B0%E7%BB%A7%E6%89%BF)
     - [➣ 手写深拷贝和浅拷贝](#%E2%9E%A3-%E6%89%8B%E5%86%99%E6%B7%B1%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B5%85%E6%8B%B7%E8%B4%9D)
+    - [➣ 前端模块化历程](#%E2%9E%A3-%E5%89%8D%E7%AB%AF%E6%A8%A1%E5%9D%97%E5%8C%96%E5%8E%86%E7%A8%8B)
+      - [1. IIFE - 立即执行函数](#1-iife---%E7%AB%8B%E5%8D%B3%E6%89%A7%E8%A1%8C%E5%87%BD%E6%95%B0)
+      - [2. AMD - requireJs](#2-amd---requirejs)
+      - [3. CMD - seaJs](#3-cmd---seajs)
+      - [4. CommonJs - Node.js模块规范](#4-commonjs---nodejs%E6%A8%A1%E5%9D%97%E8%A7%84%E8%8C%83)
+      - [5. ES Module - 浏览器模块系统](#5-es-module---%E6%B5%8F%E8%A7%88%E5%99%A8%E6%A8%A1%E5%9D%97%E7%B3%BB%E7%BB%9F)
     - [➣ ES6新增特性](#%E2%9E%A3-es6%E6%96%B0%E5%A2%9E%E7%89%B9%E6%80%A7)
     - [➣ 移动端点击穿透问题](#%E2%9E%A3-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E7%82%B9%E5%87%BB%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98)
     - [➣ 图片懒加载具体实现方案和思路](#%E2%9E%A3-%E5%9B%BE%E7%89%87%E6%87%92%E5%8A%A0%E8%BD%BD%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E5%92%8C%E6%80%9D%E8%B7%AF)
@@ -623,6 +629,61 @@ function shallowClone(data) {
 
 ```
 
+#### ➣ 前端模块化历程
+模块化主要是用来抽离公共代码，隔离作用域，避免变量冲突等。
+
+##### 1. IIFE - 立即执行函数
+使用自执行函数来编写模块化，特点：在一个单独的函数作用域中执行代码，避免变量冲突。
+```js
+(function(){
+  return {
+	data:[]
+  }
+})()
+
+```
+
+##### 2. AMD - requireJs
+模块依赖需要提前声明好，不支持动态设置依赖
+```js
+define('./index.js',function(code){
+	// code 就是index.js 返回的内容
+});
+```
+
+##### 3. CMD - seaJs
+支持动态依赖设置
+```js
+define(function(require, exports, module) {  
+  var indexCode = require('./index.js');
+});
+```
+
+##### 4. CommonJs - Node.js模块规范
+&nbsp;&nbsp;&nbsp;&nbsp; 特点: require、module.exports、exports CommonJS 一般用在服务端或者Node用来同步加载模块，它对于模块的依赖发生在代码运行阶段，不适合在浏览器端做异步加载。 exports实际上是一个对module.exports的引用，不能给exports赋值，否则会断开与module.exports的连接：
+```js
+  exports.add = function add () {/* 方法 */}
+    // 等同于
+  module.exports.add = function add () {/* 方法 */}
+```
+
+##### 5. ES Module - 浏览器模块系统
+&nbsp;&nbsp;&nbsp;&nbsp; import、export ES6模块化不是对象，import会在JavaScript引擎静态分析，在编译时就引入模块代码，而并非在代码运行时加载，因此也不适合异步加载。 在HTML中如果要引入模块需要使用。
+
+**ESModule的优势：**
+
+- 死代码检测和排除。我们可以用静态分析工具检测出哪些模块没有被调用过。比如，在引入工具类库时，工程中往往只用到了其中一部分组件或接口，但有可能会将其代码完整地加载进来。未被调用到的模块代码永远不会被执行，也就成为了死代码。通过静态分析可以在打包时去掉这些未曾使用过的模块，以减小打包资源体积。
+- 模块变量类型检查。JavaScript属于动态类型语言，不会在代码执行前检查类型错误（比如对一个字符串类型的值进行函数调用）。ES6 Module的静态模块结构有助于确保模块之间传递的值或接口类型是正确的。
+- 编译器优化。在CommonJS等动态模块系统中，无论采用哪种方式，本质上导入的都是一个对象，而ES6 Module支持直接导入变量，减少了引用层级，程序效率更高。
+
+**ESModule和CommonJs差异：**
+- CommonJS模块引用后是一个值的拷贝，而ESModule引用后是一个值的动态映射，并且这个映射是只读的
+- CommonJS 模块输出的是值的拷贝，一旦输出之后，无论模块内部怎么变化，都无法影响之前的引用。
+- ESModule 是引擎会在遇到import后生成一个引用链接，在脚本真正执行时才会根据这个引用链接去模块里面取值，模块内部的原始值变了import加载的模块也会变。
+- CommonJS运行时加载，ESModule编译阶段引用。CommonJS在引入时是加载整个模块，生成一个对象，然后再从这个生成的对象上读取方法和属性。
+- ESModule 不是对象，而是通过export暴露出要输出的代码块，在import时使用静态命令的方法引用指定的输出代码块，并在import语句处执行这个要输出的代码，而不是直接加载整个模块。
+
+
 #### ➣ ES6新增特性
 
 1. Promise
@@ -750,6 +811,29 @@ JS 引擎一直等待着任务队列中任务的到来，然后加以处理，�
 - 页面渲染
 - 从事件队列面里取一个宏任务塞入执行栈执行
 如此反复
+
+**一个参考题目：**
+```js
+const promise = new Promise((resolve, reject) => {
+  console.log(1);
+  resolve(5);
+  console.log(2);
+}).then(val => {
+  console.log(val);
+});
+
+promise.then(() => {
+  console.log(3);
+});
+
+console.log(4);
+
+setTimeout(function() {
+  console.log(6);
+});
+
+```
+输出结果：`124536`，注意main主进程代码第一次执行时被看做宏任务。
 
 #### ➣ 从输入URL到页面渲染完成发生了什么
 
