@@ -44,12 +44,6 @@
     - [Js实现bind函数](#js%E5%AE%9E%E7%8E%B0bind%E5%87%BD%E6%95%B0)
     - [➣ Js实现继承](#%E2%9E%A3-js%E5%AE%9E%E7%8E%B0%E7%BB%A7%E6%89%BF)
     - [➣ 手写深拷贝和浅拷贝](#%E2%9E%A3-%E6%89%8B%E5%86%99%E6%B7%B1%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B5%85%E6%8B%B7%E8%B4%9D)
-    - [➣ 前端模块化历程](#%E2%9E%A3-%E5%89%8D%E7%AB%AF%E6%A8%A1%E5%9D%97%E5%8C%96%E5%8E%86%E7%A8%8B)
-      - [1. IIFE - 立即执行函数](#1-iife---%E7%AB%8B%E5%8D%B3%E6%89%A7%E8%A1%8C%E5%87%BD%E6%95%B0)
-      - [2. AMD - requireJs](#2-amd---requirejs)
-      - [3. CMD - seaJs](#3-cmd---seajs)
-      - [4. CommonJs - Node.js模块规范](#4-commonjs---nodejs%E6%A8%A1%E5%9D%97%E8%A7%84%E8%8C%83)
-      - [5. ES Module - 浏览器模块系统](#5-es-module---%E6%B5%8F%E8%A7%88%E5%99%A8%E6%A8%A1%E5%9D%97%E7%B3%BB%E7%BB%9F)
     - [➣ ES6新增特性](#%E2%9E%A3-es6%E6%96%B0%E5%A2%9E%E7%89%B9%E6%80%A7)
     - [➣ 移动端点击穿透问题](#%E2%9E%A3-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E7%82%B9%E5%87%BB%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98)
     - [➣ 图片懒加载具体实现方案和思路](#%E2%9E%A3-%E5%9B%BE%E7%89%87%E6%87%92%E5%8A%A0%E8%BD%BD%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E5%92%8C%E6%80%9D%E8%B7%AF)
@@ -72,31 +66,45 @@
     - [➣ 函数柯里化2：curry函数](#%E2%9E%A3-%E5%87%BD%E6%95%B0%E6%9F%AF%E9%87%8C%E5%8C%962curry%E5%87%BD%E6%95%B0)
     - [➣ vue双向绑定实现原理](#%E2%9E%A3-vue%E5%8F%8C%E5%90%91%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)
     - [➣ Vue2.0与Vue3.0双向绑定，proxy实现](#%E2%9E%A3-vue20%E4%B8%8Evue30%E5%8F%8C%E5%90%91%E7%BB%91%E5%AE%9Aproxy%E5%AE%9E%E7%8E%B0)
-    - [➣ React 中 setState 什么时候是同步的，什么时候是异步的？](#%E2%9E%A3-react-%E4%B8%AD-setstate-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E6%98%AF%E5%90%8C%E6%AD%A5%E7%9A%84%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E6%98%AF%E5%BC%82%E6%AD%A5%E7%9A%84)
-    - [➣ React-Fiber原理和生命周期使用详解](#%E2%9E%A3-react-fiber%E5%8E%9F%E7%90%86%E5%92%8C%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3)
-    - [➣ React虚拟dom以及diff算法](#%E2%9E%A3-react%E8%99%9A%E6%8B%9Fdom%E4%BB%A5%E5%8F%8Adiff%E7%AE%97%E6%B3%95)
-    - [➣ Babel源码](#%E2%9E%A3-babel%E6%BA%90%E7%A0%81)
-    - [➣ React SetState原理](#%E2%9E%A3-react-setstate%E5%8E%9F%E7%90%86)
     - [➣ 前端错误监控方法](#%E2%9E%A3-%E5%89%8D%E7%AB%AF%E9%94%99%E8%AF%AF%E7%9B%91%E6%8E%A7%E6%96%B9%E6%B3%95)
     - [➣ 发布订阅模式和观察者模式区别](#%E2%9E%A3-%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F%E5%92%8C%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F%E5%8C%BA%E5%88%AB)
     - [➣ 实现一个EventEmitter类，支持事件的on,off,emit,once,setMaxListeners。](#%E2%9E%A3-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AAeventemitter%E7%B1%BB%E6%94%AF%E6%8C%81%E4%BA%8B%E4%BB%B6%E7%9A%84onoffemitoncesetmaxlisteners)
     - [➣ 实现ajax并发请求控制](#%E2%9E%A3-%E5%AE%9E%E7%8E%B0ajax%E5%B9%B6%E5%8F%91%E8%AF%B7%E6%B1%82%E6%8E%A7%E5%88%B6)
     - [➣ 如何自己实现一个单点登录系统](#%E2%9E%A3-%E5%A6%82%E4%BD%95%E8%87%AA%E5%B7%B1%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E5%8D%95%E7%82%B9%E7%99%BB%E5%BD%95%E7%B3%BB%E7%BB%9F)
     - [➣ 使用ES5实现Promise](#%E2%9E%A3-%E4%BD%BF%E7%94%A8es5%E5%AE%9E%E7%8E%B0promise)
-- [### V. 要点：Node.js](#v-%E8%A6%81%E7%82%B9nodejs)
+  - [V. 要点：React](#v-%E8%A6%81%E7%82%B9react)
+    - [➣ React 中 setState 什么时候是同步的，什么时候是异步的？](#%E2%9E%A3-react-%E4%B8%AD-setstate-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E6%98%AF%E5%90%8C%E6%AD%A5%E7%9A%84%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E6%98%AF%E5%BC%82%E6%AD%A5%E7%9A%84)
+    - [➣ React-Fiber原理和生命周期使用详解](#%E2%9E%A3-react-fiber%E5%8E%9F%E7%90%86%E5%92%8C%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3)
+    - [➣ React虚拟dom以及diff算法](#%E2%9E%A3-react%E8%99%9A%E6%8B%9Fdom%E4%BB%A5%E5%8F%8Adiff%E7%AE%97%E6%B3%95)
+    - [➣ Babel源码](#%E2%9E%A3-babel%E6%BA%90%E7%A0%81)
+    - [➣ React SetState原理](#%E2%9E%A3-react-setstate%E5%8E%9F%E7%90%86)
+- [### VI. 要点：Node.js](#vi-%E8%A6%81%E7%82%B9nodejs)
+    - [➣ Node.js和Webpack对模块循环依赖的处理](#%E2%9E%A3-nodejs%E5%92%8Cwebpack%E5%AF%B9%E6%A8%A1%E5%9D%97%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96%E7%9A%84%E5%A4%84%E7%90%86)
+      - [Node.js的处理](#nodejs%E7%9A%84%E5%A4%84%E7%90%86)
+      - [Webpack的处理](#webpack%E7%9A%84%E5%A4%84%E7%90%86)
+    - [➣ 前端模块化历程](#%E2%9E%A3-%E5%89%8D%E7%AB%AF%E6%A8%A1%E5%9D%97%E5%8C%96%E5%8E%86%E7%A8%8B)
+      - [1. IIFE - 立即执行函数](#1-iife---%E7%AB%8B%E5%8D%B3%E6%89%A7%E8%A1%8C%E5%87%BD%E6%95%B0)
+      - [2. AMD - requireJs](#2-amd---requirejs)
+      - [3. CMD - seaJs](#3-cmd---seajs)
+      - [4. CommonJs - Node.js模块规范](#4-commonjs---nodejs%E6%A8%A1%E5%9D%97%E8%A7%84%E8%8C%83)
+      - [5. ES Module - 浏览器模块系统](#5-es-module---%E6%B5%8F%E8%A7%88%E5%99%A8%E6%A8%A1%E5%9D%97%E7%B3%BB%E7%BB%9F)
     - [➣ 谈谈node子进程child_process和实际使用场景](#%E2%9E%A3-%E8%B0%88%E8%B0%88node%E5%AD%90%E8%BF%9B%E7%A8%8Bchildprocess%E5%92%8C%E5%AE%9E%E9%99%85%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF)
     - [➣ node是IO密集型体现在哪里](#%E2%9E%A3-node%E6%98%AFio%E5%AF%86%E9%9B%86%E5%9E%8B%E4%BD%93%E7%8E%B0%E5%9C%A8%E5%93%AA%E9%87%8C)
-- [### VI. 要点：设计模式](#vi-%E8%A6%81%E7%82%B9%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F)
-- [### VII. 要点：前端工具](#vii-%E8%A6%81%E7%82%B9%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7)
+- [### VII. 要点：设计模式](#vii-%E8%A6%81%E7%82%B9%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F)
+- [### VIII. 要点：前端工具](#viii-%E8%A6%81%E7%82%B9%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7)
     - [➣ 打包gulp/webpack/rollup一些区别](#%E2%9E%A3-%E6%89%93%E5%8C%85gulpwebpackrollup%E4%B8%80%E4%BA%9B%E5%8C%BA%E5%88%AB)
     - [➣ ts自己的看法，和应用](#%E2%9E%A3-ts%E8%87%AA%E5%B7%B1%E7%9A%84%E7%9C%8B%E6%B3%95%E5%92%8C%E5%BA%94%E7%94%A8)
     - [➣ webpack loader和plugin区别](#%E2%9E%A3-webpack-loader%E5%92%8Cplugin%E5%8C%BA%E5%88%AB)
     - [➣ webpack中循环引用问题，a里面引用了b，b里面引用了a](#%E2%9E%A3-webpack%E4%B8%AD%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8%E9%97%AE%E9%A2%98a%E9%87%8C%E9%9D%A2%E5%BC%95%E7%94%A8%E4%BA%86bb%E9%87%8C%E9%9D%A2%E5%BC%95%E7%94%A8%E4%BA%86a)
-- [### VIII. 要点：前端性能优化](#viii-%E8%A6%81%E7%82%B9%E5%89%8D%E7%AB%AF%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96)
+  - [IV. 要点：前端工程化方面](#iv-%E8%A6%81%E7%82%B9%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96%E6%96%B9%E9%9D%A2)
+    - [➣ 前端兼容](#%E2%9E%A3-%E5%89%8D%E7%AB%AF%E5%85%BC%E5%AE%B9)
+      - [多屏幕自适应](#%E5%A4%9A%E5%B1%8F%E5%B9%95%E8%87%AA%E9%80%82%E5%BA%94)
+      - [浏览器兼容处理](#%E6%B5%8F%E8%A7%88%E5%99%A8%E5%85%BC%E5%AE%B9%E5%A4%84%E7%90%86)
+- [### IV. 要点：前端性能优化](#iv-%E8%A6%81%E7%82%B9%E5%89%8D%E7%AB%AF%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96)
     - [➣ webpack性能优化方面](#%E2%9E%A3-webpack%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%96%B9%E9%9D%A2)
     - [➣ 服务器性能优化方面](#%E2%9E%A3-%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%96%B9%E9%9D%A2)
     - [➣ 弱网环境下页面首屏如何快速加载](#%E2%9E%A3-%E5%BC%B1%E7%BD%91%E7%8E%AF%E5%A2%83%E4%B8%8B%E9%A1%B5%E9%9D%A2%E9%A6%96%E5%B1%8F%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E5%8A%A0%E8%BD%BD)
-- [### IX. 要点：操作系统和网络](#ix-%E8%A6%81%E7%82%B9%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%92%8C%E7%BD%91%E7%BB%9C)
+- [### X. 要点：操作系统和网络](#x-%E8%A6%81%E7%82%B9%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%92%8C%E7%BD%91%E7%BB%9C)
     - [➣ 常见的网页攻击方式，如何防范](#%E2%9E%A3-%E5%B8%B8%E8%A7%81%E7%9A%84%E7%BD%91%E9%A1%B5%E6%94%BB%E5%87%BB%E6%96%B9%E5%BC%8F%E5%A6%82%E4%BD%95%E9%98%B2%E8%8C%83)
       - [1. XSS：跨站脚本攻击(Cross-site scripting)](#1-xss%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%AC%E6%94%BB%E5%87%BBcross-site-scripting)
       - [2. XSRF：跨站请求伪造(Cross-site request forgery)](#2-xsrf%E8%B7%A8%E7%AB%99%E8%AF%B7%E6%B1%82%E4%BC%AA%E9%80%A0cross-site-request-forgery)
@@ -113,7 +121,9 @@
     - [➣ http2.0 http3.0作了哪些优化](#%E2%9E%A3-http20-http30%E4%BD%9C%E4%BA%86%E5%93%AA%E4%BA%9B%E4%BC%98%E5%8C%96)
     - [➣ https建立连接过程](#%E2%9E%A3-https%E5%BB%BA%E7%AB%8B%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B)
     - [➣ 计算机网络中，http地址，在7层协议中，如何一步步向下解析，从应用层到最底层的物理层，每一层处理的事情](#%E2%9E%A3-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B8%ADhttp%E5%9C%B0%E5%9D%80%E5%9C%A87%E5%B1%82%E5%8D%8F%E8%AE%AE%E4%B8%AD%E5%A6%82%E4%BD%95%E4%B8%80%E6%AD%A5%E6%AD%A5%E5%90%91%E4%B8%8B%E8%A7%A3%E6%9E%90%E4%BB%8E%E5%BA%94%E7%94%A8%E5%B1%82%E5%88%B0%E6%9C%80%E5%BA%95%E5%B1%82%E7%9A%84%E7%89%A9%E7%90%86%E5%B1%82%E6%AF%8F%E4%B8%80%E5%B1%82%E5%A4%84%E7%90%86%E7%9A%84%E4%BA%8B%E6%83%85)
-- [### X. 要点：Leetcode算法刷题](#x-%E8%A6%81%E7%82%B9leetcode%E7%AE%97%E6%B3%95%E5%88%B7%E9%A2%98)
+  - [ＸI. 产品、项目和工程化](#%EF%BD%98i-%E4%BA%A7%E5%93%81%E9%A1%B9%E7%9B%AE%E5%92%8C%E5%B7%A5%E7%A8%8B%E5%8C%96)
+    - [➣ 项目怎么复盘？](#%E2%9E%A3-%E9%A1%B9%E7%9B%AE%E6%80%8E%E4%B9%88%E5%A4%8D%E7%9B%98)
+- [### XII. 要点：Leetcode算法刷题](#xii-%E8%A6%81%E7%82%B9leetcode%E7%AE%97%E6%B3%95%E5%88%B7%E9%A2%98)
     - [➣ 考察重点](#%E2%9E%A3-%E8%80%83%E5%AF%9F%E9%87%8D%E7%82%B9)
     - [➣ 推荐作者和资源](#%E2%9E%A3-%E6%8E%A8%E8%8D%90%E4%BD%9C%E8%80%85%E5%92%8C%E8%B5%84%E6%BA%90)
 
@@ -657,61 +667,6 @@ function shallowClone(data) {
 
 ```
 
-#### ➣ 前端模块化历程
-模块化主要是用来抽离公共代码，隔离作用域，避免变量冲突等。
-
-##### 1. IIFE - 立即执行函数
-使用自执行函数来编写模块化，特点：在一个单独的函数作用域中执行代码，避免变量冲突。
-```js
-(function(){
-  return {
-	data:[]
-  }
-})()
-
-```
-
-##### 2. AMD - requireJs
-模块依赖需要提前声明好，不支持动态设置依赖
-```js
-define('./index.js',function(code){
-	// code 就是index.js 返回的内容
-});
-```
-
-##### 3. CMD - seaJs
-支持动态依赖设置
-```js
-define(function(require, exports, module) {  
-  var indexCode = require('./index.js');
-});
-```
-
-##### 4. CommonJs - Node.js模块规范
-&nbsp;&nbsp;&nbsp;&nbsp; 特点: require、module.exports、exports CommonJS 一般用在服务端或者Node用来同步加载模块，它对于模块的依赖发生在代码运行阶段，不适合在浏览器端做异步加载。 exports实际上是一个对module.exports的引用，不能给exports赋值，否则会断开与module.exports的连接：
-```js
-  exports.add = function add () {/* 方法 */}
-    // 等同于
-  module.exports.add = function add () {/* 方法 */}
-```
-
-##### 5. ES Module - 浏览器模块系统
-&nbsp;&nbsp;&nbsp;&nbsp; import、export ES6模块化不是对象，import会在JavaScript引擎静态分析，在编译时就引入模块代码，而并非在代码运行时加载，因此也不适合异步加载。 在HTML中如果要引入模块需要使用。
-
-**ESModule的优势：**
-
-- 死代码检测和排除。我们可以用静态分析工具检测出哪些模块没有被调用过。比如，在引入工具类库时，工程中往往只用到了其中一部分组件或接口，但有可能会将其代码完整地加载进来。未被调用到的模块代码永远不会被执行，也就成为了死代码。通过静态分析可以在打包时去掉这些未曾使用过的模块，以减小打包资源体积。
-- 模块变量类型检查。JavaScript属于动态类型语言，不会在代码执行前检查类型错误（比如对一个字符串类型的值进行函数调用）。ES6 Module的静态模块结构有助于确保模块之间传递的值或接口类型是正确的。
-- 编译器优化。在CommonJS等动态模块系统中，无论采用哪种方式，本质上导入的都是一个对象，而ES6 Module支持直接导入变量，减少了引用层级，程序效率更高。
-
-**ESModule和CommonJs差异：**
-- CommonJS模块引用后是一个值的拷贝，而ESModule引用后是一个值的动态映射，并且这个映射是只读的
-- CommonJS 模块输出的是值的拷贝，一旦输出之后，无论模块内部怎么变化，都无法影响之前的引用。
-- ESModule 是引擎会在遇到import后生成一个引用链接，在脚本真正执行时才会根据这个引用链接去模块里面取值，模块内部的原始值变了import加载的模块也会变。
-- CommonJS运行时加载，ESModule编译阶段引用。CommonJS在引入时是加载整个模块，生成一个对象，然后再从这个生成的对象上读取方法和属性。
-- ESModule 不是对象，而是通过export暴露出要输出的代码块，在import时使用静态命令的方法引用指定的输出代码块，并在import语句处执行这个要输出的代码，而不是直接加载整个模块。
-
-
 #### ➣ ES6新增特性
 
 1. Promise
@@ -1017,21 +972,6 @@ function curry(func) {
 
 #### ➣ Vue2.0与Vue3.0双向绑定，proxy实现
 
-#### ➣ React 中 setState 什么时候是同步的，什么时候是异步的？
-- setState 只在合成事件和钩子函数中是“异步”的，在原生事件和 setTimeout 中都是同步的。
-- setState的“异步”并不是说内部由异步代码实现，其实本身执行的过程和代码都是同步的，只是合成事件和钩子函数的调用顺序在更新之前，导致在合成事件和钩子函数中没法立马拿到更新后的值，形式了所谓的“异步”，当然可以通过第二个参数 setState(partialState, callback) 中的callback拿到更新后的结果。
-- setState 的批量更新优化也是建立在“异步”（合成事件、钩子函数）之上的，在原生事件和setTimeout 中不会批量更新，在“异步”中如果对同一个值进行多次 setState ， setState 的批量更新策略会对其进行覆盖，取最后一次的执行，如果是同时 setState 多个不同的值，在更新时会对其进行合并批量更新。
-
-#### ➣ React-Fiber原理和生命周期使用详解
-
-[>> 文章链接](https://nojsja.gitee.io/blogs/2021/01/25/%E7%90%86%E8%A7%A3React%EF%BC%9AFiber%E6%9E%B6%E6%9E%84%E5%92%8C%E6%96%B0%E6%97%A7%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/)
-
-#### ➣ React虚拟dom以及diff算法
-
-#### ➣ Babel源码
-
-#### ➣ React SetState原理
-
 #### ➣ 前端错误监控方法
 
 #### ➣ 发布订阅模式和观察者模式区别
@@ -1166,14 +1106,135 @@ function multiAjaxRequest(urls=[], maxNum=0) {
 #### ➣ 使用ES5实现Promise  
 [链接-> 使用ES5实现ES6 Promise API](https://github.com/nojsja/promise-nojsja)
 
-### V. 要点：Node.js
+### V. 要点：React
+
+#### ➣ React 中 setState 什么时候是同步的，什么时候是异步的？
+- setState 只在合成事件和钩子函数中是“异步”的，在原生事件和 setTimeout 中都是同步的。
+- setState的“异步”并不是说内部由异步代码实现，其实本身执行的过程和代码都是同步的，只是合成事件和钩子函数的调用顺序在更新之前，导致在合成事件和钩子函数中没法立马拿到更新后的值，形式了所谓的“异步”，当然可以通过第二个参数 setState(partialState, callback) 中的callback拿到更新后的结果。
+- setState 的批量更新优化也是建立在“异步”（合成事件、钩子函数）之上的，在原生事件和setTimeout 中不会批量更新，在“异步”中如果对同一个值进行多次 setState ， setState 的批量更新策略会对其进行覆盖，取最后一次的执行，如果是同时 setState 多个不同的值，在更新时会对其进行合并批量更新。
+
+#### ➣ React-Fiber原理和生命周期使用详解
+
+[>> 文章链接](https://nojsja.gitee.io/blogs/2021/01/25/%E7%90%86%E8%A7%A3React%EF%BC%9AFiber%E6%9E%B6%E6%9E%84%E5%92%8C%E6%96%B0%E6%97%A7%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/)
+
+#### ➣ React虚拟dom以及diff算法
+
+#### ➣ Babel源码
+
+#### ➣ React SetState原理
+
+
+### VI. 要点：Node.js
 ----------
+
+#### ➣ Node.js和Webpack对模块循环依赖的处理
+
+举例，A和B相互依赖，我们运行A.js：
+```js
+// A.js:
+let b = require('./B');
+
+module.exports = {
+    A: 'this is a Object'
+};
+
+
+console.log('A: before log b');
+console.log(b);
+console.log('A: after log b');
+
+// B.js:
+
+let a = require('./A');
+
+module.exports = {
+    B: 'this is b Object'
+};
+
+console.log('B: before log a');
+console.log(a);
+console.log('B: after log a');
+
+```
+
+##### Node.js的处理
+
+1. 工作方式
+
+&nbsp;&nbsp;&nbsp;&nbsp; Node.js具有两个特性：运行时加载和缓存已加载模块。为了避免无限循环的模块依赖，在 Node.js 运行 A.js 之后，它就被缓存了，但需要注意的是，此时缓存的仅仅是一个未完工的 A.js（an unfinished copy of the a.js）。所以在 B.js require A.js 时，得到的仅仅是缓存中一个未完工的 A.js，具体来说，它并没有明确被导出的具体内容（A.js 尾端）。所以 B.js 中输出的 a 是一个空对象。之后，B.js 顺利执行完，回到 A.js 的 require 语句之后，继续执行完成。
+
+2. 解决方案
+
+&nbsp;&nbsp;&nbsp;&nbsp; 想要解决这个问题有一个很简明的方法，那就是在循环依赖的每个模块中先导出自身，然后再导入其他模块（对于本文的举例来说，实际只需改动 A.js，先使用module.exports导出，然后再require B.js）。
+
+##### Webpack的处理
+
+1. 工作方式
+
+&nbsp;&nbsp;&nbsp;&nbsp; ES Modules 模块输出的是值的引用，输出接口动态绑定，在编译时执行。运行A.js时文件声明的变量存在提升
+
+
+#### ➣ 前端模块化历程
+模块化主要是用来抽离公共代码，隔离作用域，避免变量冲突等。
+
+##### 1. IIFE - 立即执行函数
+使用自执行函数来编写模块化，特点：在一个单独的函数作用域中执行代码，避免变量冲突。
+```js
+(function(){
+  return {
+	data:[]
+  }
+})()
+
+```
+
+##### 2. AMD - requireJs
+模块依赖需要提前声明好，不支持动态设置依赖
+```js
+define('./index.js',function(code){
+	// code 就是index.js 返回的内容
+});
+```
+
+##### 3. CMD - seaJs
+支持动态依赖设置
+```js
+define(function(require, exports, module) {  
+  var indexCode = require('./index.js');
+});
+```
+
+##### 4. CommonJs - Node.js模块规范
+&nbsp;&nbsp;&nbsp;&nbsp; 特点: require、module.exports、exports CommonJS 一般用在服务端或者Node用来同步加载模块，它对于模块的依赖发生在代码运行阶段，不适合在浏览器端做异步加载。 exports实际上是一个对module.exports的引用，不能给exports赋值，否则会断开与module.exports的连接：
+```js
+  exports.add = function add () {/* 方法 */}
+    // 等同于
+  module.exports.add = function add () {/* 方法 */}
+```
+
+##### 5. ES Module - 浏览器模块系统
+&nbsp;&nbsp;&nbsp;&nbsp; import、export ES6模块化不是对象，import会在JavaScript引擎静态分析，在编译时就引入模块代码，而并非在代码运行时加载，因此也不适合异步加载。 在HTML中如果要引入模块需要使用。
+
+**ESModule的优势：**
+
+- 死代码检测和排除。我们可以用静态分析工具检测出哪些模块没有被调用过。比如，在引入工具类库时，工程中往往只用到了其中一部分组件或接口，但有可能会将其代码完整地加载进来。未被调用到的模块代码永远不会被执行，也就成为了死代码。通过静态分析可以在打包时去掉这些未曾使用过的模块，以减小打包资源体积。
+- 模块变量类型检查。JavaScript属于动态类型语言，不会在代码执行前检查类型错误（比如对一个字符串类型的值进行函数调用）。ES6 Module的静态模块结构有助于确保模块之间传递的值或接口类型是正确的。
+- 编译器优化。在CommonJS等动态模块系统中，无论采用哪种方式，本质上导入的都是一个对象，而ES6 Module支持直接导入变量，减少了引用层级，程序效率更高。
+
+**ESModule和CommonJs差异：**
+- CommonJS模块引用后是一个值的拷贝，而ESModule引用后是一个值的动态映射，并且这个映射是只读的
+- CommonJS 模块输出的是值的拷贝，一旦输出之后，无论模块内部怎么变化，都无法影响之前的引用。
+- ESModule 是引擎会在遇到import后生成一个引用链接，在脚本真正执行时才会根据这个引用链接去模块里面取值，模块内部的原始值变了import加载的模块也会变。
+- CommonJS运行时加载，ESModule编译阶段引用。CommonJS在引入时是加载整个模块，生成一个对象，然后再从这个生成的对象上读取方法和属性。
+- ESModule 不是对象，而是通过export暴露出要输出的代码块，在import时使用静态命令的方法引用指定的输出代码块，并在import语句处执行这个要输出的代码，而不是直接加载整个模块。
+
+
 
 #### ➣ 谈谈node子进程child_process和实际使用场景
 
 #### ➣ node是IO密集型体现在哪里
 
-### VI. 要点：设计模式
+### VII. 要点：设计模式
 ----------
 
 1. [策略模式](https://github.com/nojsja/javascript-learning/tree/master/design-patterns#1-the-strategy-pattern%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F)
@@ -1192,7 +1253,7 @@ function multiAjaxRequest(urls=[], maxNum=0) {
 
 8. [模板方法模式](https://github.com/nojsja/javascript-learning/tree/master/design-patterns#7-the-responsibility-chain-pattern%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F)
 
-### VII. 要点：前端工具
+### VIII. 要点：前端工具
 ---------
 
 #### ➣ 打包gulp/webpack/rollup一些区别
@@ -1205,8 +1266,183 @@ function multiAjaxRequest(urls=[], maxNum=0) {
 
 #### ➣ webpack中循环引用问题，a里面引用了b，b里面引用了a
 
+### IV. 要点：前端工程化方面
 
-### VIII. 要点：前端性能优化
+#### ➣ 前端兼容
+
+##### 多屏幕自适应
+
+1. 媒体查询的`width`边界值
+2. 一些较新的自适应API
+##### 浏览器兼容处理
+
+1. XHR请求创建的兼容写法(惰性载入)
+```js
+function createXHR(){
+   if(typeof XMLHttpRequest != "undefined"){//XMLHttpRequest
+       createXHR = function(){
+           return new XMLHttpRequest();
+       };
+   }else if(typeof ActiveXObject!="undefined"){//IE ActiveXObject
+       createXHR = function(){
+           if(typeof arguments.callee.activeXString!="string"){
+               var versions=["MSXML2.XMLHttp.6.0", "MSXML2.XMLHttp.3.0", "MSXML2.XMLHttp"],//IE
+                   i,len;
+                for(i=0,len=versions.length;i<len;i++){
+                   try{
+                       new ActiveXObject(versions[i]);
+                       arguments.callee.activeXString=version[i];
+                       break;
+                   }catch(ex){}
+                }
+               
+           }
+           return new ActiveXObject(arguments.callee.activeXString);
+       };
+   }else{
+       createXHR = function(){
+           throw new Error("fail");
+       }
+   }
+
+   return createXHR();
+}
+```
+1. 事件监听器的兼容写法
+  ```js
+   var eventUtil={
+
+    addEventHandler: function (obj, eventName, handler) {
+        if (document.attachEvent) {//IE
+            obj.attachEvent("on" + eventName, handler);
+        } else if (document.addEventListener) {//DOM2级
+            obj.addEventListener(eventName, handler, false);//false- 默认。事件句柄在冒泡阶段执行
+        }
+        else{//DOM0级
+            obj['on'+eventName]=handler;
+        }
+    },
+
+    removeEventHandler:function(obj, eventName, handler){
+        if (document.attachEvent) {//IE
+            obj.detachEvent("on" + eventName, handler);
+        } else if (document.addEventListener) {//DOM2级
+            obj.removeEventListener(eventName, handler, false);
+        }
+        else{//DOM0级
+            obj['on'+eventName]=null;
+        }
+    },
+    //获取event对象的引用，取到事件的所有信息，确保随时能使用event；
+    getEvent: function (e) {
+        var ev = e || window.event;
+        if (!ev) {
+            var c = this.getEvent.caller;
+            while (c) {
+                ev = c.arguments[0];
+                if (ev && Event == ev.constructor) {
+                    break;
+                }
+                c = c.caller;
+            }
+        }
+        return ev;
+    },
+    //事件类型
+    getType: function (e) {
+        return e.type;
+
+    },
+    //调用事件的元素
+    getElement: function (e) {
+        return e.target|| e.srcElement;
+    },
+    //阻止默认事件
+    preventDefault: function (e) {
+        e= this.getEvent(e);
+        if(e.preventDefault){
+            e.preventDefault();
+        }
+        else {
+            return e.returnValue=false;//IE
+        }
+    },
+    //阻止冒泡
+    stopPropagation:function(e) {
+      if(e.stopPropagation){
+          e.stopPropagation();
+      }
+        else {
+          e.cancelBubble=true;//IE
+      }
+
+    },
+    //键盘事件键盘的编号
+    getCharCode:function (e){
+        if(typeof e.charCode=="number") return e.charCode;
+        else return e.keyCode;
+    },
+    //获取剪贴板的文本
+    getClipbordText:function(e){
+        var clipboardData=(e.clipboardData||window.clipboardData);
+        return clipboardData.getData("text");
+    },
+    //设置剪贴板文本
+    setClipboardText:function(e,value){
+        if(e.clipboardData){
+            return e.clipboardData.setData("text/plain",value);
+        }else if(window.clipboardData){
+            return window.clipboardData.setData("text",value);
+        }
+    },
+
+  }
+  ```
+3. 浏览器事件对象的兼容
+```js
+   function getActivatedObject(e) {
+      var obj;
+      if (!e) {
+          // early version of IE
+          obj = window.event.srcElement;
+      } else if (e.srcElement) {
+          // IE 7 or later
+          obj = e.srcElement;
+      } else {
+          // DOM Level 2 browser
+          obj = e.target;
+      }
+      return obj;
+    }
+```
+4. requestAnimationFrame兼容写法
+5. 获取页面视口大小的兼容写法
+   ```js
+   var pageWidth=window.innerWidth,
+   pageHeight=window.innerHeight;
+   if(typeof pageHeight!="number"){
+       if(document.compatMode=="CSS1Compat"){//标准模式
+           pageHeight=window.documentElement.clientHeight;
+           pageWidth=window.documentElement.clientWidth;
+       }
+       else {//BackCompat
+           pageHeight=window.body.clientHeight;
+           pageWidth=window.body.clientWidth;
+       }
+   }
+   ```
+6. 获取CSS样式
+   ```js
+   function getStyle(obj,attr){
+      if(obj.currentStyle) {//IE 浏览器
+          return obj.currentStyle[attr];
+      }else{//Firefox浏览器
+          return getComputedStyle(obj,false)[attr];
+      }
+    }
+   ```
+
+### IV. 要点：前端性能优化
 --------
 
 ![](./images/frontend-optimization.png)
@@ -1222,14 +1458,13 @@ function multiAjaxRequest(urls=[], maxNum=0) {
 
 #### ➣ 服务器性能优化方面
 
-
 #### ➣ 弱网环境下页面首屏如何快速加载
 方案：
 1. 缓存的使用
 2. SSR使用
 3. 骨架屏使用
 
-### IX. 要点：操作系统和网络
+### X. 要点：操作系统和网络
 -------------
 
 #### ➣ 常见的网页攻击方式，如何防范
@@ -1457,7 +1692,37 @@ console.log('Server is running at port 8080...');
 
 #### ➣ 计算机网络中，http地址，在7层协议中，如何一步步向下解析，从应用层到最底层的物理层，每一层处理的事情
 
-### X. 要点：Leetcode算法刷题
+### ＸI. 产品、项目和工程化
+
+#### ➣ 项目怎么复盘？
+&nbsp;&nbsp;&nbsp;&nbsp; 通俗地讲，就是对你所做事情的反思，可以是优点也可以是缺点。笔者进行复盘的出发点，一方面是想在一个项目中，有什么东西可以沉淀下来，下次做事情的时候可以直接用；二是这次有哪些地方做得不够好的地方下次有更大的进步空间。朝着这两个方向去提高自己。
+
+&nbsp;&nbsp;&nbsp;&nbsp; 在项目结束一个星期左右的时候开始第一次的复盘比较合适。这个时候因为刚做完项目，很多实操的做法和过程都是清晰的，方便自己回忆起来。而且这个时候，头脑也会自动处于一种整理的状态，一般手上的活也不会很多，效率是最高的时候。
+
+`复盘`-最普遍也是最通用的做法：回顾目标 -> 评估结果 —> 分析原因 —> 总结经验：
+1. 回顾目标
+   
+- 1）当初行动的意图是什么？
+- 2）事件想要达到的目标是什么？
+- 3）预先制定的计划是什么？
+- 4）事先设想要发生的事情是什么？
+
+2. 评估结果
+  - 1）实际发生了什么事？
+  - 2）在什么情况下，是怎么发生的？
+  - 3）与目标相比，哪些地方做得好？哪些未达预期？
+
+3. 分析原因
+  - 1）实际情况与预期有无差异？
+  - 2）如果实际情况与预期有差异，那么，为什么会出现这些差异？是由哪些因素造成？根本原因是什么？
+  - 3）如果实际情况与预期无差异，那么，成功的关键因素是什么？
+
+4. 总结经验
+  - 1）我们从过程中学到了什么新东西？
+  - 2）如果有人进行同样的行动，我会给他什么建议？
+  - 3）接下来我们该做什么？哪些是可以直接行动的？哪些是其他层级才能处理的？是否要向上级呈报？
+
+### XII. 要点：Leetcode算法刷题
 --------------
 
 #### ➣ 考察重点
