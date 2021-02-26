@@ -32,6 +32,9 @@
     - [➣ 浮动布局相关](#%E2%9E%A3-%E6%B5%AE%E5%8A%A8%E5%B8%83%E5%B1%80%E7%9B%B8%E5%85%B3)
     - [➣ 位图和矢量图的区别](#%E2%9E%A3-%E4%BD%8D%E5%9B%BE%E5%92%8C%E7%9F%A2%E9%87%8F%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB)
     - [➣ opacity: 0、visibility: hidden、display: none 的异同](#%E2%9E%A3-opacity-0visibility-hiddendisplay-none-%E7%9A%84%E5%BC%82%E5%90%8C)
+    - [➣ 多端适配](#%E2%9E%A3-%E5%A4%9A%E7%AB%AF%E9%80%82%E9%85%8D)
+      - [1. 关于视口](#1-%E5%85%B3%E4%BA%8E%E8%A7%86%E5%8F%A3)
+      - [2. 关于多倍图](#2-%E5%85%B3%E4%BA%8E%E5%A4%9A%E5%80%8D%E5%9B%BE)
 - [### IV. 要点：Javascript](#iv-%E8%A6%81%E7%82%B9javascript)
     - [➣ Map/WeakMap/Set/WeakSet区别](#%E2%9E%A3-mapweakmapsetweakset%E5%8C%BA%E5%88%AB)
       - [1. Set](#1-set)
@@ -431,6 +434,70 @@ box-sizing属性可以为三个值之一：
 - 继承： display: none和opacity: 0：是非继承属性，子孙节点消失由于元素从渲染树消失造成，通过修改子孙节点属性无法显示。 visibility: hidden：是继承属性，子孙节点消失由于继承了hidden，通过设置visibility: visible;可以让子孙节点显式。
 
 - 性能： displa:none : 修改元素会造成文档回流,读屏器不会读取，性能消耗较大；visibility:hidden: 修改元素只会造成本元素的重绘, 性能消耗较少，读屏器能读取；；opacity: 0 ： 修改元素会造成重绘，性能消耗较少，读屏器能读取。
+
+#### ➣ 多端适配
+
+##### 1. 关于视口
+
+移动端浏览器通常宽度是 240px~640px，而大多数为 PC 端设计的网站宽度至少为 800px，如果仍以浏览器窗口作为视口的话，网站内容在手机上看起来会非常窄。
+
+因此，引入了布局视口、视觉视口和理想视口三个概念，使得移动端中的视口与浏览器宽度不再相关联。
+
+- 1）布局视口（layout viewport）
+
+![](./images/layout_viewport.png)
+
+一般移动设备的浏览器都默认设置了一个 viewport 元标签，定义一个虚拟的布局视口（layout viewport），用于解决早期的页面在手机上显示的问题。iOS, Android 基本都将这个视口分辨率设置为 980px，所以 PC 上的网页基本能在手机上呈现，只不过元素看上去很小，一般默认可以通过手动缩放网页。
+
+布局视口的宽度/高度可以通过 `document.documentElement.clientWidth / Height` 获取。布局视口使视口与移动端浏览器屏幕宽度完全独立开。CSS 布局将会根据它来进行计算，并被它约束。
+
+- 2）视觉视口（visual viewport）
+
+![](./images/visual_viewport.png)
+
+视觉视口是用户当前看到的区域，用户可以通过缩放操作视觉视口，同时不会影响布局视口。
+
+视觉视口和缩放比例的关系为：`当前缩放值 = 理想视口宽度 / 视觉视口宽度`。所以，当用户放大时，视觉视口将会变小，一个CSS 像素将显示更多的物理像素。
+
+- 3）理想视口（ideal viewport）
+
+布局视口的默认宽度并不是一个理想的宽度，于是 Apple 和其他浏览器厂商引入了理想视口的概念，它对设备而言是最理想的布局视口尺寸。显示在理想视口中的网站具有最理想的宽度，用户无需进行缩放。
+
+理想视口的值其实就是屏幕分辨率的值，它对应的像素叫做设备逻辑像素（device independent pixel, dip）。dip 和设备的物理像素无关，一个 dip 在任意像素密度的设备屏幕上都占据相同的空间。如果用户没有进行缩放，那么一个 CSS 像素就等于一个 dip。
+
+用下面的方法可以使布局视口与理想视口的宽度一致：`<meta name="viewport" content="width=device-width">`
+
+- 4）注意：
+
+    - viewport 标签只对移动端浏览器有效，对 PC 端浏览器是无效的
+
+    - 当缩放比例为 100% 时，dip 宽度 = CSS 像素宽度 = 理想视口的宽度 = 布局视口的宽度
+
+    - 单独设置 initial-scale 或 width 都会有兼容性问题，所以设置布局视口为理想视口的最佳方法是同时设置这两个属性
+
+    - 即使设置了 user-scalable = no，在 Android Chrome 浏览器中也可以强制启用手动缩放
+
+##### 2. 关于多倍图
+
+MacBook Pro 视网膜屏（Retina）显示器硬件像素是 2880px 1800px。当设置屏幕分辨率为 1920px 1200px 的时候，理想视口的宽度值是 1920px， 那么 dip 的宽度值就是 1920px。其与理想视口宽度的比值为1.5（2880/1920），这个比值叫做设备像素比：`逻辑像素宽度 * dpr = 物理像素宽度`。
+
+设备像素比可以通过 window.devicePixelRatio 来获取，或者使用 CSS 中的 device-pixel-ratio。
+
+下面是常见的设备像素比：
+
+- 普通密度桌面显示屏：devicePixelRatio = 1
+- 高密度桌面显示屏(Mac Retina)：devicePixelRatio = 2
+- 主流手机显示屏：devicePixelRatio = 2 or 3
+
+对于一张 100px * 100px 的图片，通过 CSS 设置其宽高：
+```css
+{
+  width:100px;
+  height:100px;
+}
+```
+
+在普通显示屏的电脑中打开是正常的，但假设在手机或 Retina 屏中打开，按照逻辑分辨率来渲染，他们的 devicePixelRatio = 2，那么就相当于拿 4 个物理像素来描绘 1 个电子像素。这等于拿一个2倍的放大镜去看图片，图片就会变得模糊。这时，就需要使用 @2x 甚至 @3x 图来避免图片的失真。
 
 ### IV. 要点：Javascript
 ----------
@@ -1276,6 +1343,9 @@ define(function(require, exports, module) {
 \> 背景：
 
 在不同的屏幕分辨率，浏览器页面展示差异很大。特别是屏幕分辨率较小时，容易发生布局错乱。为了解决这个问题，响应式UI框架应运而生。
+
+\> 关于浏览器视口： 
+[浏览器视口](https://segmentfault.com/a/1190000016595303#)
 
 \> 移动设备优先和非移动设备移动优先：
 ```css
