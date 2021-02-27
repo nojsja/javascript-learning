@@ -45,6 +45,7 @@
     - [➣ 实现Call和Apply](#%E2%9E%A3-%E5%AE%9E%E7%8E%B0call%E5%92%8Capply)
     - [➣ 实现对象new操作](#%E2%9E%A3-%E5%AE%9E%E7%8E%B0%E5%AF%B9%E8%B1%A1new%E6%93%8D%E4%BD%9C)
     - [Js实现bind函数](#js%E5%AE%9E%E7%8E%B0bind%E5%87%BD%E6%95%B0)
+    - [➣ 二维数组扁平化](#%E2%9E%A3-%E4%BA%8C%E7%BB%B4%E6%95%B0%E7%BB%84%E6%89%81%E5%B9%B3%E5%8C%96)
     - [➣ Js实现继承](#%E2%9E%A3-js%E5%AE%9E%E7%8E%B0%E7%BB%A7%E6%89%BF)
     - [➣ 手写深拷贝和浅拷贝](#%E2%9E%A3-%E6%89%8B%E5%86%99%E6%B7%B1%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B5%85%E6%8B%B7%E8%B4%9D)
     - [➣ ES6新增特性](#%E2%9E%A3-es6%E6%96%B0%E5%A2%9E%E7%89%B9%E6%80%A7)
@@ -636,6 +637,49 @@ Function.prototype.myBind = function(context) {
     return that.apply(context, args.concat(Array.from(arguments)));
   }
 }
+```
+
+#### ➣ 二维数组扁平化
+
+```js
+function flat(array) {
+  return array.reduce((total, current) => {
+    return total.concat(current);
+  }, []);
+}
+
+function flat(array, res=[]) {
+  for (var i = 0; i < array.length; i++) {
+    if (Array.isArray(array[i])) {
+      flat(array[i], res);
+    } else {
+      res.push(array[i]);
+    }
+  }
+
+  return res;
+}
+
+function flat(array) {
+  const res = [];
+  for (let i = 0; i < array.length; i++) {
+    if (Array.isArray(array[i])) {
+      res.push(...array[i]);
+    } else {
+      res.push(array[i]);
+    }
+  }
+  return res;
+}
+
+function flat(array) {
+  let str = JSON.stringify(array);
+  str = str.replace(/[\[\]]/g, '');
+  return JSON.parse(`[${str}]`);
+}
+
+console.log(flat([[1,2], [2,3], 4]))
+
 ```
 
 #### ➣ Js实现继承
