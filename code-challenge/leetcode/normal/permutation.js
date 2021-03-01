@@ -40,4 +40,4 @@ var permutation = function(S) {
 
   return filtedArray;
 };
-console.log(permutation("qqesd"));
+console.log(permutation("qqe"));

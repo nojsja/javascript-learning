@@ -32,10 +32,8 @@ var reverseString = function(s) {
   if (length < 2) return s;
 
   for (var i = 0; i < length; i++) {
-    if (i < Math.floor(length / 2)) {
-      s['__tmp'] = s[i];
-      s[i] = s[length - 1 - i];
-      s[length - 1 - i] = s['__tmp'];
+    if (i < (length / 2) ^ 0) {
+      [s[i], s[length - 1 - i]] = [s[length - 1 - i], s[i]];
     }
   }
 
