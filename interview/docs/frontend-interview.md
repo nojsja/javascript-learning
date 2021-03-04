@@ -46,8 +46,10 @@
     - [➣ 实现对象new操作](#%E2%9E%A3-%E5%AE%9E%E7%8E%B0%E5%AF%B9%E8%B1%A1new%E6%93%8D%E4%BD%9C)
     - [Js实现bind函数](#js%E5%AE%9E%E7%8E%B0bind%E5%87%BD%E6%95%B0)
     - [➣ 二维数组扁平化](#%E2%9E%A3-%E4%BA%8C%E7%BB%B4%E6%95%B0%E7%BB%84%E6%89%81%E5%B9%B3%E5%8C%96)
+    - [➣ Js如何判断一个数是不是2的N次幂](#%E2%9E%A3-js%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E4%B8%80%E4%B8%AA%E6%95%B0%E6%98%AF%E4%B8%8D%E6%98%AF2%E7%9A%84n%E6%AC%A1%E5%B9%82)
     - [➣ Js实现继承](#%E2%9E%A3-js%E5%AE%9E%E7%8E%B0%E7%BB%A7%E6%89%BF)
     - [➣ 手写深拷贝和浅拷贝](#%E2%9E%A3-%E6%89%8B%E5%86%99%E6%B7%B1%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B5%85%E6%8B%B7%E8%B4%9D)
+    - [➣ 基本数据类型和引用数据类型](#%E2%9E%A3-%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%BC%95%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B)
     - [➣ ES6新增特性](#%E2%9E%A3-es6%E6%96%B0%E5%A2%9E%E7%89%B9%E6%80%A7)
     - [➣ 移动端点击穿透问题](#%E2%9E%A3-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E7%82%B9%E5%87%BB%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98)
     - [➣ 图片懒加载具体实现方案和思路](#%E2%9E%A3-%E5%9B%BE%E7%89%87%E6%87%92%E5%8A%A0%E8%BD%BD%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E5%92%8C%E6%80%9D%E8%B7%AF)
@@ -101,6 +103,7 @@
     - [➣ webpack loader和plugin区别](#%E2%9E%A3-webpack-loader%E5%92%8Cplugin%E5%8C%BA%E5%88%AB)
     - [➣ webpack中循环引用问题，a里面引用了b，b里面引用了a](#%E2%9E%A3-webpack%E4%B8%AD%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8%E9%97%AE%E9%A2%98a%E9%87%8C%E9%9D%A2%E5%BC%95%E7%94%A8%E4%BA%86bb%E9%87%8C%E9%9D%A2%E5%BC%95%E7%94%A8%E4%BA%86a)
   - [IV. 要点：前端工程化方面](#iv-%E8%A6%81%E7%82%B9%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96%E6%96%B9%E9%9D%A2)
+    - [➣ 前端组件设计原则](#%E2%9E%A3-%E5%89%8D%E7%AB%AF%E7%BB%84%E4%BB%B6%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99)
     - [➣ 前端兼容](#%E2%9E%A3-%E5%89%8D%E7%AB%AF%E5%85%BC%E5%AE%B9)
       - [1. 多屏幕自适应](#1-%E5%A4%9A%E5%B1%8F%E5%B9%95%E8%87%AA%E9%80%82%E5%BA%94)
       - [2. 兼容策略](#2-%E5%85%BC%E5%AE%B9%E7%AD%96%E7%95%A5)
@@ -371,8 +374,8 @@ box-sizing属性可以为三个值之一：
 #### ➣ 两列布局实现
 1) 使用float浮动元素同时设置元素宽度为100/列数 %
 2) 使用inline-block实现方式同1
-2) 使用css属性column-count实现
-3) 使用flex布局、grid布局
+3) 使用css属性column-count实现
+4) 使用flex布局、grid布局
 
 #### ➣ 1px问题
 1. 涉及到css像素比 device pixel/css pixel = devicePixelRatio(DPR)  
@@ -682,6 +685,26 @@ console.log(flat([[1,2], [2,3], 4]))
 
 ```
 
+#### ➣ Js如何判断一个数是不是2的N次幂
+```js
+function check2n(num) {
+  if (!Number.isInteger(num) || num < 1) return false;
+
+  if (num !== 1) {
+    while (num > 1) {
+      if (num % 2 === 0) {
+        num = num / 2;
+      } else {
+        return false;
+      }
+    }
+    return true;
+  } else {
+    return true;
+  }
+}
+```
+
 #### ➣ Js实现继承
 ```js
 function Inherit (parent, child) {
@@ -778,6 +801,11 @@ function shallowClone(data) {
 }
 
 ```
+
+#### ➣ 基本数据类型和引用数据类型
+
+1. 基本数据类型：String/Boolean/Number/Null/Undefined/Symbol/BigInt(ES2020)
+2. 引用数据类型：Function/Object/Array
 
 #### ➣ ES6新增特性
 
@@ -1379,6 +1407,10 @@ define(function(require, exports, module) {
 #### ➣ webpack中循环引用问题，a里面引用了b，b里面引用了a
 
 ### IV. 要点：前端工程化方面
+
+#### ➣ 前端组件设计原则
+
+
 
 #### ➣ 前端兼容
 
