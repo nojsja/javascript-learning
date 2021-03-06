@@ -85,8 +85,15 @@
     - [➣ Babel源码](#%E2%9E%A3-babel%E6%BA%90%E7%A0%81)
     - [➣ React SetState原理](#%E2%9E%A3-react-setstate%E5%8E%9F%E7%90%86)
 - [### VI. 要点：Node.js](#vi-%E8%A6%81%E7%82%B9nodejs)
-    - [➣ Node.js床技安子进程方法异同](#%E2%9E%A3-nodejs%E5%BA%8A%E6%8A%80%E5%AE%89%E5%AD%90%E8%BF%9B%E7%A8%8B%E6%96%B9%E6%B3%95%E5%BC%82%E5%90%8C)
+    - [➣ Node.js创建子进程方法异同](#%E2%9E%A3-nodejs%E5%88%9B%E5%BB%BA%E5%AD%90%E8%BF%9B%E7%A8%8B%E6%96%B9%E6%B3%95%E5%BC%82%E5%90%8C)
     - [➣ Node.js创建子进程参数`stdio`的理解](#%E2%9E%A3-nodejs%E5%88%9B%E5%BB%BA%E5%AD%90%E8%BF%9B%E7%A8%8B%E5%8F%82%E6%95%B0stdio%E7%9A%84%E7%90%86%E8%A7%A3)
+    - [➣ Node.js流的概念](#%E2%9E%A3-nodejs%E6%B5%81%E7%9A%84%E6%A6%82%E5%BF%B5)
+      - [流的类型](#%E6%B5%81%E7%9A%84%E7%B1%BB%E5%9E%8B)
+      - [流的缓冲区](#%E6%B5%81%E7%9A%84%E7%BC%93%E5%86%B2%E5%8C%BA)
+      - [可写流](#%E5%8F%AF%E5%86%99%E6%B5%81)
+      - [可读流](#%E5%8F%AF%E8%AF%BB%E6%B5%81)
+      - [可读可写双向流](#%E5%8F%AF%E8%AF%BB%E5%8F%AF%E5%86%99%E5%8F%8C%E5%90%91%E6%B5%81)
+      - [转换流](#%E8%BD%AC%E6%8D%A2%E6%B5%81)
     - [➣ Node.js和Webpack对模块循环依赖的处理](#%E2%9E%A3-nodejs%E5%92%8Cwebpack%E5%AF%B9%E6%A8%A1%E5%9D%97%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96%E7%9A%84%E5%A4%84%E7%90%86)
       - [Node.js的处理](#nodejs%E7%9A%84%E5%A4%84%E7%90%86)
       - [Webpack的处理](#webpack%E7%9A%84%E5%A4%84%E7%90%86)
@@ -1269,7 +1276,7 @@ function multiAjaxRequest(urls=[], maxNum=0) {
 ### VI. 要点：Node.js
 ----------
 
-#### ➣ Node.js床技安子进程方法异同
+#### ➣ Node.js创建子进程方法异同
 
 child_process 模块提供了衍生子进程的能力。 此功能主要由 child_process.spawn() 函数提供。
 
@@ -1307,7 +1314,7 @@ options.stdio 选项用于配置在父进程和子进程之间建立的管道。
 
 - 'pipe'：相当于 ['pipe', 'pipe', 'pipe']（默认值）。
 - 'ignore'：相当于 ['ignore', 'ignore', 'ignore']。
-- 'inherit'：相当于 ['inherit', 'inherit', 'inherit'] 或 [0, 1, 2]。
+- 'inherit'：相当于 ['inherit', 'inherit', 'inherit'] 或 [0, 1, 2] 或 [process.stdin, process.stdout, process.stderr]。
 
 否则， options.stdio 的值需是数组（其中每个索引对应于子进程中的文件描述符）。 文件描述符 0、1 和 2 分别对应于 stdin、stdout 和 stderr。 其他的文件描述符可以被指定用于在父进程和子进程之间创建其他的管道。 值可以是以下之一：
 
@@ -1340,6 +1347,122 @@ spawn('prg', [], { stdio: ['pipe', null, null, null, 'pipe'] });
 当在父进程和子进程之间建立 IPC 通道，并且子进程是 Node.js 进程时，则子进程启动时不会指向 IPC 通道（使用 unref()），直到子进程为 'disconnect' 事件或 'message' 事件注册了事件句柄。 这使得子进程可以正常退出而不需要通过开放的 IPC 通道保持打开该进程。
 
 在类 Unix 操作系统上，child_process.spawn() 方法在将事件循环与子进程解耦之前会同步地执行内存操作。 具有大内存占用的应用程序可能会发现频繁的 child_process.spawn() 调用成为瓶颈。 详见 V8 问题 7381。
+
+#### ➣ Node.js流的概念
+
+流（stream）是 Node.js 中处理流式数据的抽象接口。 Node.js 提供了多种流对象。 例如，HTTP 服务器的请求和 process.stdout 都是流的实例。流可以是可读的、可写的、或者可读可写的，所有的流都是 EventEmitter 的实例。
+
+##### 流的类型
+
+Node.js 中有四种基本的流类型：
+
+- Writable - 可写入数据的流（例如 fs.createWriteStream()）。
+- Readable - 可读取数据的流（例如 fs.createReadStream()）。
+- Duplex - 可读又可写的流（例如 net.Socket）。
+- Transform - 在读写过程中可以修改或转换数据的 Duplex 流（例如 zlib.createDeflate()）。
+
+##### 流的缓冲区
+
+可写流和可读流都会在内部的缓冲器中存储数据，可以分别使用的 writable.writableBuffer 或 readable.readableBuffer 来获取。
+
+可缓冲的数据大小取决于传入流构造函数的 highWaterMark 选项。 对于普通的流， highWaterMark 指定了字节的总数。 对于对象模式的流， highWaterMark 指定了对象的总数。
+
+当调用 stream.push(chunk) 时，数据会被缓冲在可读流中。 如果流的消费者没有调用 stream.read()，则数据会保留在内部队列中直到被消费。
+
+一旦内部的可读缓冲的总大小达到 highWaterMark 指定的阈值时，流会暂时停止从底层资源读取数据，直到当前缓冲的数据被消费 （也就是说，流会停止调用内部的用于填充可读缓冲的 readable._read()）。
+
+当调用 writable.write(chunk) 时，数据会被缓冲在可写流中。 当内部的可写缓冲的总大小小于 highWaterMark 设置的阈值时，调用 writable.write() 会返回 true。 一旦内部缓冲的大小达到或超过 highWaterMark 时，则会返回 false。
+
+stream API 的主要目标，特别是 stream.pipe()，是为了限制数据的缓冲到可接受的程度，也就是读写速度不一致的源头与目的地不会压垮内存。
+
+因为 Duplex 和 Transform 都是可读又可写的，所以它们各自维护着两个相互独立的内部缓冲器用于读取和写入， 这使得它们在维护数据流时，读取和写入两边可以各自独立地运作。 例如，net.Socket 实例是 Duplex 流，它的可读端可以消费从 socket 接收的数据，而可写端则可以将数据写入到 socket。 因为数据写入到 socket 的速度可能比接收数据的速度快或者慢，所以读写两端应该独立地进行操作（或缓冲）。
+
+##### 可写流
+
+可写流是对数据要被写入的目的地的一种抽象。
+
+常见的可写流包括：
+- 客户端的 HTTP 请求
+- 服务器的 HTTP 响应
+- fs 的写入流
+- zlib 流
+- crypto 流
+- TCP socket
+- 子进程 stdin
+- process.stdout、process.stderr
+
+使用示例：
+```js
+const myStream = getWritableStreamSomehow();
+myStream.write('一些数据');
+myStream.write('更多数据');
+myStream.end('完成写入数据');
+```
+
+常见事件：
+- close: 当流或其底层资源（比如文件描述符）被关闭时触发。 表明不会再触发其他事件，也不会再发生操作。
+- drain: 如果调用 stream.write(chunk) 返回 false，则当可以继续写入数据到流时会触发 'drain' 事件。
+- error: 如果在写入或管道数据时发生错误，则会触发 'error' 事件，在 'error' 之后，除 'close' 事件外，不应再触发其他事件。
+- 调用 stream.end() 且缓冲数据都已传给底层系统之后触发。
+- pipe: 可写流被`stream.pipe()`连接
+
+常见方法：
+
+- writable.end([chunk[, encoding]][, callback]): 调用 writable.end() 表明已没有数据要被写入可写流。 可选的 chunk 和 encoding 参数可以在关闭流之前再写入一块数据。 如果传入了 callback 函数，则会做为监听器添加到 'finish' 事件和 'error' 事件。
+- writable.write(chunk[, encoding][, callback]): writable.write() 写入数据到流，并在数据被完全处理之后调用 callback。 如果发生错误，则 callback 可能被调用也可能不被调用。 为了可靠地检测错误，可以为 'error' 事件添加监听器。 callback 会在触发 'error' 之前被异步地调用。在接收了 chunk 后，如果内部的缓冲小于创建流时配置的 highWaterMark，则返回 true 。 如果返回 false ，则应该停止向流写入数据，直到 'drain' 事件被触发。
+
+##### 可读流
+可读流运作于两种模式之一：流动模式（flowing）或暂停模式（paused）。 这些模式与对象模式分开。 无论是否处于流动模式或暂停模式，可读流都可以处于对象模式：
+- 在流动模式中，数据自动从底层系统读取，并通过 EventEmitter 接口的事件尽可能快地被提供给应用程序。
+- 在暂停模式中，必须显式调用 stream.read() 读取数据块。
+
+所有可读流都开始于暂停模式，可以通过以下方式切换到流动模式：
+- 添加 'data' 事件句柄。
+- 调用 stream.resume() 方法。
+- 调用 stream.pipe() 方法将数据发送到可写流。
+
+可读流可以通过以下方式切换回暂停模式：
+- 如果没有管道目标，则调用 stream.pause()。
+- 如果有管道目标，则移除所有管道目标。调用 stream.unpipe() 可以移除多个管道目标。
+
+只有提供了消费或忽略数据的机制后，可读流才会产生数据。 如果消费的机制被禁用或移除，则可读流会停止产生数据。
+
+为了向后兼容，移除 'data' 事件句柄不会自动地暂停流。 如果有管道目标，一旦目标变为 drain 状态并请求接收数据时，则调用 stream.pause() 也不能保证流会保持暂停模式。
+
+如果可读流切换到流动模式，且没有可用的消费者来处理数据，则数据将会丢失。 例如，当调用 readable.resume() 时，没有监听 'data' 事件或 'data' 事件句柄已移除。
+
+添加 'readable' 事件句柄会使流自动停止流动，并通过 readable.read() 消费数据。 如果 'readable' 事件句柄被移除，且存在 'data' 事件句柄，则流会再次开始流动。
+
+常见事件：
+
+- close: 当流或其底层资源（比如文件描述符）被关闭时触发 'close' 事件。 该事件表明不会再触发其他事件，也不会再发生操作。
+- data: 当流将数据块传送给消费者后触发。 当调用 readable.pipe()， readable.resume() 或绑定监听器到 'data' 事件时，流会转换到流动模式。 当调用 readable.read() 且有数据块返回时，也会触发 'data' 事件。
+- end: 'end' 事件只有在数据被完全消费掉后才会触发。 要想触发该事件，可以将流转换到流动模式，或反复调用 stream.read() 直到数据被消费完。
+- error: 'error' 事件可能随时由 Readable 实现触发。 通常，如果底层的流由于底层内部的故障而无法生成数据，或者流的实现尝试推送无效的数据块，则可能会发生这种情况。
+- pause: 当调用 stream.pause() 并且 readsFlowing 不为 false 时，就会触发 'pause' 事件。
+- readable: 当有数据可从流中读取时，就会触发 'readable' 事件。 在某些情况下，为 'readable' 事件附加监听器将会导致将一些数据读入内部缓冲区。
+- resume: 当调用 stream.resume() 并且 readsFlowing 不为 true 时，将会触发 'resume' 事件。
+
+常见方法:
+
+- readable.pause:  方法使流动模式的流停止触发 'data' 事件，并切换出流动模式。 任何可用的数据都会保留在内部缓存中。
+- readable.resume:  方法将被暂停的可读流恢复触发 'data' 事件，并将流切换到流动模式。
+- readable.read([size]): 从内部缓冲拉取并返回数据。 如果没有可读的数据，则返回 null。 默认情况下， readable.read() 返回的数据是 Buffer 对象，除非使用 readable.setEncoding() 指定字符编码或流处于对象模式。如果没有指定 size 参数，则返回内部缓冲中的所有数据。
+- readable.setEncoding(encoding): 方法为从可读流读取的数据设置字符编码。默认情况下没有设置字符编码，流数据返回的是 Buffer 对象。 如果设置了字符编码，则流数据返回指定编码的字符串。 例如，调用 readable.setEncoding('utf-8') 会将数据解析为 UTF-8 数据，并返回字符串。
+
+##### 可读可写双向流
+双工流（Duplex）是同时实现了 Readable 和 Writable 接口的流。
+
+Duplex 流的例子包括：
+- TCP socket
+- zlib 流
+- crypto 流
+##### 转换流
+转换流（Transform）是一种 Duplex 流，但它的输出与输入是相关联的。 与 Duplex 流一样， Transform 流也同时实现了 Readable 和 Writable 接口。
+
+Transform 流的例子包括：
+- zlib 流
+- crypto 流
 
 #### ➣ Node.js和Webpack对模块循环依赖的处理
 
