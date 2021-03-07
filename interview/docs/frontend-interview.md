@@ -87,6 +87,8 @@
 - [### VI. 要点：Node.js](#vi-%E8%A6%81%E7%82%B9nodejs)
     - [➣ Node.js创建子进程方法异同](#%E2%9E%A3-nodejs%E5%88%9B%E5%BB%BA%E5%AD%90%E8%BF%9B%E7%A8%8B%E6%96%B9%E6%B3%95%E5%BC%82%E5%90%8C)
     - [➣ Node.js创建子进程参数`stdio`的理解](#%E2%9E%A3-nodejs%E5%88%9B%E5%BB%BA%E5%AD%90%E8%BF%9B%E7%A8%8B%E5%8F%82%E6%95%B0stdio%E7%9A%84%E7%90%86%E8%A7%A3)
+    - [➣ Nodejs使用场景](#%E2%9E%A3-nodejs%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF)
+    - [➣ Nodejs 中的 Stream 和 Buffer 有什么区别?](#%E2%9E%A3-nodejs-%E4%B8%AD%E7%9A%84-stream-%E5%92%8C-buffer-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB)
     - [➣ Node.js流的概念](#%E2%9E%A3-nodejs%E6%B5%81%E7%9A%84%E6%A6%82%E5%BF%B5)
       - [流的类型](#%E6%B5%81%E7%9A%84%E7%B1%BB%E5%9E%8B)
       - [流的缓冲区](#%E6%B5%81%E7%9A%84%E7%BC%93%E5%86%B2%E5%8C%BA)
@@ -97,6 +99,7 @@
     - [➣ Node.js和Webpack对模块循环依赖的处理](#%E2%9E%A3-nodejs%E5%92%8Cwebpack%E5%AF%B9%E6%A8%A1%E5%9D%97%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96%E7%9A%84%E5%A4%84%E7%90%86)
       - [Node.js的处理](#nodejs%E7%9A%84%E5%A4%84%E7%90%86)
       - [Webpack的处理](#webpack%E7%9A%84%E5%A4%84%E7%90%86)
+    - [➣ Webpack怎么处理require和import语法混用的](#%E2%9E%A3-webpack%E6%80%8E%E4%B9%88%E5%A4%84%E7%90%86require%E5%92%8Cimport%E8%AF%AD%E6%B3%95%E6%B7%B7%E7%94%A8%E7%9A%84)
     - [➣ 前端模块化历程](#%E2%9E%A3-%E5%89%8D%E7%AB%AF%E6%A8%A1%E5%9D%97%E5%8C%96%E5%8E%86%E7%A8%8B)
       - [1. IIFE - 立即执行函数](#1-iife---%E7%AB%8B%E5%8D%B3%E6%89%A7%E8%A1%8C%E5%87%BD%E6%95%B0)
       - [2. AMD - requireJs](#2-amd---requirejs)
@@ -107,10 +110,9 @@
     - [➣ node是IO密集型体现在哪里](#%E2%9E%A3-node%E6%98%AFio%E5%AF%86%E9%9B%86%E5%9E%8B%E4%BD%93%E7%8E%B0%E5%9C%A8%E5%93%AA%E9%87%8C)
 - [### VII. 要点：设计模式](#vii-%E8%A6%81%E7%82%B9%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F)
 - [### VIII. 要点：前端工具](#viii-%E8%A6%81%E7%82%B9%E5%89%8D%E7%AB%AF%E5%B7%A5%E5%85%B7)
-    - [➣ 打包gulp/webpack/rollup一些区别](#%E2%9E%A3-%E6%89%93%E5%8C%85gulpwebpackrollup%E4%B8%80%E4%BA%9B%E5%8C%BA%E5%88%AB)
+    - [➣ webpack/rollup一些区别](#%E2%9E%A3-webpackrollup%E4%B8%80%E4%BA%9B%E5%8C%BA%E5%88%AB)
     - [➣ ts自己的看法，和应用](#%E2%9E%A3-ts%E8%87%AA%E5%B7%B1%E7%9A%84%E7%9C%8B%E6%B3%95%E5%92%8C%E5%BA%94%E7%94%A8)
     - [➣ webpack loader和plugin区别](#%E2%9E%A3-webpack-loader%E5%92%8Cplugin%E5%8C%BA%E5%88%AB)
-    - [➣ webpack中循环引用问题，a里面引用了b，b里面引用了a](#%E2%9E%A3-webpack%E4%B8%AD%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8%E9%97%AE%E9%A2%98a%E9%87%8C%E9%9D%A2%E5%BC%95%E7%94%A8%E4%BA%86bb%E9%87%8C%E9%9D%A2%E5%BC%95%E7%94%A8%E4%BA%86a)
   - [IV. 要点：前端工程化方面](#iv-%E8%A6%81%E7%82%B9%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96%E6%96%B9%E9%9D%A2)
     - [➣ 前端组件设计原则](#%E2%9E%A3-%E5%89%8D%E7%AB%AF%E7%BB%84%E4%BB%B6%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99)
     - [➣ 前端兼容](#%E2%9E%A3-%E5%89%8D%E7%AB%AF%E5%85%BC%E5%AE%B9)
@@ -1348,6 +1350,13 @@ spawn('prg', [], { stdio: ['pipe', null, null, null, 'pipe'] });
 
 在类 Unix 操作系统上，child_process.spawn() 方法在将事件循环与子进程解耦之前会同步地执行内存操作。 具有大内存占用的应用程序可能会发现频繁的 child_process.spawn() 调用成为瓶颈。 详见 V8 问题 7381。
 
+
+#### ➣ Nodejs使用场景
+Nodejs 是单线程，非阻塞 I/O，事件驱动，不适用于CPU密集运算的任务。它的特点决定了它适合做一些大量 I/O 的东西，比如，聊天室，表单提交等不需要大量计算的功能。做一些微信后端开发，或者做消息系统等。可以整个项目用， 也可以根据它的特点在某个模块使用，比如 socketio，打造一个消息系统等。
+
+#### ➣ Nodejs 中的 Stream 和 Buffer 有什么区别?
+Buffer：为数据缓冲对象，是一个类似数组结构的对象，可以通过指定开始写入的位置及写入的数据长度，往其中写入二进制数据。Stream：是对 buffer 对象的高级封装，其操作的底层还是 buffer 对象， stream 可以设置为可读、可写，或者即可读也可写，在 nodejs 中继承了 EventEmitter 接口，可以监听读入、写入的过程。具体实现有文件流，httpresponse 等。
+
 #### ➣ Node.js流的概念
 
 流（stream）是 Node.js 中处理流式数据的抽象接口。 Node.js 提供了多种流对象。 例如，HTTP 服务器的请求和 process.stdout 都是流的实例。流可以是可读的、可写的、或者可读可写的，所有的流都是 EventEmitter 的实例。
@@ -1500,6 +1509,36 @@ console.log('B: after log a');
 
 &nbsp;&nbsp;&nbsp;&nbsp; Node.js具有两个特性：运行时加载和缓存已加载模块。为了避免无限循环的模块依赖，在 Node.js 运行 A.js 之后，它就被缓存了，但需要注意的是，此时缓存的仅仅是一个未完工的 A.js（an unfinished copy of the a.js）。所以在 B.js require A.js 时，得到的仅仅是缓存中一个未完工的 A.js，具体来说，它并没有明确被导出的具体内容（A.js 尾端）。所以 B.js 中输出的 a 是一个空对象。之后，B.js 顺利执行完，回到 A.js 的 require 语句之后，继续执行完成。
 
+```js
+// a.js
+module.exports.a = 1
+var b = require('./b')
+console.log(b)
+module.exports.a = 2
+
+// b.js
+module.exports.b = 11
+var a = require('./a')
+console.log(a)
+module.exports.b = 22
+
+//main.js
+var a = require('./a')
+console.log(a)
+```
+
+执行过程：
+
+- 执行 node main.js -> 第一行 require(a.js)，（node 执行也可以理解为调用了require方法，我们省略require(main.js)内容）
+- 进入 require(a)方法： 判断缓存（无） -> 初始化一个 module -> 将 module 加入缓存 -> 执行模块 a.js 内容，（需要注意 是先加入缓存， 后执行模块内容）
+- a.js： 第一行导出 a = 1 -> 第二行 require(b.js)（a 只执行了第一行）
+- 进入 require(b) 内 同 1 -> 执行模块 b.js 内容
+- b.js： 第一行 b = 11 -> 第二行 require(a.js)
+- require(a) 此时 a.js 是第二次调用 require -> 判断缓存（有）-> cachedModule.exports -> 回到 b.js（因为js对象引用问题 此时的 cachedModule.exports = { a: 1 }）
+- b.js：第三行 输出 { a: 1 } -> 第四行 修改 b = 22 -> 执行完毕回到 a.js
+- a.js：第二行 require 完毕 获取到 b -> 第三行 输出 { b: 22 } -> 第四行 导出 a = 2 -> 执行完毕回到 main.js
+- main.js：获取 a -> 第二行 输出 { a: 2 } -> 执行完毕
+
 2. 解决方案
 
 &nbsp;&nbsp;&nbsp;&nbsp; 想要解决这个问题有一个很简明的方法，那就是在循环依赖的每个模块中先导出自身，然后再导入其他模块（对于本文的举例来说，实际只需改动 A.js，先使用module.exports导出，然后再require B.js）。
@@ -1508,8 +1547,17 @@ console.log('B: after log a');
 
 1. 工作方式
 
-&nbsp;&nbsp;&nbsp;&nbsp; ES Modules 模块输出的是值的引用，输出接口动态绑定，在编译时执行。运行A.js时文件声明的变量存在提升
+&nbsp;&nbsp;&nbsp;&nbsp; ES Modules 模块输出的是值的引用，输出接口动态绑定，在编译时执行。
 
+&nbsp;&nbsp;&nbsp;&nbsp; webpack的头部启动代码中，通过闭包中的installedModules对象，将模块名或者id作为对象的key来缓存各个模块的export的值，通过判断installedModules上是否缓存了对应模块的key来判断是否已经加载了模块。
+
+2. 解决方案
+- 1）webpack尚未解决循环依赖问题，可以使用 circular-dependency-plugin 插件进行循依赖检测，减少debug时间。
+- 2）打破文件间的依赖关系的闭环
+- 3）依赖关系闭环的情况下，将变量改为function导出，利用function的变量提升机制
+
+#### ➣ Webpack怎么处理require和import语法混用的
+对于es6规范和commonjs规范来说，经过babel编译以后，都会转化成commonjs规范，然后在此基础上，用__esModule区分了是属于es6模块还是commonjs模块。并切为了保证es6规范用import导入值的正确性和统一性，babel还做了一些策略去处理这两者之前的差异。
 
 #### ➣ 前端模块化历程
 模块化主要是用来抽离公共代码，隔离作用域，避免变量冲突等。
@@ -1542,7 +1590,7 @@ define(function(require, exports, module) {
 ```
 
 ##### 4. CommonJs - Node.js模块规范
-&nbsp;&nbsp;&nbsp;&nbsp; 特点: require、module.exports、exports CommonJS 一般用在服务端或者Node用来同步加载模块，它对于模块的依赖发生在代码运行阶段，不适合在浏览器端做异步加载。 exports实际上是一个对module.exports的引用，不能给exports赋值，否则会断开与module.exports的连接：
+&nbsp;&nbsp;&nbsp;&nbsp; 属于动态导入规范，特点: require、module.exports、exports CommonJS 一般用在服务端或者Node用来同步加载模块，它对于模块的依赖发生在代码运行阶段，不适合在浏览器端做异步加载。 exports实际上是一个对module.exports的引用，不能给exports赋值，否则会断开与module.exports的连接：
 ```js
   exports.add = function add () {/* 方法 */}
     // 等同于
@@ -1550,7 +1598,9 @@ define(function(require, exports, module) {
 ```
 
 ##### 5. ES Module - 浏览器模块系统
-&nbsp;&nbsp;&nbsp;&nbsp; import、export ES6模块化不是对象，import会在JavaScript引擎静态分析，在编译时就引入模块代码，而并非在代码运行时加载，因此也不适合异步加载。 在HTML中如果要引入模块需要使用。
+&nbsp;&nbsp;&nbsp;&nbsp; 属于静态导入规范，import、export ES6模块化不是对象，import会在JavaScript引擎静态分析，在编译时就引入模块代码，而并非在代码运行时加载，因此也不适合异步加载。
+
+静态的语法意味着可以在编译时确定导入和导出，更加快速的查找依赖，可以使用lint工具对模块依赖进行检查，可以对导入导出加上类型信息进行静态的类型检查
 
 **ESModule的优势：**
 
@@ -1558,14 +1608,27 @@ define(function(require, exports, module) {
 - 模块变量类型检查。JavaScript属于动态类型语言，不会在代码执行前检查类型错误（比如对一个字符串类型的值进行函数调用）。ES6 Module的静态模块结构有助于确保模块之间传递的值或接口类型是正确的。
 - 编译器优化。在CommonJS等动态模块系统中，无论采用哪种方式，本质上导入的都是一个对象，而ES6 Module支持直接导入变量，减少了引用层级，程序效率更高。
 
+**ESModule导出的值是引用的例子：**
+```js
+// es6 module 中基本类型也按引用传递
+// foo.js
+export let a = 1
+export function count(){
+  a++
+}
+
+// main.js
+import { a, count } from './foo'
+console.log(a) //1
+count()
+console.log(a) //2
+```
+
 **ESModule和CommonJs差异：**
-- CommonJS模块引用后是一个值的拷贝，而ESModule引用后是一个值的动态映射，并且这个映射是只读的
-- CommonJS 模块输出的是值的拷贝，一旦输出之后，无论模块内部怎么变化，都无法影响之前的引用。
+- CommonJS模块导入后是一个值的拷贝，一旦输出之后，无论模块内部怎么变化，都无法影响之前的引用；而ESModule导入后是一个引用值的动态映射，并且这个映射是只读的。
 - ESModule 是引擎会在遇到import后生成一个引用链接，在脚本真正执行时才会根据这个引用链接去模块里面取值，模块内部的原始值变了import加载的模块也会变。
 - CommonJS运行时加载，ESModule编译阶段引用。CommonJS在引入时是加载整个模块，生成一个对象，然后再从这个生成的对象上读取方法和属性。
 - ESModule 不是对象，而是通过export暴露出要输出的代码块，在import时使用静态命令的方法引用指定的输出代码块，并在import语句处执行这个要输出的代码，而不是直接加载整个模块。
-
-
 
 #### ➣ 谈谈node子进程child_process和实际使用场景
 
@@ -1593,15 +1656,17 @@ define(function(require, exports, module) {
 ### VIII. 要点：前端工具
 ---------
 
-#### ➣ 打包gulp/webpack/rollup一些区别
+#### ➣ webpack/rollup一些区别
+
+- webpack 不支持导出 es6 module 规范，rollup 支持导出 es6 module
+- webpack 打包后代码很多冗余无法直接看，rollup 打包后的代码简洁，可读，像源码
+- webpack 可以进行代码分割，静态资源处理，HRM，rollup 专注于 es module，tree-shaking更加强大的，精简
 
 #### ➣ ts自己的看法，和应用
 
 #### ➣ webpack loader和plugin区别
 1. loader，它是一个转换器，将A文件进行编译成B文件，比如：将A.less转换为A.css，单纯的文件转换过程。
 2. plugin是一个扩展器，它丰富了webpack本身，针对是loader结束后，webpack打包的整个过程，它并不直接操作文件，而是基于事件机制工作，会监听webpack打包过程中的某些节点，执行广泛的任务
-
-#### ➣ webpack中循环引用问题，a里面引用了b，b里面引用了a
 
 ### IV. 要点：前端工程化方面
 
