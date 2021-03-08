@@ -50,6 +50,7 @@
     - [➣ Js实现继承](#%E2%9E%A3-js%E5%AE%9E%E7%8E%B0%E7%BB%A7%E6%89%BF)
     - [➣ 手写深拷贝和浅拷贝](#%E2%9E%A3-%E6%89%8B%E5%86%99%E6%B7%B1%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B5%85%E6%8B%B7%E8%B4%9D)
     - [➣ 基本数据类型和引用数据类型](#%E2%9E%A3-%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%BC%95%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B)
+    - [➣ 如何判断对象上的属性是原型属性还是实例属性呢？](#%E2%9E%A3-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%AF%B9%E8%B1%A1%E4%B8%8A%E7%9A%84%E5%B1%9E%E6%80%A7%E6%98%AF%E5%8E%9F%E5%9E%8B%E5%B1%9E%E6%80%A7%E8%BF%98%E6%98%AF%E5%AE%9E%E4%BE%8B%E5%B1%9E%E6%80%A7%E5%91%A2)
     - [➣ ES6新增特性](#%E2%9E%A3-es6%E6%96%B0%E5%A2%9E%E7%89%B9%E6%80%A7)
     - [➣ 移动端点击穿透问题](#%E2%9E%A3-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E7%82%B9%E5%87%BB%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98)
     - [➣ 图片懒加载具体实现方案和思路](#%E2%9E%A3-%E5%9B%BE%E7%89%87%E6%87%92%E5%8A%A0%E8%BD%BD%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E5%92%8C%E6%80%9D%E8%B7%AF)
@@ -80,12 +81,15 @@
     - [➣ 使用ES5实现Promise](#%E2%9E%A3-%E4%BD%BF%E7%94%A8es5%E5%AE%9E%E7%8E%B0promise)
   - [V. 要点：React](#v-%E8%A6%81%E7%82%B9react)
     - [➣ React 中 setState 什么时候是同步的，什么时候是异步的？](#%E2%9E%A3-react-%E4%B8%AD-setstate-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E6%98%AF%E5%90%8C%E6%AD%A5%E7%9A%84%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E6%98%AF%E5%BC%82%E6%AD%A5%E7%9A%84)
+    - [➣ React中父组件如何调用子组件的方法？](#%E2%9E%A3-react%E4%B8%AD%E7%88%B6%E7%BB%84%E4%BB%B6%E5%A6%82%E4%BD%95%E8%B0%83%E7%94%A8%E5%AD%90%E7%BB%84%E4%BB%B6%E7%9A%84%E6%96%B9%E6%B3%95)
+    - [➣ 为什么 React 元素有一个 $$typeof 属性？](#%E2%9E%A3-%E4%B8%BA%E4%BB%80%E4%B9%88-react-%E5%85%83%E7%B4%A0%E6%9C%89%E4%B8%80%E4%B8%AA-typeof-%E5%B1%9E%E6%80%A7)
     - [➣ hooks 为什么不能放在条件判断里？](#%E2%9E%A3-hooks-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E6%94%BE%E5%9C%A8%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD%E9%87%8C)
     - [➣ React-Fiber原理和生命周期使用详解](#%E2%9E%A3-react-fiber%E5%8E%9F%E7%90%86%E5%92%8C%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3)
     - [➣ React虚拟dom以及diff算法](#%E2%9E%A3-react%E8%99%9A%E6%8B%9Fdom%E4%BB%A5%E5%8F%8Adiff%E7%AE%97%E6%B3%95)
     - [➣ Babel源码](#%E2%9E%A3-babel%E6%BA%90%E7%A0%81)
     - [➣ React SetState原理](#%E2%9E%A3-react-setstate%E5%8E%9F%E7%90%86)
 - [### VI. 要点：Node.js](#vi-%E8%A6%81%E7%82%B9nodejs)
+    - [➣ Node.js的优势和劣势](#%E2%9E%A3-nodejs%E7%9A%84%E4%BC%98%E5%8A%BF%E5%92%8C%E5%8A%A3%E5%8A%BF)
     - [➣ Node.js创建子进程方法异同](#%E2%9E%A3-nodejs%E5%88%9B%E5%BB%BA%E5%AD%90%E8%BF%9B%E7%A8%8B%E6%96%B9%E6%B3%95%E5%BC%82%E5%90%8C)
     - [➣ Node.js创建子进程参数`stdio`的理解](#%E2%9E%A3-nodejs%E5%88%9B%E5%BB%BA%E5%AD%90%E8%BF%9B%E7%A8%8B%E5%8F%82%E6%95%B0stdio%E7%9A%84%E7%90%86%E8%A7%A3)
     - [➣ Nodejs使用场景](#%E2%9E%A3-nodejs%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF)
@@ -819,6 +823,14 @@ function shallowClone(data) {
 1. 基本数据类型：String/Boolean/Number/Null/Undefined/Symbol/BigInt(ES2020)
 2. 引用数据类型：Function/Object/Array
 
+#### ➣ 如何判断对象上的属性是原型属性还是实例属性呢？
+```js
+/* 实例属性 */
+Object.prototype.hasOwnProperty.call(obj, attr);
+/* 原型属性 */
+(attr in obj) && !Object.prototype.hasOwnProperty.call(obj, attr);
+```
+
 #### ➣ ES6新增特性
 
 1. Promise
@@ -1265,6 +1277,39 @@ function multiAjaxRequest(urls=[], maxNum=0) {
 - setState的“异步”并不是说内部由异步代码实现，其实本身执行的过程和代码都是同步的，只是合成事件和钩子函数的调用顺序在更新之前，导致在合成事件和钩子函数中没法立马拿到更新后的值，形式了所谓的“异步”，当然可以通过第二个参数 setState(partialState, callback) 中的callback拿到更新后的结果。
 - setState 的批量更新优化也是建立在“异步”（合成事件、钩子函数）之上的，在原生事件和setTimeout 中不会批量更新，在“异步”中如果对同一个值进行多次 setState ， setState 的批量更新策略会对其进行覆盖，取最后一次的执行，如果是同时 setState 多个不同的值，在更新时会对其进行合并批量更新。
 
+#### ➣ React中父组件如何调用子组件的方法？
+使用createRef()，然后在父组件中使用ref调用子组件实例的方法。
+
+#### ➣ 为什么 React 元素有一个 $$typeof 属性？
+```js
+Object {
+  $$typeof: Symbol(react.element)
+}
+```
+目的是为了防止 XSS 攻击。因为 Synbol 无法被序列化，所以 React 可以通过有没有 $$typeof 属性来断出当前的 element 对象是从数据库来的还是自己生成的。
+
+如果没有 $$typeof 这个属性，react 会拒绝处理该元素。
+
+在 React 的古老版本中，下面的写法会出现 XSS 攻击：
+```js
+// 服务端允许用户存储 JSON
+let expectedTextButGotJSON = {
+  type: 'div',
+  props: {
+    dangerouslySetInnerHTML: {
+      __html: '/* 把你想的搁着 */'
+    },
+  },
+  // ...
+};
+let message = { text: expectedTextButGotJSON };
+
+// React 0.13 中有风险
+<p>
+  {message.text}
+</p>
+```
+
 #### ➣ hooks 为什么不能放在条件判断里？
 以 setState 为例，在 react 内部，每个组件(Fiber)的 hooks 都是以链表的形式存在 memoizeState 属性中：
 
@@ -1307,6 +1352,11 @@ update 阶段，每次调用 setState，链表就会执行 next 向后移动一�
 
 ### VI. 要点：Node.js
 ----------
+
+#### ➣ Node.js的优势和劣势
+**优势：** 处理I/O密集的任务，主要在于Node利用事件循环的处理能力，而不是启动一个线程为每一个请求服务，不用处理线程间的切换，资源占用极少。
+
+**劣势：** 处理CPU密集型的任务，由于JS单线程的原因，如果有长时间运行的计算，将会导致CPU时间片得不到释放，使得后续的I/O任务无法发起。因此应该考虑适当调整和分解大型运算任务为多个小任务，使得运算能够适时释放，充分利用CPU，又不阻塞I/O调用的发起。
 
 #### ➣ Node.js创建子进程方法异同
 
