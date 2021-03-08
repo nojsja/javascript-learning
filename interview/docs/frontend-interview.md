@@ -80,6 +80,7 @@
     - [➣ 使用ES5实现Promise](#%E2%9E%A3-%E4%BD%BF%E7%94%A8es5%E5%AE%9E%E7%8E%B0promise)
   - [V. 要点：React](#v-%E8%A6%81%E7%82%B9react)
     - [➣ React 中 setState 什么时候是同步的，什么时候是异步的？](#%E2%9E%A3-react-%E4%B8%AD-setstate-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E6%98%AF%E5%90%8C%E6%AD%A5%E7%9A%84%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E6%98%AF%E5%BC%82%E6%AD%A5%E7%9A%84)
+    - [➣ hooks 为什么不能放在条件判断里？](#%E2%9E%A3-hooks-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E6%94%BE%E5%9C%A8%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD%E9%87%8C)
     - [➣ React-Fiber原理和生命周期使用详解](#%E2%9E%A3-react-fiber%E5%8E%9F%E7%90%86%E5%92%8C%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3)
     - [➣ React虚拟dom以及diff算法](#%E2%9E%A3-react%E8%99%9A%E6%8B%9Fdom%E4%BB%A5%E5%8F%8Adiff%E7%AE%97%E6%B3%95)
     - [➣ Babel源码](#%E2%9E%A3-babel%E6%BA%90%E7%A0%81)
@@ -1264,11 +1265,40 @@ function multiAjaxRequest(urls=[], maxNum=0) {
 - setState的“异步”并不是说内部由异步代码实现，其实本身执行的过程和代码都是同步的，只是合成事件和钩子函数的调用顺序在更新之前，导致在合成事件和钩子函数中没法立马拿到更新后的值，形式了所谓的“异步”，当然可以通过第二个参数 setState(partialState, callback) 中的callback拿到更新后的结果。
 - setState 的批量更新优化也是建立在“异步”（合成事件、钩子函数）之上的，在原生事件和setTimeout 中不会批量更新，在“异步”中如果对同一个值进行多次 setState ， setState 的批量更新策略会对其进行覆盖，取最后一次的执行，如果是同时 setState 多个不同的值，在更新时会对其进行合并批量更新。
 
+#### ➣ hooks 为什么不能放在条件判断里？
+以 setState 为例，在 react 内部，每个组件(Fiber)的 hooks 都是以链表的形式存在 memoizeState 属性中：
+
+![](../images/../docs/images/hooks.png)
+
+update 阶段，每次调用 setState，链表就会执行 next 向后移动一步。如果将 setState 写在条件判断中，假设条件判断不成立，没有执行里面的 setState 方法，会导致接下来所有的 setState 的取值出现偏移，从而导致异常发生。
+
 #### ➣ React-Fiber原理和生命周期使用详解
 
 [>> 文章链接](https://nojsja.gitee.io/blogs/2021/01/25/%E7%90%86%E8%A7%A3React%EF%BC%9AFiber%E6%9E%B6%E6%9E%84%E5%92%8C%E6%96%B0%E6%97%A7%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/)
 
 #### ➣ React虚拟dom以及diff算法
+
+传统 diff 算法的时间复杂度是 O(n^3)，这在前端 render 中是不可接受的。为了降低时间复杂度，react 的 diff 算法做了一些妥协，放弃了最优解，最终将时间复杂度降低到了 O(n)。
+
+那么 react diff 算法做了哪些妥协呢？，参考如下：
+
+1、tree diff：只对比同一层的 dom 节点，忽略 dom 节点的跨层级移动
+
+如下图，react 只会对相同颜色方框内的 DOM 节点进行比较，即同一个父节点下的所有子节点。当发现节点不存在时，则该节点及其子节点会被完全删除掉，不会用于进一步的比较。
+
+这样只需要对树进行一次遍历，便能完成整个 DOM 树的比较。
+
+![](../images/../docs/images/diff1.png)
+
+这就意味着，如果 dom 节点发生了跨层级移动，react 会删除旧的节点，生成新的节点，而不会复用。
+
+2、component diff：如果不是同一类型的组件，会删除旧的组件，创建新的组件
+
+![](../images/../docs/images/diff2.png)
+
+3、element diff：对于同一层级的一组子节点，需要通过唯一 id 进行来区分
+
+如果没有 id 来进行区分，一旦有插入动作，会导致插入位置之后的列表全部重新渲染。这也是为什么渲染列表时为什么要使用唯一的 key。
 
 #### ➣ Babel源码
 
