@@ -89,6 +89,7 @@
     - [➣ Babel源码](#%E2%9E%A3-babel%E6%BA%90%E7%A0%81)
     - [➣ React SetState原理](#%E2%9E%A3-react-setstate%E5%8E%9F%E7%90%86)
 - [### VI. 要点：Node.js](#vi-%E8%A6%81%E7%82%B9nodejs)
+    - [➣ Node.js的模块加载机制](#%E2%9E%A3-nodejs%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6)
     - [➣ Node.js的优势和劣势](#%E2%9E%A3-nodejs%E7%9A%84%E4%BC%98%E5%8A%BF%E5%92%8C%E5%8A%A3%E5%8A%BF)
     - [➣ Node.js创建子进程方法异同](#%E2%9E%A3-nodejs%E5%88%9B%E5%BB%BA%E5%AD%90%E8%BF%9B%E7%A8%8B%E6%96%B9%E6%B3%95%E5%BC%82%E5%90%8C)
     - [➣ Node.js创建子进程参数`stdio`的理解](#%E2%9E%A3-nodejs%E5%88%9B%E5%BB%BA%E5%AD%90%E8%BF%9B%E7%A8%8B%E5%8F%82%E6%95%B0stdio%E7%9A%84%E7%90%86%E8%A7%A3)
@@ -1352,6 +1353,72 @@ update 阶段，每次调用 setState，链表就会执行 next 向后移动一�
 
 ### VI. 要点：Node.js
 ----------
+
+#### ➣ Node.js的模块加载机制
+
+分为内置模块、外部扩展模块和自定义模块
+
+大致步骤：
+
+![](../images/../docs/images/node-module.jpg)
+
+1. 先计算模块路径
+
+&nbsp;&nbsp;&nbsp;&nbsp; 将我们的相对路径和使用path方法生成的路径装换成一个绝对路径，无需转换的路径保留原始名字(比如内置模块和npm模块)。
+
+2. 如果模块在缓存里面，取出缓存
+
+&nbsp;&nbsp;&nbsp;&nbsp; 原生模块的缓存和其它模块的缓存区域不同，模块一经加载即会被缓存，下次加载时会直接从缓存中获取。
+
+3. 查找模块
+
+&nbsp;&nbsp;&nbsp;&nbsp; 内置原生模块会直接从node目录的libs目录下搜索；外部扩展模块即通过npm安装的模块，node会先从当前node_modules目录查找，然后是上层各个node_modules目录下查找，直到根目录；自定义模块我们一般会使用相对路径和绝对路径进行查找，如果没有扩展名node会依次按照['.js', '.node', '.json']进行匹配，自定义模块多为开发者根据commonJs规范编写的代码模块。
+
+4. 加载模块
+
+根据查找模块获取到的文件绝对路径定位到文件之后，node同步加载模块然后编译执行，将编译和执行之后的结果缓存到内存中，注意不同于浏览器仅仅缓存文件。
+
+5. 输出模块的exports属性即可
+
+```js
+// require 其实内部调用 Module._load 方法
+Module._load = function(request, parent, isMain) {
+  //  计算绝对路径
+  var filename = Module._resolveFilename(request, parent);
+
+  //  第一步：如果有缓存，取出缓存
+  var cachedModule = Module._cache[filename];
+  if (cachedModule) {
+    return cachedModule.exports;
+
+  // 第二步：是否为内置模块
+  if (NativeModule.exists(filename)) {
+    return NativeModule.require(filename);
+  }
+  
+  /********************************这里注意了**************************/
+  // 第三步：生成模块实例，存入缓存
+  // 这里的Module就是我们上面的1.1定义的Module
+  var module = new Module(filename, parent);
+  Module._cache[filename] = module;
+
+  /********************************这里注意了**************************/
+  // 第四步：加载模块
+  // 下面的module.load实际上是Module原型上有一个方法叫Module.prototype.load
+  try {
+    module.load(filename);
+    hadException = false;
+  } finally {
+    if (hadException) {
+      delete Module._cache[filename];
+    }
+  }
+
+  // 第五步：输出模块的exports属性
+  return module.exports;
+};
+```
+
 
 #### ➣ Node.js的优势和劣势
 **优势：** 处理I/O密集的任务，主要在于Node利用事件循环的处理能力，而不是启动一个线程为每一个请求服务，不用处理线程间的切换，资源占用极少。
