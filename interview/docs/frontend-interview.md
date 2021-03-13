@@ -79,7 +79,7 @@
     - [➣ 实现ajax并发请求控制](#%E2%9E%A3-%E5%AE%9E%E7%8E%B0ajax%E5%B9%B6%E5%8F%91%E8%AF%B7%E6%B1%82%E6%8E%A7%E5%88%B6)
     - [➣ 如何自己实现一个单点登录系统](#%E2%9E%A3-%E5%A6%82%E4%BD%95%E8%87%AA%E5%B7%B1%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E5%8D%95%E7%82%B9%E7%99%BB%E5%BD%95%E7%B3%BB%E7%BB%9F)
     - [➣ 使用ES5实现Promise](#%E2%9E%A3-%E4%BD%BF%E7%94%A8es5%E5%AE%9E%E7%8E%B0promise)
-  - [V. 要点：React](#v-%E8%A6%81%E7%82%B9react)
+- [### V. 要点：React](#v-%E8%A6%81%E7%82%B9react)
     - [➣ React 中 setState 什么时候是同步的，什么时候是异步的？](#%E2%9E%A3-react-%E4%B8%AD-setstate-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E6%98%AF%E5%90%8C%E6%AD%A5%E7%9A%84%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E6%98%AF%E5%BC%82%E6%AD%A5%E7%9A%84)
     - [➣ React中父组件如何调用子组件的方法？](#%E2%9E%A3-react%E4%B8%AD%E7%88%B6%E7%BB%84%E4%BB%B6%E5%A6%82%E4%BD%95%E8%B0%83%E7%94%A8%E5%AD%90%E7%BB%84%E4%BB%B6%E7%9A%84%E6%96%B9%E6%B3%95)
     - [➣ 为什么 React 元素有一个 $$typeof 属性？](#%E2%9E%A3-%E4%B8%BA%E4%BB%80%E4%B9%88-react-%E5%85%83%E7%B4%A0%E6%9C%89%E4%B8%80%E4%B8%AA-typeof-%E5%B1%9E%E6%80%A7)
@@ -110,7 +110,7 @@
       - [1. IIFE - 立即执行函数](#1-iife---%E7%AB%8B%E5%8D%B3%E6%89%A7%E8%A1%8C%E5%87%BD%E6%95%B0)
       - [2. AMD - requireJs](#2-amd---requirejs)
       - [3. CMD - seaJs](#3-cmd---seajs)
-      - [4. CommonJs - Node.js模块规范](#4-commonjs---nodejs%E6%A8%A1%E5%9D%97%E8%A7%84%E8%8C%83)
+      - [4. commonJs - Node.js模块规范](#4-commonjs---nodejs%E6%A8%A1%E5%9D%97%E8%A7%84%E8%8C%83)
       - [5. ES Module - 浏览器模块系统](#5-es-module---%E6%B5%8F%E8%A7%88%E5%99%A8%E6%A8%A1%E5%9D%97%E7%B3%BB%E7%BB%9F)
     - [➣ 谈谈node子进程child_process和实际使用场景](#%E2%9E%A3-%E8%B0%88%E8%B0%88node%E5%AD%90%E8%BF%9B%E7%A8%8Bchildprocess%E5%92%8C%E5%AE%9E%E9%99%85%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF)
     - [➣ node是IO密集型体现在哪里](#%E2%9E%A3-node%E6%98%AFio%E5%AF%86%E9%9B%86%E5%9E%8B%E4%BD%93%E7%8E%B0%E5%9C%A8%E5%93%AA%E9%87%8C)
@@ -126,6 +126,7 @@
       - [2. 兼容策略](#2-%E5%85%BC%E5%AE%B9%E7%AD%96%E7%95%A5)
       - [3. 常见浏览器兼容处理方法](#3-%E5%B8%B8%E8%A7%81%E6%B5%8F%E8%A7%88%E5%99%A8%E5%85%BC%E5%AE%B9%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95)
 - [### IV. 要点：前端性能优化](#iv-%E8%A6%81%E7%82%B9%E5%89%8D%E7%AB%AF%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96)
+    - [➣ 前端如何优化大量数据的加载和渲染](#%E2%9E%A3-%E5%89%8D%E7%AB%AF%E5%A6%82%E4%BD%95%E4%BC%98%E5%8C%96%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E5%8A%A0%E8%BD%BD%E5%92%8C%E6%B8%B2%E6%9F%93)
     - [➣ webpack性能优化方面](#%E2%9E%A3-webpack%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%96%B9%E9%9D%A2)
     - [➣ 服务器性能优化方面](#%E2%9E%A3-%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%96%B9%E9%9D%A2)
     - [➣ 弱网环境下页面首屏如何快速加载](#%E2%9E%A3-%E5%BC%B1%E7%BD%91%E7%8E%AF%E5%A2%83%E4%B8%8B%E9%A1%B5%E9%9D%A2%E9%A6%96%E5%B1%8F%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E5%8A%A0%E8%BD%BD)
@@ -1272,6 +1273,7 @@ function multiAjaxRequest(urls=[], maxNum=0) {
 [链接-> 使用ES5实现ES6 Promise API](https://github.com/nojsja/promise-nojsja)
 
 ### V. 要点：React
+---
 
 #### ➣ React 中 setState 什么时候是同步的，什么时候是异步的？
 - setState 只在合成事件和钩子函数中是“异步”的，在原生事件和 setTimeout 中都是同步的。
@@ -1364,7 +1366,7 @@ update 阶段，每次调用 setState，链表就会执行 next 向后移动一�
 
 1. 先计算模块路径
 
-&nbsp;&nbsp;&nbsp;&nbsp; 将我们的相对路径和使用path方法生成的路径装换成一个绝对路径，无需转换的路径保留原始名字(比如内置模块和npm模块)。
+&nbsp;&nbsp;&nbsp;&nbsp; 将我们的相对路径和使用path方法生成的路径转换成一个绝对路径，无需转换的路径保留原始名字(比如内置模块和npm模块)。
 
 2. 如果模块在缓存里面，取出缓存
 
@@ -1704,7 +1706,7 @@ console.log(a)
 - 3）依赖关系闭环的情况下，将变量改为function导出，利用function的变量提升机制
 
 #### ➣ Webpack怎么处理require和import语法混用的
-对于es6规范和commonjs规范来说，经过babel编译以后，都会转化成commonjs规范，然后在此基础上，用__esModule区分了是属于es6模块还是commonjs模块。并切为了保证es6规范用import导入值的正确性和统一性，babel还做了一些策略去处理这两者之前的差异。
+对于es6规范和commonJs规范来说，经过babel编译以后，都会转化成commonJs规范，然后在此基础上，用__esModule区分了是属于es6模块还是commonJs模块。并切为了保证es6规范用import导入值的正确性和统一性，babel还做了一些策略去处理这两者之前的差异。
 
 #### ➣ 前端模块化历程
 模块化主要是用来抽离公共代码，隔离作用域，避免变量冲突等。
@@ -1736,8 +1738,8 @@ define(function(require, exports, module) {
 });
 ```
 
-##### 4. CommonJs - Node.js模块规范
-&nbsp;&nbsp;&nbsp;&nbsp; 属于动态导入规范，特点: require、module.exports、exports CommonJS 一般用在服务端或者Node用来同步加载模块，它对于模块的依赖发生在代码运行阶段，不适合在浏览器端做异步加载。 exports实际上是一个对module.exports的引用，不能给exports赋值，否则会断开与module.exports的连接：
+##### 4. commonJs - Node.js模块规范
+&nbsp;&nbsp;&nbsp;&nbsp; 属于动态导入规范，可以在条件语句中导入其它模块，特点: require、module.exports、exports。commonJs 一般用在服务端或者Node用来同步加载模块，它对于模块的依赖发生在代码运行阶段，不适合在浏览器端做异步加载。exports实际上是一个对module.exports的引用，不能给exports赋值，否则会断开与module.exports的连接：
 ```js
   exports.add = function add () {/* 方法 */}
     // 等同于
@@ -1753,7 +1755,7 @@ define(function(require, exports, module) {
 
 - 死代码检测和排除。我们可以用静态分析工具检测出哪些模块没有被调用过。比如，在引入工具类库时，工程中往往只用到了其中一部分组件或接口，但有可能会将其代码完整地加载进来。未被调用到的模块代码永远不会被执行，也就成为了死代码。通过静态分析可以在打包时去掉这些未曾使用过的模块，以减小打包资源体积。
 - 模块变量类型检查。JavaScript属于动态类型语言，不会在代码执行前检查类型错误（比如对一个字符串类型的值进行函数调用）。ES6 Module的静态模块结构有助于确保模块之间传递的值或接口类型是正确的。
-- 编译器优化。在CommonJS等动态模块系统中，无论采用哪种方式，本质上导入的都是一个对象，而ES6 Module支持直接导入变量，减少了引用层级，程序效率更高。
+- 编译器优化。在commonJs等动态模块系统中，无论采用哪种方式，本质上导入的都是一个对象，而ES6 Module支持直接导入变量，减少了引用层级，程序效率更高。
 
 **ESModule导出的值是引用的例子：**
 ```js
@@ -1771,10 +1773,10 @@ count()
 console.log(a) //2
 ```
 
-**ESModule和CommonJs差异：**
-- CommonJS模块导入后是一个值的拷贝，一旦输出之后，无论模块内部怎么变化，都无法影响之前的引用；而ESModule导入后是一个引用值的动态映射，并且这个映射是只读的。
+**ESModule和commonJs差异：**
+- commonJs模块导入后是一个值的拷贝，一旦输出之后，无论模块内部怎么变化，都无法影响之前的引用；而ESModule导入后是一个引用值的动态映射，并且这个映射是只读的。
 - ESModule 是引擎会在遇到import后生成一个引用链接，在脚本真正执行时才会根据这个引用链接去模块里面取值，模块内部的原始值变了import加载的模块也会变。
-- CommonJS运行时加载，ESModule编译阶段引用。CommonJS在引入时是加载整个模块，生成一个对象，然后再从这个生成的对象上读取方法和属性。
+- commonJs运行时加载，ESModule编译阶段引用。commonJs在引入时是加载整个模块，生成一个对象，然后再从这个生成的对象上读取方法和属性。
 - ESModule 不是对象，而是通过export暴露出要输出的代码块，在import时使用静态命令的方法引用指定的输出代码块，并在import语句处执行这个要输出的代码，而不是直接加载整个模块。
 
 #### ➣ 谈谈node子进程child_process和实际使用场景
@@ -2095,6 +2097,15 @@ function createXHR(){
 &nbsp;&nbsp;&nbsp;&nbsp; 例如优化浏览器缓存策略以减少HTTP请求传输量、图片和其它静态资源的压缩、服务器端启用Gzip压缩、使用CDN、图片懒加载、延迟脚本Defer和异步脚本Async等属于网络层面的优化。另一方面，减少页面的回流和重绘、使用React.Fragment减少界面dom层级、使用骨架屏、函数节流和去抖、React长列表组件优化、通过事件冒泡机制实现事件委托等就属于渲染层面的优化。
 
 [ >> 文章链接](https://nojsja.gitee.io/blogs/2021/02/07/%E5%89%8D%E7%AB%AF%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97-1/)
+
+#### ➣ 前端如何优化大量数据的加载和渲染
+
+1. 如果有使用Node.js中间层的话，可以利用服务器的多核渲染能力进行同构JS服务端渲染。
+2. 界面使用虚拟列表技术，动态显示部分数据。
+3. 使用懒加载技术，每次只加载部分数据，配合加载动画提升用户体验。
+4. 使用分页组件，用户自由选择需要加载的部分。
+5. 如果在一次性请求大量数据并需要进行数据处理的话，可以使用 web-worker 线程单独处理然后返回给主线程使用，否则主线程大量的计算可能影响界面流畅度。
+6. 使用 websocket 进行异步加载而不是 ajax 同步请求获取数据。
 
 #### ➣ webpack性能优化方面
 
