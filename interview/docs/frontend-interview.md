@@ -125,6 +125,8 @@
       - [1. 多屏幕自适应](#1-%E5%A4%9A%E5%B1%8F%E5%B9%95%E8%87%AA%E9%80%82%E5%BA%94)
       - [2. 兼容策略](#2-%E5%85%BC%E5%AE%B9%E7%AD%96%E7%95%A5)
       - [3. 常见浏览器兼容处理方法](#3-%E5%B8%B8%E8%A7%81%E6%B5%8F%E8%A7%88%E5%99%A8%E5%85%BC%E5%AE%B9%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95)
+      - [3. 工程化兼容方法：babel](#3-%E5%B7%A5%E7%A8%8B%E5%8C%96%E5%85%BC%E5%AE%B9%E6%96%B9%E6%B3%95babel)
+      - [4. 工具兼容方法：css前缀](#4-%E5%B7%A5%E5%85%B7%E5%85%BC%E5%AE%B9%E6%96%B9%E6%B3%95css%E5%89%8D%E7%BC%80)
 - [### IV. 要点：前端性能优化](#iv-%E8%A6%81%E7%82%B9%E5%89%8D%E7%AB%AF%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96)
     - [➣ 前端如何优化大量数据的加载和渲染](#%E2%9E%A3-%E5%89%8D%E7%AB%AF%E5%A6%82%E4%BD%95%E4%BC%98%E5%8C%96%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E5%8A%A0%E8%BD%BD%E5%92%8C%E6%B8%B2%E6%9F%93)
     - [➣ webpack性能优化方面](#%E2%9E%A3-webpack%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%96%B9%E9%9D%A2)
@@ -2086,6 +2088,94 @@ function createXHR(){
       }
     }
    ```
+
+##### 3. 工程化兼容方法：babel
+&nbsp;&nbsp;&nbsp;&nbsp; babel默认只转换一些我们最新的ES语法，比如：箭头函数、Class等，一些新的API方法，比如：Generator、Iterator、Set、Map、Proxy、Reflect、Symbol、Promise、Object.assgin、Array.from 等都不会做转换，可以使用 babel polyfill 插件制定兼容方案。
+
+\> 1) 使用 `babel-plugin-transform-xxx` 内联定向兼容一些API方法：  
+
+比如使用 `babel-plugin-transform-object-assign` 插件单独兼容`Object.assign`：
+
+```bash
+npm i babel-plugin-transform-object-assign
+
+# in .babelrc
+{
+  "presets": ["latest"],
+  "plugins": ["transform-object-assign"]
+}
+```
+
+代码会被转化为如下：
+```js
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var foo = exports.foo = function foo(a, b) {
+  return _extends(a, b);
+};
+```
+
+**缺点是**：该插件可能在每个代码块中重复插入polyfill处理，造成重复的不必要引入
+
+\> 2) 使用 `babel-plugin-transform-runtime` 进行模块级自动兼容：
+
+plugin-transform 的引用是 module 级别的，意味着在多个 module 使用时会重复的引用，但是不会污染全局变量。
+
+```js
+npm i -D babel-plugin-transform-runtime
+npm i babel-runtime
+
+# .babelrc
+{
+  "presets": ["latest"],
+  "plugins": ["transform-runtime"]
+}
+```
+
+**缺点是：** 只会兼容原型方法，实例对象上的方法无效，比如`var a = {}; a.assgin()`没法被正确转换。
+
+\> 3) 源码引入`babel-polyfill`来进行全局兼容：  
+
+babel 提供了通过改变全局来兼容 es2015 所有方法的 babel-polyfill，安装 babel-polyfill 后你只需要在 main.js加一句 import引入它即可，如果使用了 webpack 也可以直接在 entry 中添加 babel-polyfill 的入口。
+
+```js
+import 'babel-polyfill';
+```
+
+**缺点：** 会污染全局变量，并且增加了引入文件体积，未使用的API polyfill也会被引入，可以将其抽离成一个 common module，放在项目的静态dll库中，或者抽成一个文件放在 cdn 上。
+
+\> 4) 使用 polyfill.io 针对使用者浏览器版本进行定向兼容：
+
+以上兼容方法都会忽略较新版本浏览器的兼容情况，可能将用户浏览器已经兼容的API都给引入覆盖了，`polyfill.io`提供一种更加智能化的方式：不同的浏览器下请求 https://cdn.polyfill.io/v2/polyfill.js 这个文件，服务器会判断浏览器 UA 返回不同的 polyfill 文件，你所要做的仅仅是在页面上使用`script`标签引入这个文件。
+
+并且 `polyfill.io` 不旦提供了 cdn 的服务，也开源了自己的实现方案 [polyfill-service](https://github.com/Financial-Times/polyfill-service)，用户可以根据实际项目情况自行选择。
+
+**缺点：** polyfill.io 面对复杂的浏览器UA可能识别不准确，面对这种情况时需要有替补解决方案。
+
+##### 4. 工具兼容方法：css前缀
+
+&nbsp;&nbsp;&nbsp;&nbsp; 有时候为了兼容一些较新的css 语法，比如：`display: flex`，我们需要针对各个浏览器添加很多前缀声明：
+```css
+.container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+```
+
+手动进行适配兼容肯定是个很大的工作量，可以使用 vscode 插件 `Autoprefixer
+`进行自动添加，它会根据[Can I Use](https://caniuse.com/)网站统计的浏览器兼容版本进行自动前缀添加。注意使用`v2.2.0`版本，最新的版本会无效，安装好之后需要去 vscode config.json 里进行配置：
+
+```json
+{
+  ...
+  "autoprefixer.browsers": [
+        "last 5 versions",
+        "> 5%"
+    ],
+}
+```
+
 
 ### IV. 要点：前端性能优化
 --------
