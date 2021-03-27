@@ -58,5 +58,25 @@ var isValid = function(s) {
   return bool;
 };
 
+var isValid = function(s) {
+  var stack = [];
+  var map = {
+    "[": "]",
+    "{": "}",
+    "(": ")",
+  };
+
+  for (var i = 0; i < s.length; i++) {
+    if (map[s[i]]) {
+      stack.push(s[i]);
+    } else {
+      if (map[stack.pop()] !== s[i])
+        return false;
+    }
+  }
+
+  return !stack.length;
+}
+
 console.log(isValid("()[]{}"));
 console.log(isValid("([)]"));

@@ -25,16 +25,19 @@
  * @param {string[]} strs
  * @return {string}
  */
+
 var longestCommonPrefix = function(strs) {
+  var str = '', tmp = "";
   if (strs.length < 2) return strs[0] || '';
-  var s = '', tmp;
-  for (var i = 0; i < strs[0].length; i++) {
-    tmp = strs[0].substring(0, i+1);
+
+  for(var i = 0; i < strs[0].length; i++) {
+    tmp += strs[0][i];
     for (var j = 1; j < strs.length; j++) {
-      if (strs[j].indexOf(tmp) !== 0) break;
+      if (strs[j].indexOf(tmp) !== 0)
+        return str;
     }
-    if (j === strs.length) s = tmp;
+    str = tmp;
   }
 
-  return s;
+  return str;
 };

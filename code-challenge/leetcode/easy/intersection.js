@@ -43,4 +43,18 @@ var intersection = function(nums1, nums2) {
   return array;
 };
 
+/**
+ * @param {number[]} nums1
+ * @param {number[]} nums2
+ * @return {number[]}
+ */
+ var intersection = function(nums1, nums2) {
+  return nums1.reduce((total, current) => {
+    if (!total.includes(current) && nums2.includes(current)) {
+      total.push(current);
+    }
+    return total;
+  }, []);
+};
+
 console.log(intersection([1,2,,1], [2,2]));

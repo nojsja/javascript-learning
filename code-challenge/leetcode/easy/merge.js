@@ -51,4 +51,20 @@ var merge = function(nums1, m, nums2, n) {
 
 };
 
+var merge = function(nums1, m, nums2, n) {
+  nums1 = nums1.slice(0, m);
+  nums2 = nums2.slice(0, n);
+  var array = [];
+
+  while (nums1.length && nums2.length) {
+    if (nums1[0] <= nums2[0]) {
+      array.push(nums1.shift());
+    } else {
+      array.push(nums2.shift());
+    }
+  }
+
+  return array.concat(nums1, nums2);
+};
+
 console.log(merge([1,2,3,0,0,0], 3, [2,5,6], 3));

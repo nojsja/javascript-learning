@@ -22,7 +22,7 @@ var maxSubArray = function(nums) {
   var sum = nums[0], res = nums[0];
 
   for (var i = 1; i < nums.length; i++) {
-    if (sum >= 0) {
+    if (sum > 0) {
       sum += nums[i];
     } else {
       sum = nums[i];

@@ -33,7 +33,7 @@
  * @param {number[]} nums
  * @return {number}
  */
-var findLengthOfLCIS = function(nums) {
+ var findLengthOfLCIS = function(nums) {
   var max = 1, start = 0, end=1;
   if (nums.length === 0) return 0;
 
@@ -41,7 +41,7 @@ var findLengthOfLCIS = function(nums) {
     if (nums[end] > nums[end-1]) {
       end++;
     } else {
-      if ((end - 1 > start + 1) || (nums[end-1] > nums[start])) {
+      if (nums[end-1] > nums[start]) {
         max = Math.max(end - start,  max);
       }
       start = end;
