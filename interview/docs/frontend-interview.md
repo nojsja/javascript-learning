@@ -83,6 +83,7 @@
     - [➣ React 中 setState 什么时候是同步的，什么时候是异步的？](#%E2%9E%A3-react-%E4%B8%AD-setstate-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E6%98%AF%E5%90%8C%E6%AD%A5%E7%9A%84%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E6%98%AF%E5%BC%82%E6%AD%A5%E7%9A%84)
     - [➣ React中父组件如何调用子组件的方法？](#%E2%9E%A3-react%E4%B8%AD%E7%88%B6%E7%BB%84%E4%BB%B6%E5%A6%82%E4%BD%95%E8%B0%83%E7%94%A8%E5%AD%90%E7%BB%84%E4%BB%B6%E7%9A%84%E6%96%B9%E6%B3%95)
     - [➣ 为什么 React 元素有一个 $$typeof 属性？](#%E2%9E%A3-%E4%B8%BA%E4%BB%80%E4%B9%88-react-%E5%85%83%E7%B4%A0%E6%9C%89%E4%B8%80%E4%B8%AA-typeof-%E5%B1%9E%E6%80%A7)
+    - [➣ hooks 优缺点？](#%E2%9E%A3-hooks-%E4%BC%98%E7%BC%BA%E7%82%B9)
     - [➣ hooks 为什么不能放在条件判断里？](#%E2%9E%A3-hooks-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E6%94%BE%E5%9C%A8%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD%E9%87%8C)
     - [➣ React-Fiber原理和生命周期使用详解](#%E2%9E%A3-react-fiber%E5%8E%9F%E7%90%86%E5%92%8C%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3)
     - [➣ React虚拟dom以及diff算法](#%E2%9E%A3-react%E8%99%9A%E6%8B%9Fdom%E4%BB%A5%E5%8F%8Adiff%E7%AE%97%E6%B3%95)
@@ -1278,6 +1279,9 @@ function multiAjaxRequest(urls=[], maxNum=0) {
 ---
 
 #### ➣ React 中 setState 什么时候是同步的，什么时候是异步的？
+
+react为了解决跨平台，兼容性和性能问题，自己封装了一套事件机制，代理了原生的事件。
+
 - setState 只在合成事件和钩子函数中是“异步”的，在原生事件和 setTimeout 中都是同步的。
 - setState的“异步”并不是说内部由异步代码实现，其实本身执行的过程和代码都是同步的，只是合成事件和钩子函数的调用顺序在更新之前，导致在合成事件和钩子函数中没法立马拿到更新后的值，形式了所谓的“异步”，当然可以通过第二个参数 setState(partialState, callback) 中的callback拿到更新后的结果。
 - setState 的批量更新优化也是建立在“异步”（合成事件、钩子函数）之上的，在原生事件和setTimeout 中不会批量更新，在“异步”中如果对同一个值进行多次 setState ， setState 的批量更新策略会对其进行覆盖，取最后一次的执行，如果是同时 setState 多个不同的值，在更新时会对其进行合并批量更新。
@@ -1315,12 +1319,28 @@ let message = { text: expectedTextButGotJSON };
 </p>
 ```
 
+#### ➣ hooks 优缺点？
+
+**优点：**
+
+1. 代码可读性更强，模板代码更少，原本同一块功能的代码逻辑被拆分在了不同的生命周期函数中，容易使开发者不利于维护和迭代，通过 React Hooks 可以将功能代码聚合，方便阅读维护。
+2. 传统Class组件需要学习ES6原生API，不利于初学者快速上手。
+3. 更加扁平化，传统组件利用 `renderProps`(传入一个可渲染函数作为props) 和 高阶组件 ( **组件组合包裹** 和 **反向继承**) 的方式实现逻辑复用和职责添加，容易形成"嵌套地狱"。
+4. 不用处理 this 的指向的问题。
+
+**缺点：**
+
+1. 复杂的组件逻辑，hooks的方式代码可读性更差。
+2. 不利于异步操作。
+3. 还无法实现 getSnapshotBeforeUpdate 和 componentDidCatch 这两个在类组件中的生命周期函数。
+4. 容易陷入闭包问题，导致读取到旧值，解决方式使用局部变量 或 useRef
+
 #### ➣ hooks 为什么不能放在条件判断里？
 以 setState 为例，在 react 内部，每个组件(Fiber)的 hooks 都是以链表的形式存在 memoizeState 属性中：
 
 ![](../images/../docs/images/hooks.png)
 
-update 阶段，每次调用 setState，链表就会执行 next 向后移动一步。如果将 setState 写在条件判断中，假设条件判断不成立，没有执行里面的 setState 方法，会导致接下来所有的 setState 的取值出现偏移，从而导致异常发生。
+update 阶段，每次调用 useState，链表就会执行 next 向后移动一步。如果将 useState 写在条件判断中，假设条件判断不成立，没有执行里面的 useState 方法，会导致接下来所有的 useState 的取值出现偏移，从而导致异常发生。
 
 #### ➣ React-Fiber原理和生命周期使用详解
 
@@ -1353,6 +1373,14 @@ update 阶段，每次调用 setState，链表就会执行 next 向后移动一�
 #### ➣ Babel源码
 
 #### ➣ React SetState原理
+
+1. 在 setState 的时候，React 会为当前节点创建一个 updateQueue 的更新列队。
+2. 然后会触发 reconciliation 过程，在这个过程中，会使用名为 Fiber 的调度算法，开始生成新的 Fiber 树， Fiber 算法的最大特点是可以做到异步可中断的执行。
+3. 然后 React Scheduler 会根据优先级高低，先执行优先级高的节点，具体是执行 doWork 方法。
+4. 在 doWork 方法中，React 会执行一遍 updateQueue 中的方法，以获得新的节点。然后对比新旧节点，为老节点打上 更新、插入、替换 等 Tag。
+5. 当前节点 doWork 完成后，会执行 performUnitOfWork 方法获得新节点，然后再重复上面的过程。
+6. 当所有节点都 doWork 完成后，会触发 commitRoot 方法，React 进入 commit 阶段。
+7. 在 commit 阶段中，React 会根据前面为各个节点打的 Tag，一次性更新整个 dom 元素。
 
 
 ### VI. 要点：Node.js
