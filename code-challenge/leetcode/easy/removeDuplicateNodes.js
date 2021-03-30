@@ -32,27 +32,50 @@
  *     this.next = null;
  * }
  */
+
 /**
  * @param {ListNode} head
  * @return {ListNode}
  */
-var removeDuplicateNodes = function(head) {
-  var now = head, next, prev;
+ var removeDuplicateNodes = function(head) {
+  var now = head, next, last;
 
-  while (now) {
-    prev = now;
-    next = prev.next;
+  while(now) {
+    next = now.next;
+    last = now;
     while (next) {
       if (next.val === now.val) {
-        prev.next = next.next;
+        last.next = next.next;
       } else {
-        prev = prev.next;
+        last = next;
       }
-      next = prev ? prev.next : null;
+      next = next.next;
     }
-
     now = now.next;
   }
 
   return head;
 };
+
+/* 进阶：以空间换时间 */
+
+var removeDuplicateNodes = function(head) {
+  if (!head) return head;
+
+  var map = {
+    [head.val]: 1,
+  };
+  var prev = head, next = head.next;
+
+  while (next) {
+    if (map[next.val]) {
+      prev.next = next.next;
+    } else {
+      prev = next;
+      map[next.val] = 1;
+    }
+    next = next.next;
+  }
+
+  return head;
+}
