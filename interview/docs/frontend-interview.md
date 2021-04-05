@@ -89,6 +89,7 @@
     - [➣ React虚拟dom以及diff算法](#%E2%9E%A3-react%E8%99%9A%E6%8B%9Fdom%E4%BB%A5%E5%8F%8Adiff%E7%AE%97%E6%B3%95)
     - [➣ Babel源码](#%E2%9E%A3-babel%E6%BA%90%E7%A0%81)
     - [➣ React SetState原理](#%E2%9E%A3-react-setstate%E5%8E%9F%E7%90%86)
+    - [➣ React Router实现原理](#%E2%9E%A3-react-router%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)
 - [### VI. 要点：Node.js](#vi-%E8%A6%81%E7%82%B9nodejs)
     - [➣ Node.js的模块加载机制](#%E2%9E%A3-nodejs%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6)
     - [➣ Node.js的优势和劣势](#%E2%9E%A3-nodejs%E7%9A%84%E4%BC%98%E5%8A%BF%E5%92%8C%E5%8A%A3%E5%8A%BF)
@@ -787,7 +788,8 @@ function deepClone(data) {
     base = isObjType(target, 'Array') ? [] : {};
 
     // 处理循环引用
-    if (map.get(target)) return map.get(target);
+    if (map.has(target))
+      return map.get(target);
     map.set(target, base);
     
     for (let i in target) {
@@ -1381,6 +1383,10 @@ update 阶段，每次调用 useState，链表就会执行 next 向后移动一�
 5. 当前节点 doWork 完成后，会执行 performUnitOfWork 方法获得新节点，然后再重复上面的过程。
 6. 当所有节点都 doWork 完成后，会触发 commitRoot 方法，React 进入 commit 阶段。
 7. 在 commit 阶段中，React 会根据前面为各个节点打的 Tag，一次性更新整个 dom 元素。
+
+#### ➣ React Router实现原理
+
+
 
 
 ### VI. 要点：Node.js
