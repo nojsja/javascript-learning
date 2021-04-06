@@ -88,7 +88,7 @@
     - [➣ hooks 为什么不能放在条件判断里？](#%E2%9E%A3-hooks-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E6%94%BE%E5%9C%A8%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD%E9%87%8C)
     - [➣ React-Fiber原理和生命周期使用详解](#%E2%9E%A3-react-fiber%E5%8E%9F%E7%90%86%E5%92%8C%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3)
     - [➣ React虚拟dom以及diff算法](#%E2%9E%A3-react%E8%99%9A%E6%8B%9Fdom%E4%BB%A5%E5%8F%8Adiff%E7%AE%97%E6%B3%95)
-    - [➣ Babel源码](#%E2%9E%A3-babel%E6%BA%90%E7%A0%81)
+    - [➣ Babel原理](#%E2%9E%A3-babel%E5%8E%9F%E7%90%86)
     - [➣ React SetState原理](#%E2%9E%A3-react-setstate%E5%8E%9F%E7%90%86)
     - [➣ React Router实现原理](#%E2%9E%A3-react-router%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)
 - [### VI. 要点：Node.js](#vi-%E8%A6%81%E7%82%B9nodejs)
@@ -1032,7 +1032,7 @@ let setTimeout = (fn, timeout, ...args) => {
 - Client向Server发送FIN包，表示Client主动要关闭连接，然后进入FIN_WAIT_1状态，等待Server返回ACK包。此后Client不能再向Server发送数据，但能读取数据。
 - Server收到FIN包后向Client发送ACK包，然后进入CLOSE_WAIT状态，此后Server不能再读取数据，但可以继续向Client发送数据。
 - Client收到Server返回的ACK包后进入FIN_WAIT_2状态，等待Server发送FIN包。
--Server完成数据的发送后，将FIN包发送给Client，然后进入LAST_ACK状态，等待Client返回ACK包，此后Server既不能读取数据，也不能发送数据。
+- Server完成数据的发送后，将FIN包发送给Client，然后进入LAST_ACK状态，等待Client返回ACK包，此后Server既不能读取数据，也不能发送数据。
 - Client收到FIN包后向Server发送ACK包，然后进入TIME_WAIT状态，接着等待足够长的时间（2MSL）以确保Server接收到ACK包，最后回到CLOSED状态，释放网络资源。
 - Server收到Client返回的ACK包后便回到CLOSED状态，释放网络资源。
 
@@ -1359,7 +1359,7 @@ let message = { text: expectedTextButGotJSON };
 4. 容易陷入闭包问题，导致读取到旧值，解决方式使用局部变量 或 useRef
 
 #### ➣ hooks 为什么不能放在条件判断里？
-以 setState 为例，在 react 内部，每个组件(Fiber)的 hooks 都是以链表的形式存在 memoizeState 属性中：
+以 setState 为例，在 react 内部，每个组件(Fiber)的 hooks 都是以链表的形式存在 memorizedState 属性中：
 
 ![](../images/../docs/images/hooks.png)
 
@@ -1393,7 +1393,14 @@ update 阶段，每次调用 useState，链表就会执行 next 向后移动一�
 
 如果没有 id 来进行区分，一旦有插入动作，会导致插入位置之后的列表全部重新渲染。这也是为什么渲染列表时为什么要使用唯一的 key。
 
-#### ➣ Babel源码
+#### ➣ Babel原理
+
+babel的转译过程分为三个阶段：parsing、transforming、generating，以ES6代码转译为ES5代码为例，babel转译的具体过程如下：
+
+- ES6 代码输入
+- `babylon` 进行解析得到 AST
+- plugin 用 `babel-traverse` 对 AST 树进行遍历转译，得到新的AST树
+- 用 `babel-generator` 通过 AST 树生成 ES5 代码
 
 #### ➣ React SetState原理
 
