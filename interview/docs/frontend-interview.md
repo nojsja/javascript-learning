@@ -59,6 +59,7 @@
       - [1. 浏览器包含下面几种进程：](#1-%E6%B5%8F%E8%A7%88%E5%99%A8%E5%8C%85%E5%90%AB%E4%B8%8B%E9%9D%A2%E5%87%A0%E7%A7%8D%E8%BF%9B%E7%A8%8B)
       - [2. 浏览器渲染进程是多线程的，包括以下线程：](#2-%E6%B5%8F%E8%A7%88%E5%99%A8%E6%B8%B2%E6%9F%93%E8%BF%9B%E7%A8%8B%E6%98%AF%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%8C%85%E6%8B%AC%E4%BB%A5%E4%B8%8B%E7%BA%BF%E7%A8%8B)
     - [➣ Js事件循环(宏任务、微任务)](#%E2%9E%A3-js%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E5%AE%8F%E4%BB%BB%E5%8A%A1%E5%BE%AE%E4%BB%BB%E5%8A%A1)
+    - [➣ 模拟实现 setTimeout](#%E2%9E%A3-%E6%A8%A1%E6%8B%9F%E5%AE%9E%E7%8E%B0-settimeout)
     - [➣ 从输入URL到页面渲染完成发生了什么](#%E2%9E%A3-%E4%BB%8E%E8%BE%93%E5%85%A5url%E5%88%B0%E9%A1%B5%E9%9D%A2%E6%B8%B2%E6%9F%93%E5%AE%8C%E6%88%90%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88)
     - [➣ tcp协议三次握手和四次挥手](#%E2%9E%A3-tcp%E5%8D%8F%E8%AE%AE%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B)
       - [1. 三次握手讲解](#1-%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E8%AE%B2%E8%A7%A3)
@@ -988,6 +989,26 @@ setTimeout(function() {
 
 ```
 输出结果：`124536`，注意main主进程代码第一次执行时被看做宏任务。
+
+#### ➣ 模拟实现 setTimeout
+```js
+let setTimeout = (fn, timeout, ...args) => {
+  // 初始当前时间
+  const start = +new Date();
+  let timer, now;
+  const loop = () => {
+    timer = window.requestAnimationFrame(loop);
+    // 再次运行时获取当前时间
+    now = +new Date();
+    // 当前运行时间 - 初始当前时间 >= 等待时间 ===>> 跳出
+    if (now - start >= timeout) {
+      fn.apply(this, args);
+      window.cancelAnimationFrame(timer);
+    }
+  }
+  window.requestAnimationFrame(loop);
+}
+```
 
 #### ➣ 从输入URL到页面渲染完成发生了什么
 
