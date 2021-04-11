@@ -122,7 +122,11 @@
     - [➣ webpack/rollup一些区别](#%E2%9E%A3-webpackrollup%E4%B8%80%E4%BA%9B%E5%8C%BA%E5%88%AB)
     - [➣ ts自己的看法，和应用](#%E2%9E%A3-ts%E8%87%AA%E5%B7%B1%E7%9A%84%E7%9C%8B%E6%B3%95%E5%92%8C%E5%BA%94%E7%94%A8)
     - [➣ webpack loader和plugin区别](#%E2%9E%A3-webpack-loader%E5%92%8Cplugin%E5%8C%BA%E5%88%AB)
-  - [IV. 要点：前端工程化方面](#iv-%E8%A6%81%E7%82%B9%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96%E6%96%B9%E9%9D%A2)
+- [### IV. 要点：前端工程化方面](#iv-%E8%A6%81%E7%82%B9%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96%E6%96%B9%E9%9D%A2)
+    - [➣ CSS 样式隔离方法](#%E2%9E%A3-css-%E6%A0%B7%E5%BC%8F%E9%9A%94%E7%A6%BB%E6%96%B9%E6%B3%95)
+      - [I. BEM规范](#i-bem%E8%A7%84%E8%8C%83)
+      - [II. CSS Modules](#ii-css-modules)
+      - [III. CSS IN JS](#iii-css-in-js)
     - [➣ 前端组件设计原则](#%E2%9E%A3-%E5%89%8D%E7%AB%AF%E7%BB%84%E4%BB%B6%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99)
     - [➣ 前端兼容](#%E2%9E%A3-%E5%89%8D%E7%AB%AF%E5%85%BC%E5%AE%B9)
       - [1. 多屏幕自适应](#1-%E5%A4%9A%E5%B1%8F%E5%B9%95%E8%87%AA%E9%80%82%E5%BA%94)
@@ -1882,10 +1886,136 @@ console.log(a) //2
 2. plugin是一个扩展器，它丰富了webpack本身，针对是loader结束后，webpack打包的整个过程，它并不直接操作文件，而是基于事件机制工作，会监听webpack打包过程中的某些节点，执行广泛的任务
 
 ### IV. 要点：前端工程化方面
+-------
+
+#### ➣ CSS 样式隔离方法
+
+##### I. BEM规范
+Bem 是块（block）、元素（element）、修饰符（modifier）的简写，由 Yandex 团队提出的一种前端 CSS 命名方法论。
+
+并不是每个地方都应该使用 BEM 命名方式。当需要明确关联性的模块关系时，应当使用 BEM 格式，当表示一条单独的公用样式时，不需要使用。
+
+- \- 中划线 ：仅作为连字符使用，表示某个块或者某个子元素的多单词之间的连接记号。
+- __  双下划线：双下划线用来连接块和块的子元素
+- _  单下划线：单下划线用来描述一个块或者块的子元素的一种状态
+
+```html
+<style>
+  .article {
+      max-width: 1200px;
+      &__body {
+          padding: 20px;
+      }
+      &__button {
+          padding: 5px 8px;
+          &--primary {background: blue;}
+          &--success {background: green;}
+      }
+  }
+</style>
+<div class="article">
+    <div class="article__body">
+        <div class="tag"></div>
+        <button class="article__button--primary"></button>
+        <button class="article__button--success"></button>
+    </div>
+</div>
+```
+
+```html
+<style>
+    .header--color-black { color: #000; }
+    .header__title--color-red { color: #f00; }
+</style>
+
+<div class="header header--color-black">
+    <h1 class="header__title">
+        <span class="header__title--color-red">Header</span>
+    </h1>
+</div>
+```
+
+##### II. CSS Modules
+CSS Modules并不是一个正式的声明或者是浏览器的一个实现，而是通过构建工具（webpack or Browserify）来使所有的class达到scope的一个过程。
+
+CSS Modules 解决了什么问题：
+
+- 全局命名冲突，因为CSS Modules只关心组件本身，只要保证组件本身命名不冲突，就不会有这样的问题，一个组件被编译之后的类名可能是这样的：
+```css
+/* App.css */
+.text {
+    color: red;
+}
+
+/* 编译之后可能是这样的 */
+.App__text___3lRY_ {
+    color: red;
+}
+复制代码
+```
+命名唯一，因此保证了全局不会冲突。
+
+- 模块化
+
+可以使用`composes`来引入自身模块中的样式以及另一个模块的样式：
+```
+.serif-font {
+  font-family: Georgia, serif;
+}
+
+.display {
+  composes: serif-font;
+  font-size: 30px;
+  line-height: 35px;
+}
+```
+应用到元素上可以这样使用：
+```
+import type from "./type.css";
+
+element.innerHTML = 
+  `<h1 class="${type.display}">
+    This is a heading
+  </h1>`;
+```
+之后编译出来的模板可能是这样的：
+```
+<h1 class="Type__display__0980340 Type__serif__404840">
+  Heading title
+</h1>
+```
+
+从另一个模块中引入，可以这样写：
+```
+.element {
+  composes: dark-red from "./colors.css";
+  font-size: 30px;
+  line-height: 1.2;
+}
+```
+
+- 解决嵌套层次过深的问题
+
+因为CSS Modules只关注与组件本身，组件本身基本都可以使用扁平的类名来写，类似于这样的：
+```
+.root {
+  composes: box from "shared/styles/layout.css";
+  border-style: dotted;
+  border-color: green;
+}
+
+.text {
+  composes: heading from "shared/styles/typography.css";
+  font-weight: 200;
+  color: green;
+}
+```
+
+##### III. CSS IN JS
+
+相当于内联，不太推荐
 
 #### ➣ 前端组件设计原则
-
-
 
 #### ➣ 前端兼容
 
