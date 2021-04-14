@@ -37,6 +37,9 @@
   著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
 ------------------------------------------------------- */
 
+
+/* -------------- 暴力法 -------------- */
+
 /**
  * @param {number} target
  * @param {number[]} nums
@@ -58,4 +61,26 @@
   }
 
   return length;
+};
+
+/* -------------- 双指针法 -------------- */
+
+/**
+ * @param {number} target
+ * @param {number[]} nums
+ * @return {number}
+ */
+var minSubArrayLen = function(target, nums) {
+    var start = 0, end = 0, res = 0, length = Infinity;
+    while (end < nums.length) {
+        res += nums[end];
+        while (res >= target) {
+            length = Math.min(length , end - start + 1);
+            res -= nums[start];
+            start++;
+        }
+        end++;
+    }
+
+    return length === Infinity ? 0 : length;
 };
