@@ -1,0 +1,152 @@
+<head>
+    <style type="text/css">
+
+        .slide-wrapper {
+            position: relative;
+            width: 90%;
+            margin: auto;
+            height: 10rem;
+            height: auto;
+            -webkit-box-shadow:  0 0 5px #808080;
+            -moz-box-shadow:  0 0 5px #808080;
+            box-shadow:  0 0 5px #808080;
+        }
+        .slide-item-list {
+            width: 100%;
+            height: 10rem;
+            overflow: hidden;
+        }
+        /* 执行滑动操作的元素 */
+        .slide-item {
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            box-sizing: border-box;
+            background-color: #d8d8d8;
+        }
+        .slide-item > img {
+            height: 10rem;
+            width: auto;
+        }
+        .slide-trigger:hover {
+
+        }
+        .slide-trigger-left {
+            position: absolute;
+            z-index: 1000;
+            width: 3rem;
+            height: 100%;
+            background: rgba(161, 215, 236, 0.6);
+            background: linear-gradient(to right, rgba(161, 215, 236, 0.6), rgba(255, 255, 255, 0.6));
+            background: -webkit-linear-gradient(to right, rgba(161, 215, 236, 0.6), rgba(255, 255, 255, 0.6));
+            top: 0;
+            left: 0;
+            color: rgba(57, 129, 213, 0.51);
+            font-weight: bold;
+        }
+        .slide-trigger-right {
+            position: absolute;
+            z-index: 1000;
+            width: 3rem;
+            height: 100%;
+            background: rgba(161, 215, 236, 0.6);
+            background: linear-gradient(to left, rgba(161, 215, 236, 0.6), rgba(255, 255, 255, 0.6));
+            background: -webkit-linear-gradient(to left, rgba(161, 215, 236, 0.6), rgba(255, 255, 255, 0.61));
+            top: 0;
+            right: 0;
+            color: rgba(57, 129, 213, 0.51);
+            font-weight: bold;
+        }
+        .slide-trigger-right:hover {
+            background: rgba(161, 215, 236, 0.6);
+            background: linear-gradient(to left, rgba(120, 161, 176, 0.6), rgba(255, 255, 255, 0.6));
+            background: -webkit-linear-gradient(to left, rgba(120, 161, 176, 0.6), rgba(255, 255, 255, 0.6));
+        }
+        .slide-trigger-left:hover{
+            background: rgba(161, 215, 236, 0.6);
+            background: linear-gradient(to right, rgba(120, 161, 176, 0.6), rgba(255, 255, 255, 0.6));
+            background: -webkit-linear-gradient(to right, rgba(120, 161, 176, 0.6), rgba(255, 255, 255, 0.6));
+        }
+        /* 垂直居中法 */
+        .trigger-left-button, .trigger-right-button {
+            top: 50%;
+            position: relative;
+            width: 3rem;
+            height: auto;
+            font-size: 2rem;
+            text-align: center;
+            /* 向上移动自身的50% */
+            -webkit-transform: translateY(-50%);
+            -moz-transform: translateY(-50%);
+            -ms-transform: translateY(-50%);
+            -o-transform: translateY(-50%);
+            transform: translateY(-50%);
+        }
+        .slide-trigger-left:hover, .slide-trigger-right:hover {
+            transition: color 0.2s linear;
+            color: #ffffff;
+        }
+        .slide-text {
+            position: absolute;
+            width: 100%;
+            height: 2rem;
+            overflow: hidden;
+            color: white;
+            display: none;
+            text-align: center;
+            background-color: rgba(39,42,48,0.6);
+            bottom: 0;
+            z-index: 1001;
+
+        }
+        .slide-point-list {
+            position: absolute;
+            z-index: 1000;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+        }
+        .slide-point {
+            margin: 1px;
+            display: inline-block;
+            width: 9px;
+            height: 9px;
+            background-color: white;
+            border-radius: 50%;
+            border: solid 2px white;
+        }
+
+    </style>
+
+</head>
+
+<body>
+<!--图片幻灯片边界-->
+<div class="slide-wrapper" id="slideWrapper">
+    <!--所有需要展播的图片列表-->
+    <div class="slide-item-list" id="slideItemList">
+        <!--<div class="slide-item" id="slide1">-->
+        <!--<img src="image/Javascript_1.jpg">-->
+        <!--</div>-->
+    </div>
+
+    <!--翻页触发区域-->
+    <div class="slide-trigger">
+        <div class="slide-trigger-left" id="triggerLeft">
+            <div class="trigger-left-button">&lt;</div>
+        </div>
+        <div class="slide-trigger-right" id="triggerRight">
+            <div class="trigger-right-button">&gt;</div>
+        </div>
+    </div>
+    <!--图片文字显示区域-->
+    <div class="slide-text" id="slideText">
+        text
+    </div>
+    <!--小白点页数显示区域-->
+    <div class="slide-point-list" id="pointList">
+        <!--<div class="slide-point" id="point1"></div>-->
+    </div>
+</div>
+</body>

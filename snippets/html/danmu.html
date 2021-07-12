@@ -1,0 +1,443 @@
+
+<!--自定义模态弹窗组件-->
+<style type="text/css">
+
+    /*** 弹幕内容 ***/
+    .danmu-div {
+        display: inline-block;
+        overflow: hidden;
+        line-height: 1.7rem;
+        height: 1.7rem;
+        position: fixed;
+        color: #eaeaea;
+        padding-left: 3px;
+        padding-right: 3px;
+        border-radius: 5px;
+        background-color: rgba(234, 234, 234, 0.5);
+        text-shadow: 2px 2px 2px #000;
+    }
+    .danmu-div p {
+        font-size: 1.1rem;
+        display: block;
+        height: 1.7rem;
+        line-height: 1.7rem;
+    }
+
+    .danmu-hidden {
+        display: none;
+    }
+
+    .danmu-show {
+        display: inline-block;
+    }
+
+
+    /*** 弹幕发送区域 ***/
+    .danmu-wrapper {
+        display: none;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        /* 如果是absolute的话，高宽仍然是视口的值，只是定位相对于顶部 */
+        position: fixed;
+        overflow: auto;
+        overflow-y: scroll;
+        /* 移动设备使用触摸进行滚动 */
+        -webkit-overflow-scrolling: touch;
+        background-color: rgba(103,103,103,0.7);
+    }
+
+    .danmu-wrapper-show {
+        -webkit-animation: danmuWrapperShow 0.3s;
+        -o-animation: danmuWrapperShow 0.3s;
+        animation: danmuWrapperShow 0.3s;
+    }
+
+    /* 内容定位器 */
+    .danmu-content-wrapper {
+        position: absolute;
+        margin: 10rem auto 0;
+        height: auto;
+        width: 100%;
+    }
+
+    /* 相对定位对于移动元素位置很重要 */
+    .danmu-content {
+        background-color: rgba(69, 69, 69, 0.90);
+        color: white;
+        position: relative;
+        padding: 1rem;
+        border-radius: 5px;
+        text-align: center;
+        width: 50%;
+        margin: auto;
+        height: auto;
+        box-shadow: 0 0 10px black;
+    }
+
+    .danmu-content-tip {
+        text-align: left;
+        padding: 2px;
+        margin-bottom: 4px;
+    }
+
+    #danmuText {
+        width: 100%;
+        color: rgb(58, 58, 58);
+        margin: 1rem 0 1rem;
+    }
+
+    #danmuSend {
+        width: 4rem;
+        background-color: #00b200;
+        font-size: 1.2rem;
+        padding: 4px;
+        border-radius: 4px;
+        color: white;
+        display: inline-block;
+    }
+
+    #danmuCancel {
+        display: inline-block;
+        width: 4rem;
+        background-color: white;
+        font-size: 1.2rem;
+        padding: 4px;
+        border-radius: 4px;
+        border: solid 1px #83b4c3;
+        color: #83b4c3;
+    }
+
+    #danmuSend:hover, #danmuSend:active {
+        background-color: #008500;
+        transition: 0.3s background-color linear;
+    }
+
+
+    /* 弹幕颜色操作 */
+    .danmu-color-div {
+        position: relative;
+        border-radius: 50%;
+        display: block;
+        width:  2.5rem;
+        height: 2.5rem;
+        margin: 3.5rem auto 3rem;
+
+        -webkit-box-shadow:  0px 0px 5px #000000;
+        -moz-box-shadow:  0px 0px 5px #000000;
+        box-shadow:  0px 0px 5px #000000;
+    }
+
+    .danmu-color-hover {
+        position: absolute;
+        border-radius: 50%;
+        z-index: 99;
+        background-image: -webkit-linear-gradient(to right, #ff3939, #98f3ff, #febc54, #2ed66b, #f2f93a);
+        background-image: linear-gradient(to right, #ff3939, #98f3ff, #febc54, #2ed66b, #f2f93a);
+        display: block;
+        top: 0;
+        left: 0;
+        width:  100%;
+        height: 100%;
+    }
+
+    .danmu-color {
+        position: absolute;
+        border: solid 1px white;
+        border-radius: 50%;
+        width: 100%;
+        height: 100%;
+        z-index: 98;
+    }
+    /* 可选弹幕颜色
+     '#eaeaea', '#ff3939',
+     '#98f3ff', '#febc54',
+     '#2ed66b', '#f2f93a'
+     */
+
+    .color1 {
+        background-color: #eaeaea;
+    }
+    .color2 {
+        background-color: #ff3939;
+    }
+    .color3 {
+        background-color: #98f3ff;
+    }
+    .color4 {
+        background-color: #febc54;
+    }
+    .color5 {
+        background-color: #2ed66b;
+    }
+    .color6 {
+        background-color: #f2f93a;
+    }
+
+    /* 按钮弹出 */
+    .danmu-color-show-1 {
+
+        -webkit-animation: colorAnimation1 1s;
+        -o-animation: colorAnimation1 1s;
+        animation: colorAnimation1 1s;
+
+        /* 动画停在终态 */
+        -webkit-animation-fill-mode: forwards;
+        -moz-animation-fill-mode: forwards;
+        -o-animation-fill-mode: forwards;
+        animation-fill-mode: forwards;
+    }
+    /* 按钮弹出 */
+    .danmu-color-show-2 {
+
+        -webkit-animation: colorAnimation2 1s;
+        -o-animation: colorAnimation2 1s;
+        animation: colorAnimation2 1s;
+
+        /* 动画停在终态 */
+        -webkit-animation-fill-mode: forwards;
+        -moz-animation-fill-mode: forwards;
+        -o-animation-fill-mode: forwards;
+        animation-fill-mode: forwards;
+    }
+    /* 按钮弹出 */
+    .danmu-color-show-3 {
+
+        -webkit-animation: colorAnimation3 1s;
+        -o-animation: colorAnimation3 1s;
+        animation: colorAnimation3 1s;
+
+        /* 动画停在终态 */
+        -webkit-animation-fill-mode: forwards;
+        -moz-animation-fill-mode: forwards;
+        -o-animation-fill-mode: forwards;
+        animation-fill-mode: forwards;
+    }
+    /* 按钮弹出 */
+    .danmu-color-show-4 {
+
+        -webkit-animation: colorAnimation4 1s;
+        -o-animation: colorAnimation4 1s;
+        animation: colorAnimation4 1s;
+
+        /* 动画停在终态 */
+        -webkit-animation-fill-mode: forwards;
+        -moz-animation-fill-mode: forwards;
+        -o-animation-fill-mode: forwards;
+        animation-fill-mode: forwards;
+    }
+    /* 按钮弹出 */
+    .danmu-color-show-5 {
+
+        -webkit-animation: colorAnimation5 1s;
+        -o-animation: colorAnimation5 1s;
+        animation: colorAnimation5 1s;
+
+        /* 动画停在终态 */
+        -webkit-animation-fill-mode: forwards;
+        -moz-animation-fill-mode: forwards;
+        -o-animation-fill-mode: forwards;
+        animation-fill-mode: forwards;
+    }
+    /* 按钮弹出 */
+    .danmu-color-show-6 {
+
+        -webkit-animation: colorAnimation6 1s;
+        -o-animation: colorAnimation6 1s;
+        animation: colorAnimation6 1s;
+
+        /* 动画停在终态 */
+        -webkit-animation-fill-mode: forwards;
+        -moz-animation-fill-mode: forwards;
+        -o-animation-fill-mode: forwards;
+        animation-fill-mode: forwards;
+    }
+    @keyframes colorAnimation1 {
+        0%{
+            opacity: 0;
+            top: 0;
+            right: 0;
+        }
+        100%{
+            opacity: 1;
+            top: -3rem;
+            right: 0;
+        }
+    }
+    @keyframes colorAnimation2 {
+        0%{
+            opacity: 0;
+            top: 0;
+            right: 0;
+        }
+        100%{
+            opacity: 1;
+            top: -3rem;
+            right: -3rem;
+        }
+    }
+    @keyframes colorAnimation3 {
+        0%{
+            opacity: 0;
+            top: 0;
+            right: 0;
+        }
+        100%{
+            opacity: 1;
+            top: 0;
+            right: -3rem;
+        }
+    }
+    @keyframes colorAnimation4 {
+        0%{
+            opacity: 0;
+            bottom: 0;
+            left: 0;
+        }
+        100%{
+            opacity: 1;
+            bottom: 0;
+            left: -3rem;
+        }
+    }
+    @keyframes colorAnimation5 {
+        0%{
+            opacity: 0;
+            bottom: 0;
+            left: 0;
+        }
+        100%{
+            opacity: 1;
+            bottom: -3rem;
+            left: -3rem;
+        }
+    }
+    @keyframes colorAnimation6 {
+        0%{
+            opacity: 0;
+            bottom: 0;
+            left: 0;
+        }
+        100%{
+            opacity: 1;
+            bottom: -3rem;
+            left: 0;
+        }
+    }
+    /* 按钮收起 */
+    .danmu-color-hidden {
+        -webkit-animation: colorHiddenAnimation 0.5s;
+        -o-animation: colorHiddenAnimation 0.5s;
+        animation: colorHiddenAnimation 0.5s;
+
+        /* 动画停在终态 */
+        -webkit-animation-fill-mode: forwards;
+        -moz-animation-fill-mode: forwards;
+        -o-animation-fill-mode: forwards;
+        animation-fill-mode: forwards;
+    }
+    @keyframes colorHiddenAnimation {
+
+        100%{
+            opacity: 0;
+            top: 0;
+            left: 0;
+        }
+    }
+
+    /* wrapper 出现动画 */
+    @keyframes danmuWrapperShow {
+        0% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    /*
+    *筛选手机以及相关的小屏幕
+    */
+    @media only screen and (max-width: 400px){
+
+        .danmu-content {
+            color: white;
+            position: relative;
+            padding: 1rem;
+            border-radius: 5px;
+            text-align: center;
+            width: 90%;
+            margin: auto;
+            height: auto;
+            background-color: rgba(69, 69, 69, 0.90);
+            box-shadow: 0 0 10px black;
+        }
+
+        #danmuText {
+            width: 100%;
+            margin: 1rem 0 1rem;
+        }
+
+        #danmuSend {
+            display: inline-block;
+            width: 4rem;
+            background-color: #00b200;
+            padding: 2px;
+            font-size: 1.1rem;
+            border-radius: 4px;
+            color: white;
+        }
+
+        #danmuCancel {
+            display: inline-block;
+            width: 4rem;
+            padding: 2px;
+            font-size: 1.1rem;
+            border-radius: 4px;
+            background-color: white;
+            border: solid 1px #83b4c3;
+            color: #83b4c3;
+        }
+    }
+</style>
+
+<!--模态弹窗-->
+<div class="danmu-wrapper" id="danmuWrapper">
+
+    <div class="danmu-content-wrapper">
+        <div class="danmu-content">
+
+            <div class="danmu-content-tip">
+                弹幕
+            </div>
+
+            <input type="text" placeholder="请输入要发送的弹幕..." id="danmuText">
+
+            <div id="danmuSend">确定</div>
+            <div id="danmuCancel">取消</div>
+
+            <!--
+            '#eaeaea', '#ff3939',
+            '#98f3ff', '#febc54',
+            '#2ed66b', '#f2f93a'
+            -->
+
+            <div class="danmu-color-div">
+                <!--点击区域-->
+                <div class="danmu-color-hover" id="danmuColorHover"></div>
+
+                <div class="danmu-color color1" id="danmuColor1" color="#eaeaea"></div>
+                <div class="danmu-color color2" id="danmuColor2" color="#ff3939"></div>
+                <div class="danmu-color color3" id="danmuColor3" color="#98f3ff"></div>
+                <div class="danmu-color color4" id="danmuColor4" color="#febc54"></div>
+                <div class="danmu-color color5" id="danmuColor5" color="#2ed66b"></div>
+                <div class="danmu-color color6" id="danmuColor6" color="#f2f93a"></div>
+            </div>
+        </div>
+    </div>
+</div>
