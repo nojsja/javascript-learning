@@ -30,13 +30,12 @@
  var hasCycle = function(head) {
   if (!head) return false;
   
-  var p1 = head, p2 = head.next;
+  var p1 = p2 = head;
 
-  while(p1 && p2) {
-    if (p1 === p2)
-      return true;
+  while(p2 && p2.next) {
     p1 = p1.next;
-    p2 = p2.next ? p2.next.next : null;
+    p2 = p2.next.next;
+    if (p1 === p2) return true;
   }
 
   return false;
