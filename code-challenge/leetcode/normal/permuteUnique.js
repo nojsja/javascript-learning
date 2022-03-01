@@ -32,7 +32,7 @@ var permuteUnique = function(nums) {
   // 使用排序让重复数相邻
   nums = nums.sort();
 
-  var backtrack = function(list, map) {
+  var backtrack = function(list) {
     if (list.length === nums.length) {
       res.push(list.slice());
       return;
