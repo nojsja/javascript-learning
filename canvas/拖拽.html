@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>drawer</title>
+  <style type="text/css">
+    #drawer {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="drawer"></canvas>
+</body>
+<script>
+  class Drawer {
+    constructor(selector) {
+      this.polygons = [];
+      this.me = document.querySelector(selector);
+      this.me.onmousedown = this.onMouseDown;
+      this.me.onmouseup = this.onMouseUp;
+      this.me.onmousemove = this.onMouseMove
+      this.target = null;
+    }
+
+    clear() {
+      this.me.clearRect();
+    }
+
+    render() {
+      this.polygons.forEach(polygon => polygon.draw());
+    }
+
+    addPolygon(polygon) {
+      this.polygons.push(polygon);
+      polygon.draw();
+    }
+
+    removePolygon(polygon) {
+      const index = this.polygons.indexOf(polygon);
+      if (index !== -1) {
+        this.polygons.destroy();
+        this.polygons.splice(index, 1);
+      }
+    }
+
+    onMouseDown() {
+      const point = {x: '', y: ''};
+      for (let i = 0; i < this.polygons.length; i++) {
+        if (this.polygons[i].isInCornerPath(point) && this.polygons[i].scalable) {
+          this.polygons[i].scaleStart(point);
+          this.target = this.polygons[i];
+          break;
+        }
+        if (this.polygons[i].isInPath(point) && this.polygons[i].dragable) {
+          this.polygons[i].dragStart(point);
+          this.target = this.polygons[i];
+          break;
+        }
+      }
+    }
+
+    onMouseMove() {
+      const point = {x: '', y: ''};
+      if (!this.target) return;
+      switch (this.target.status) {
+        case 'draging':
+          this.target.drag(point)
+          break;
+        case 'scaling':
+          this.target.scale(point)
+          break;
+        default:
+          break;
+      }
+    }
+
+    onMouseUp() {
+      const point = {x: '', y: ''};
+      if (!this.target) return;
+      switch (this.target.status) {
+        case 'draging':
+          this.target.dragEnd(point)
+          break;
+        case 'scaling':
+          this.target.scaleEnd(point)
+          break;
+        default:
+          break;
+      }
+      this.target = null;
+    }
+  }
+
+  class DrawHelper {
+    static drawPoints(ctx, points) {
+      const firstPoint = points.shift();
+      ctx.strokeStyle = 'black';
+      ctx.beginPath();
+
+      ctx.moveTo(firstPoint.x, firstPoint.y);
+      points.forEach(point => {
+        ctx.lineTo(point.x, point.y);
+      });
+      ctx.stroke();
+    }
+
+    static drawRect() {}
+  }
+
+  class Polygon {
+    dragable=false
+    scalable=false
+    status='pending'
+    prePoint=null
+    constructor(selector, points) {
+      this.parent = document.querySelector(selector);
+      this.ctx = null;
+      if (this.parent.getContext) {
+        this.ctx = this.canvas.getContext('2d');
+        this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      } else {
+        throw new Error('canvas context is not available!');
+      }
+      this.points = points;
+    }
+
+    draw() {
+      this.points.forEach(pointArray => {
+        if (Array.isArray(pointArray)) {
+          DrawHelper.drawPoints(this.ctx, pointArray);
+        }
+      });
+    }
+
+    destroy() {
+      this.parent.clearRect();
+    }
+
+    isInPath(point) { return false }
+    isInCornerPath(point) { return false }
+
+    scaleStart(point) {
+      this.status = 'scaling';
+      this.prePoint = point;
+    }
+    scale(point) {
+      this.destroy();
+      this.update(point);
+      this.draw();
+    }
+    scaleEnd(point) {
+      this.status = 'pending';
+      this.destroy();
+      this.update(point);
+      this.draw();
+      this.prePoint = null;
+    }
+
+    dragStart(point) {
+      this.status = 'draging';
+      this.prePoint = point;
+    }
+    drag(point) {
+      this.destroy();
+      this.update(point);
+      this.draw();
+    }
+    dragEnd(point) {
+      this.status = 'pending';
+      this.destroy();
+      this.update(point);
+      this.draw();
+      this.prePoint = null;
+    }
+
+  }
+
+  class DragableAndScalableRect extends Polygon {
+    constructor(selector, geometry) {
+      this.points = this.getPoints();
+      super(selector, this.points);
+      this.geometry = geometry;
+      this.cornerPoint = null;
+      this.dragable = true;
+      this.scalable = true;
+    }
+
+    isInPath(point, geometry) {
+      const { x, y, width, height } = geometry || this.geometry;
+      return (point.x >= x - width/2) &&
+             (point.x <= x + width/2) &&
+             (point.y >= y - height/2) &&
+             (point.y <= y + height/2);
+    }
+
+    isInCornerPath(point) {
+      const [rectPoints, ...cornerPoints] = this.points;
+      const { cornerWidth } = this.geometry;
+      for (let i = 0; i < rectPoints.length; i++) {
+        if (
+          this.isInPath(
+            point,
+            {...rectPoints[i], width: cornerWidth, height: cornerWidth})
+          ) {
+            this.cornerPoint = i;
+            return true;
+            break;
+          }
+      }
+      this.cornerPoint = null;
+      return false;
+    }
+
+    updateWhenDraging(point) {
+      const { prePoint } = this;
+      this.geometry.x = this.geometry.x + (point.x - prePoint.x);
+      this.geometry.y = this.geometry.y + (point.y - prePoint.y);
+      this.points = this.getPointFromGeometry();
+      this.prePoint = point;
+    }
+
+    updateWhenScaling(point) {
+      const { prePoint } = this;
+      const xDistance = (point.x - prePoint.x);
+      const yDistance = (point.y - prePoint.y);
+      switch (this.cornerPoint) {
+        case 0:
+          this.geometry.x = this.geometry.x - (xDistance) / 2;
+          this.geometry.y = this.geometry.y - (yDistance) / 2;
+          this.geometry.width = this.geometry.width - (xDistance);
+          this.geometry.height = this.geometry.height - (yDistance);
+          break;
+        case 1:
+          this.geometry.x = this.geometry.x + (xDistance) / 2;
+          this.geometry.y = this.geometry.y + (yDistance) / 2;
+          this.geometry.width = this.geometry.width - (xDistance);
+          this.geometry.height = this.geometry.height - (yDistance);
+        break;
+        case 2:
+          this.geometry.x = this.geometry.x + (xDistance) / 2;
+          this.geometry.y = this.geometry.y + (yDistance) / 2;
+          this.geometry.width = this.geometry.width + (xDistance);
+          this.geometry.height = this.geometry.height + (yDistance);
+        break;
+        case 3:
+          this.geometry.x = this.geometry.x - (xDistance) / 2;
+          this.geometry.y = this.geometry.y - (yDistance) / 2;
+          this.geometry.width = this.geometry.width + (xDistance);
+          this.geometry.height = this.geometry.height + (yDistance);
+        break;
+        default:
+          return;
+      }
+      this.points = this.getPointFromGeometry();
+      this.prePoint = point;
+    }
+
+    update(point) {
+      switch (this.status) {
+        case 'draging':
+          this.updateWhenDraging(point);
+          break;
+        case 'scaling':
+          this.updateWhenScaling(point);
+          break;
+        default:
+          break;
+      }
+    }
+
+    getPointFromGeometry(x, y, width, height) {
+      return {
+        leftTopPoint: {
+          x: x - width / 2,
+          y: y - height / 2
+        },
+        rightTopPoint: {
+          x: x + width / 2,
+          y: y - height / 2
+        },
+        leftBottomPoint: {
+          x: x - width / 2,
+          y: y + height / 2
+        },
+        rightBottomPoint: {
+          x: x + width / 2,
+          y: y + height / 2
+        }
+      };
+    }
+    getPoints() {
+      const { x, y, width, height, cornerWidth } = this.geometry;
+      const rectPosition = this.getPointFromGeometry(x, y, width, height);
+      const leftTopPoint = rectPosition.leftTopPoint;
+      const rightTopPoint = rectPosition.rightTopPoint;
+      const leftBottomPoint = rectPosition.leftBottomPoint;
+      const rightBottomPoint = rectPosition.rightBottomPoint;
+
+      const leftTopRectPosition = this.getPointFromGeometry(leftTopPoint.x, leftTopPoint.y, cornerWidth, cornerWidth);
+      const rightTopRectPosition = this.getPointFromGeometry(rightTopPoint.x, rightTopPoint.y, cornerWidth, cornerWidth);
+      const rightBottomRectPosition = this.getPointFromGeometry(rightBottom.x, rightBottom.y, cornerWidth, cornerWidth);
+      const leftBottomRectPosition = this.getPointFromGeometry(leftBottomPoint.x, leftBottomPoint.y, cornerWidth, cornerWidth);
+
+      const leftTopRect = [
+        leftTopRectPosition.leftTopPoint,
+        leftTopRectPosition.rightTopPoint,
+        leftTopRectPosition.rightBottomPoint,
+        leftTopRectPosition.leftBottomPoint
+      ];
+      const rightTopRect = [
+        rightTopRectPosition.leftTopPoint,
+        rightTopRectPosition.rightTopPoint,
+        rightTopRectPosition.rightBottomPoint,
+        rightTopRectPosition.leftBottomPoint
+      ];
+      const leftBottomRect = [
+        leftBottomRectPosition.leftTopPoint,
+        leftBottomRectPosition.rightTopPoint,
+        leftBottomRectPosition.rightBottomPoint,
+        leftBottomRectPosition.leftBottomPoint
+      ];
+      const rightBottomRect = [
+        rightBottomRectPosition.leftTopPoint,
+        rightBottomRectPosition.rightTopPoint,
+        rightBottomRectPosition.rightBottomPoint,
+        rightBottomRectPosition.leftBottomPoint
+      ];
+
+      return [
+        [
+          leftTopPoint, rightTopPoint, rightBottomPoint, leftBottomPoint
+        ],
+        leftTopRect,
+        rightTopRect,
+        rightBottomPoint,
+        leftBottomPoint
+      ];
+    }
+  }
+</script>
+
+<script type="text/javascript">
+  const drawer = new Drawer('#drawer');
+  const rect = new DragableAndScalableRect('#drawer', {
+    x: 100,
+    y: 100,
+    width: 120,
+    height: 120,
+    cornerWidth: 20
+  });
+  drawer.addPolygon(rect);
+</script>
+</html>
