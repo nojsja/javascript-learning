@@ -8,6 +8,7 @@
     #drawer {
       width: 100%;
       height: 100%;
+      border: dashed 1px grey;
     }
   </style>
 </head>
@@ -16,24 +17,42 @@
 </body>
 <script>
 
-  /* canvas 画板类 */
+  /* -------------- canvas 画板类 -------------- */
   class Drawer {
     constructor(selector) {
       this.polygons = [];
       this.me = document.querySelector(selector);
-      const rect = this.me.getBoundingClientRect();
+      this.ctx = null;
+      this.target = null; // 单点操作目标
 
-      this.me.width = rect.width * window.devicePixelRatio;
-      this.me.height = rect.height * window.devicePixelRatio;
       this.me.onmousedown = this.onMouseDown;
       this.me.onmouseup = this.onMouseUp;
       this.me.onmousemove = this.onMouseMove;
-      this.target = null;
+
+      if (this.me.getContext) {
+        this.ctx = this.me.getContext('2d');
+        this.resize();
+      } else {
+        throw new Error('canvas context:2d is not available!');
+      }
+    }
+
+    onResize() {
+      this.resize();
+      this.clear();
+      this.render();
+    }
+
+    resize() {
+      const rect = this.me.getBoundingClientRect();
+      this.me.width = rect.width * window.devicePixelRatio;
+      this.me.height = rect.height * window.devicePixelRatio;
+      this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
     }
 
     clear() {
       const rect = this.me.getBoundingClientRect();
-      this.me.clearRect(0, 0, canvas.width, canvas.height);
+      this.ctx.clearRect(0, 0, this.me.width, this.me.height);
     }
 
     render() {
@@ -42,20 +61,21 @@
 
     addPolygon(polygon) {
       this.polygons.push(polygon);
+      polygon.attach(this.ctx);
       polygon.draw();
     }
 
     removePolygon(polygon) {
       const index = this.polygons.indexOf(polygon);
       if (index !== -1) {
-        this.polygons.destroy();
+        this.polygons[index].destroy();
+        this.polygons[index].detach();
         this.polygons.splice(index, 1);
       }
     }
 
     onMouseDown = (event) => {
       const point = DrawHelper.getMousePosition(this.me, event);
-      console.log('mousedown', point);
       for (let i = 0; i < this.polygons.length; i++) {
         if (this.polygons[i].isInCornerPath(point) && this.polygons[i].scalable) {
           this.polygons[i].scaleStart(point);
@@ -73,7 +93,6 @@
     onMouseMove = (event) => {
       const point = DrawHelper.getMousePosition(this.me, event);
       if (!this.target) return;
-      console.log('mousemove', point);
       switch (this.target.status) {
         case 'draging':
           this.target.drag(point)
@@ -88,7 +107,6 @@
 
     onMouseUp = (event) => {
       const point = DrawHelper.getMousePosition(this.me, event);
-      console.log('mouseup', point);
       if (!this.target) return;
       switch (this.target.status) {
         case 'draging':
@@ -133,36 +151,41 @@
     // 清除举行区域
     static clearRect(ctx, x, y, width, height) {
       ctx.clearRect(x, y, width, height);
-      // test code
-      // ctx.beginPath();
-      // ctx.fillStyle = "red";
-      // ctx.fillRect(point.x, point.y, width, height);    
-      // ctx.stroke();
+    }
+
+    // 检查参数 geometry
+    static checkGeometry(geometry) {
+      const keys = Object.keys(geometry);
+      for (let i = 0; i < keys.length; i++) {
+        if (geometry[keys[i]] < 0) {
+          throw new Error(`geometry: value of ${keys[i]} is no less than 0!`);
+        }
+      }
+      return geometry;
     }
 
     static drawRect() {}
   }
 
-  /* 几何图形类 */
+  /* -------------- 几何图形类 -------------- */
   class Polygon {
     dragable=false
     scalable=false
     status='pending'
     prePoint=null
-    constructor(selector) {
-      this.parent = document.querySelector(selector);
+    constructor() {
       this.ctx = null;
-      if (this.parent.getContext) {
-        this.ctx = this.parent.getContext('2d');
-        this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-      } else {
-        throw new Error('canvas context is not available!');
-      }
     }
 
     draw() {}
-
     destroy() {}
+
+    attach(ctx) {
+      this.ctx = ctx;
+    }
+    detach() {
+      this.ctx = null;
+    }
 
     isInPath(point) { return false }
     isInCornerPath(point) { return false }
@@ -203,13 +226,16 @@
 
   }
 
-  /* 可拖动和缩放矩形类 */
+  /* -------------- 可拖动和缩放矩形类 -------------- */
   class DragableAndScalableRect extends Polygon {
-    constructor(selector, geometry) {
-      super(selector);
-      this.geometry = geometry;
+    minWidth = 0
+    minHeight = 0
+    constructor(geometry) {
+      super();
+      this.geometry = DrawHelper.checkGeometry(geometry);
+      this.minWidth = 'minWidth' in geometry ? geometry.minWidth : this.minWidth;
+      this.minHeight = 'minHeight' in geometry ? geometry.minHeight : this.minHeight;
       this.points = this.getPoints();
-      console.log('points', this.points);
       this.cornerPoint = null;
       this.dragable = true;
       this.scalable = true;
@@ -274,34 +300,44 @@
       const { prePoint } = this;
       const xDistance = (point.x - prePoint.x);
       const yDistance = (point.y - prePoint.y);
+      const newGeometry = {...this.geometry };
+
       switch (this.cornerPoint) {
         case 0:
-          this.geometry.x = this.geometry.x + (xDistance) / 2;
-          this.geometry.y = this.geometry.y + (yDistance) / 2;
-          this.geometry.width = this.geometry.width - (xDistance);
-          this.geometry.height = this.geometry.height - (yDistance);
+          newGeometry.x = this.geometry.x + (xDistance) / 2;
+          newGeometry.y = this.geometry.y + (yDistance) / 2;
+          newGeometry.width = this.geometry.width - (xDistance);
+          newGeometry.height = this.geometry.height - (yDistance);
           break;
         case 1:
-          this.geometry.x = this.geometry.x + (xDistance) / 2;
-          this.geometry.y = this.geometry.y + (yDistance) / 2;
-          this.geometry.width = this.geometry.width + (xDistance);
-          this.geometry.height = this.geometry.height - (yDistance);
-        break;
+          newGeometry.x = this.geometry.x + (xDistance) / 2;
+          newGeometry.y = this.geometry.y + (yDistance) / 2;
+          newGeometry.width = this.geometry.width + (xDistance);
+          newGeometry.height = this.geometry.height - (yDistance);
+          break;
         case 2:
-          this.geometry.x = this.geometry.x + (xDistance) / 2;
-          this.geometry.y = this.geometry.y + (yDistance) / 2;
-          this.geometry.width = this.geometry.width + (xDistance);
-          this.geometry.height = this.geometry.height + (yDistance);
-        break;
+          newGeometry.x = this.geometry.x + (xDistance) / 2;
+          newGeometry.y = this.geometry.y + (yDistance) / 2;
+          newGeometry.width = this.geometry.width + (xDistance);
+          newGeometry.height = this.geometry.height + (yDistance);
+          break;
         case 3:
-          this.geometry.x = this.geometry.x + (xDistance) / 2;
-          this.geometry.y = this.geometry.y + (yDistance) / 2;
-          this.geometry.width = this.geometry.width - (xDistance);
-          this.geometry.height = this.geometry.height + (yDistance);
-        break;
+          newGeometry.x = this.geometry.x + (xDistance) / 2;
+          newGeometry.y = this.geometry.y + (yDistance) / 2;
+          newGeometry.width = this.geometry.width - (xDistance);
+          newGeometry.height = this.geometry.height + (yDistance);
+          break;
         default:
           return;
       }
+
+      if (
+        newGeometry.width < this.minWidth ||
+        newGeometry.height < this.minHeight
+      ) {
+        return;
+      }
+      this.geometry = newGeometry;
       this.points = this.getPoints();
       this.prePoint = point;
     }
@@ -398,15 +434,17 @@
   // 创建画板
   const drawer = new Drawer('#drawer');
   // 创建几何图形
-  const rect1 = new DragableAndScalableRect('#drawer', {
+  const rect1 = new DragableAndScalableRect({
     x: 500, // 中心点 x 坐标
     y: 300, // 中心点 y 坐标
     width: 200,
     height: 200,
+    minWidth: 20,
+    minHeight: 20,
     cornerWidth: 20
   });
   drawer.addPolygon(rect1);
-  // const rect2 = new DragableAndScalableRect('#drawer', {
+  // const rect2 = new DragableAndScalableRect({
   //   x: 100, // 中心点 x 坐标
   //   y: 100, // 中心点 y 坐标
   //   width: 100,
@@ -414,5 +452,9 @@
   //   cornerWidth: 10
   // });
   // drawer.addPolygon(rect2);
+  
+  window.onresize = () => {
+    drawer.onResize();
+  }
 </script>
 </html>
