@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- <script src="./index.js"></script> -->
+  <style type="text/css">
+    body {
+      background-color: whitesmoke;
+    }
+    #container {
+      display: flex;
+      flex-direction: row;
+      text-align: center;
+      width: 100%;
+    }
+    #textInput {
+      display: inline-block;
+      margin-right: 10px;
+      padding: 10px;
+      width: 50%;
+      height: 60%;
+      box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
+      border: none;
+    }
+    #textOutput {
+      display: inline-block;
+      margin-left: 10px;
+      padding: 10px;
+      width: 50%;
+      height: 60%;
+      box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
+      border: none;
+    }
+    #footer {
+      text-align: center;
+      padding-top: 20px;
+    }
+    #footer > button {
+      width: 100px;
+      height: 50px;
+      border: none;
+      border-radius: 5px;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all .3s;
+    }
+    #footer > button:hover {
+      background-color: #337a36;
+    }
+    .sort-keys-wrapper, .sort-keys-wrapper2 {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      margin: 20px;
+    }
+    .sort-keys-wrapper {
+      color: rgb(169, 23, 23);
+    }
+    .sort-keys-wrapper2 {
+      color: rgb(30, 30, 210);
+    }
+    .sort-keys-wrapper > label, .sort-keys-wrapper2 > label {
+      margin-right: 10px;
+    }
+    .sort-keys-wrapper > input[type=checkbox], .sort-keys-wrapper2 > input[type=checkbox] {
+      cursor: pointer;
+    }
+    .define-key-wrapper, .define-key-wrapper2 {
+      text-align: center;
+    }
+    .define-key-wrapper {
+      color: rgb(169, 23, 23);
+    }
+    .define-key-wrapper2 {
+      color: rgb(30, 30, 210);
+    }
+    .define-key, .define-key2 {
+      margin-left: 36px;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <textarea id="textInput" placeholder="这里输入文字" rows="50"></textarea>
+    <textarea id="textOutput" placeholder="这里是处理后的文字" rows="50"></textarea>
+  </div>
+  <div class="sort-keys-wrapper">
+    <!-- <input type="checkbox" value="葡萄糖" checked="checked" />
+    <label for="葡萄糖">葡萄糖</label> -->
+  </div>
+  <div class="sort-keys-wrapper2">
+    <!-- <input type="checkbox" value="葡萄糖" checked="checked" />
+    <label for="葡萄糖">葡萄糖</label> -->
+  </div>
+  <div class="define-key-wrapper">
+    重要级别1
+    <input placeholder="请输入关键字文本" id="define-key" />
+    <button id="define">自定义+</button>
+  </div>
+  <div class="define-key-wrapper2">
+    重要级别2
+    <input placeholder="请输入关键字文本" id="define-key2" />
+    <button id="define2">自定义+</button>
+  </div>
+
+  <div id="footer">
+    <button id="footerButton">开始处理</button>
+  </div>
+</body>
+<script type="text/javascript">
+  var textInput = document.getElementById('textInput');
+  var textOutput = document.getElementById('textOutput');
+  var defaultKeys = [];
+
+  function handleTextSort(text) {
+    if (!text) {
+      return '';
+    }
+    var numberTitleReg = /^【(\d{1,}).*】$/g;
+    var numberNormalReg = /^【.*】$/g;
+    var lastMatched = null;
+    var preText = '';
+    var result = '';
+    var matchedMap = {};
+    var index = 0;
+    var keys = getKeys();
+    var keys2 = getKeys(2);
+
+    text.split('\n').forEach(function (item) {
+      var tmp = numberTitleReg.exec(item);
+      var tmp2 = numberNormalReg.exec(item);
+      var matchCase1 = tmp && tmp[1] !== undefined;
+      var matchCase2 = tmp2;
+      if (matchCase1 || matchCase2) { // match header
+        index ++;
+        lastMatched = index;
+        if (matchCase1) {
+          item = item.replace('【' + tmp[1], '【' + index); // 【1.xxx
+        } else {
+          item = item.replace('【', '【' + index + '.'); // 【xxx
+        }
+        if (!matchedMap[lastMatched]) {
+          matchedMap[lastMatched] = [];
+        }
+        matchedMap[lastMatched].push(item);
+      } else { // match body
+        if (lastMatched === null) { // begin lines
+          preText += (item + '\n');
+        } else { // body lines
+          matchedMap[lastMatched].push(item);
+        }
+      }
+    });
+
+    result = Object.keys(matchedMap)
+      .sort(function (a, b) { return (+a) - (+b); })
+      .sort(function(a, b) { // level2
+        if (matchedMap[a] && matchedMap[b]) {
+          var aMatched = keys2.find(function(key) {
+            return matchedMap[a][0].indexOf(key) !== -1;
+          });
+          var bMatched = keys2.find(function(key) {
+            return matchedMap[b][0].indexOf(key) !== -1;
+          });
+          if (aMatched && bMatched) {
+            return 0;
+          }
+          if (aMatched) {
+            return -1;
+          }
+          if (bMatched) {
+            return 1;
+          }
+        }
+        return 0;
+      })
+      .sort(function(a, b) { // level1
+        if (matchedMap[a] && matchedMap[b]) {
+          var aMatched = keys.find(function(key) {
+            return matchedMap[a][0].indexOf(key) !== -1;
+          });
+          var bMatched = keys.find(function(key) {
+            return matchedMap[b][0].indexOf(key) !== -1;
+          });
+          if (aMatched && bMatched) {
+            return 0;
+          }
+          if (aMatched) {
+            return -1;
+          }
+          if (bMatched) {
+            return 1;
+          }
+        }
+        return 0;
+      }).map(function(index, i) {
+        var numberTitleReg = /^【(\d{1,}).*】$/;
+        var originIndex = numberTitleReg.exec(matchedMap[index][0])[1];
+        var length = matchedMap[index].length;
+        matchedMap[index][0] = matchedMap[index][0].replace('【' + originIndex, '【' + (i+1));
+        for (var cur = length - 1; cur >= 0; cur--) { // 清除末尾空行
+          if (matchedMap[index][cur] === '') {
+            matchedMap[index].splice(cur, 1);
+          } else {
+            break;
+          }
+        }
+        return matchedMap[index].join('\n') + '\n';
+      }).join('\n');
+
+    return preText + result;
+  }
+
+  function addKeys(keys, level) {
+    if (!keys || !keys.length) {
+      return;
+    }
+    var existsKeys = getKeys(level);
+    window.localStorage.setItem('sortKeys' + (level || ''), keys.concat(existsKeys).join(','));
+  }
+
+  function removeKeys(keys, level) {
+    if (!keys || !keys.length) {
+      return;
+    }
+    var existsKeys = getKeys(level || '');
+    var newKeys = existsKeys.filter(function (item) {
+      return keys.indexOf(item) === -1;
+    });
+    window.localStorage.setItem('sortKeys' + (level || ''), newKeys.join(','));
+  }
+
+  function getKeys(level) {
+    var defineKeys = window.localStorage.getItem('sortKeys' + (level || ''));
+    if (defineKeys) {
+      return defineKeys.split(',');
+    }
+    return [];
+  }
+
+  function renderKeys(keys, container) {
+
+    if (!container) {
+      return;
+    }
+
+    container.innerHTML = '';
+
+    keys.forEach(function(key) {
+      var inputDom = document.createElement('input');
+      inputDom.type = 'checkbox';
+      inputDom.value = key;
+      inputDom.checked = true;
+      var labelDom = document.createElement('label');
+      labelDom.htmlFor = key;
+      labelDom.innerText = key;
+      container.appendChild(inputDom);
+      container.appendChild(labelDom);
+    });
+  }
+
+  function init() {
+    renderKeys(defaultKeys.concat(getKeys()), document.getElementsByClassName('sort-keys-wrapper')[0]);
+    renderKeys(defaultKeys.concat(getKeys(2)), document.getElementsByClassName('sort-keys-wrapper2')[0]);
+
+    document.getElementById('footerButton').addEventListener('click', function() {
+      textOutput.value = handleTextSort(textInput.value);
+    });
+
+    /* -------------- level1 -------------- */
+
+    document.getElementById('define').addEventListener('click', function() {
+      var key = document.getElementById('define-key').value;
+      if (key) {
+        addKeys([key]);
+        renderKeys(defaultKeys.concat(getKeys()), document.getElementsByClassName('sort-keys-wrapper')[0]);
+        document.getElementById('define-key').value = '';
+      }
+    });
+    document.querySelector('.sort-keys-wrapper').addEventListener('click', function(e) {
+      if (!e || !e.target || e.target.tagName !== 'INPUT') {
+        return;
+      }
+      var value = e.target.checked;
+
+      if (value) {
+        addKeys([e.target.value]);
+      } else {
+        removeKeys([e.target.value]);
+      }
+      renderKeys(defaultKeys.concat(getKeys()), document.getElementsByClassName('sort-keys-wrapper')[0]);
+    });
+  }
+
+  /* -------------- level2 -------------- */
+  document.getElementById('define2').addEventListener('click', function() {
+      var key = document.getElementById('define-key2').value;
+      if (key) {
+        addKeys([key], 2);
+        renderKeys(defaultKeys.concat(getKeys(2)), document.getElementsByClassName('sort-keys-wrapper2')[0]);
+        document.getElementById('define-key2').value = '';
+      }
+    });
+    document.querySelector('.sort-keys-wrapper2').addEventListener('click', function(e) {
+      if (!e || !e.target || e.target.tagName !== 'INPUT') {
+        return;
+      }
+      var value = e.target.checked;
+
+      if (value) {
+        addKeys([e.target.value], 2);
+      } else {
+        removeKeys([e.target.value], 2);
+      }
+      renderKeys(defaultKeys.concat(getKeys(2)), document.getElementsByClassName('sort-keys-wrapper2')[0]);
+    });
+
+  init();
+
+</script>
+</html>
