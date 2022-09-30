@@ -8,11 +8,57 @@
     body {
       background-color: whitesmoke;
     }
+    .header {
+      margin: 10px 0;
+    }
+    #handleButton {
+      background-color: #4CAF50;
+    }
+    #handleButton:hover {
+      background-color: #337a36;
+    }
+    #quickButton {
+      width: 100px;
+      height: 30px;
+      font-size: 14px;
+      background-color: #4CAF50;
+    }
+    #quickButton:hover {
+      background-color: #337a36;
+    }
+    #goBottomButton {
+      width: 100px;
+      height: 30px;
+      font-size: 14px;
+      background-color: #3764e2;
+    }
+    #goBottomButton:hover {
+      background-color: #264498;
+    }
+    #toggleWrapButton {
+      width: 100px;
+      height: 30px;
+      font-size: 14px;
+      background-color: rgb(178, 178, 178);
+    }
+    #toggleWrapButton:hover {
+      background-color: grey;
+    }
+    #goTopButton {
+      width: 100px;
+      height: 30px;
+      font-size: 14px;
+      background-color: #3764e2;
+    }
+    #goTopButton:hover {
+      background-color: #264498;
+    }
     #container {
       display: flex;
       flex-direction: row;
       text-align: center;
       width: 100%;
+      margin: 10px 0;
     }
     #textInput {
       display: inline-block;
@@ -36,27 +82,23 @@
       text-align: center;
       padding-top: 20px;
     }
-    #footer > button {
+    #footer > button, .header > button {
       width: 100px;
-      height: 50px;
+      height: 40px;
       border: none;
       border-radius: 5px;
-      background-color: #4CAF50;
       color: white;
       font-size: 20px;
       font-weight: bold;
       cursor: pointer;
       transition: all .3s;
     }
-    #footer > button:hover {
-      background-color: #337a36;
-    }
     .sort-keys-wrapper, .sort-keys-wrapper2 {
       display: flex;
       flex-direction: row;
       justify-content: center;
       align-items: center;
-      margin: 20px;
+      /* margin: 20px; */
     }
     .sort-keys-wrapper {
       color: rgb(169, 23, 23);
@@ -86,9 +128,14 @@
   </style>
 </head>
 <body>
+  <div class="header">
+    <button id="quickButton">快捷处理</button>
+    <button id="goBottomButton">回到底部</button>
+    <button id="toggleWrapButton">切换换行状态</button>
+  </div>
   <div id="container">
-    <textarea id="textInput" placeholder="这里输入文字" rows="50"></textarea>
-    <textarea id="textOutput" placeholder="这里是处理后的文字" rows="50"></textarea>
+    <textarea wrap="off" id="textInput" placeholder="这里输入文字" rows="50"></textarea>
+    <textarea wrap="off" id="textOutput" placeholder="这里是处理后的文字" rows="50"></textarea>
   </div>
   <div class="sort-keys-wrapper">
     <!-- <input type="checkbox" value="葡萄糖" checked="checked" />
@@ -108,9 +155,9 @@
     <input placeholder="请输入关键字文本" id="define-key2" />
     <button id="define2">自定义+</button>
   </div>
-
   <div id="footer">
-    <button id="footerButton">开始处理</button>
+    <button id="handleButton">开始处理</button>
+    <button id="goTopButton">回到顶部</button>
   </div>
 </body>
 <script type="text/javascript">
@@ -122,8 +169,8 @@
     if (!text) {
       return '';
     }
-    var numberTitleReg = /^【(\d{1,}).*】$/g;
-    var numberNormalReg = /^【.*】$/g;
+    var numberTitleReg = /^【(\d{1,}).*$/g;
+    var numberNormalReg = /^【.*$/g;
     var lastMatched = null;
     var preText = '';
     var result = '';
@@ -172,10 +219,10 @@
             return 0;
           }
           if (aMatched) {
-            return -1;
+            return 1;
           }
           if (bMatched) {
-            return 1;
+            return -1;
           }
         }
         return 0;
@@ -200,12 +247,12 @@
         }
         return 0;
       }).map(function(index, i) {
-        var numberTitleReg = /^【(\d{1,}).*】$/;
+        var numberTitleReg = /^【(\d{1,}).*$/;
         var originIndex = numberTitleReg.exec(matchedMap[index][0])[1];
         var length = matchedMap[index].length;
         matchedMap[index][0] = matchedMap[index][0].replace('【' + originIndex, '【' + (i+1));
         for (var cur = length - 1; cur >= 0; cur--) { // 清除末尾空行
-          if (matchedMap[index][cur] === '') {
+          if (!((matchedMap[index][cur]).replace(/\s/g, ''))) {
             matchedMap[index].splice(cur, 1);
           } else {
             break;
@@ -269,7 +316,32 @@
     renderKeys(defaultKeys.concat(getKeys()), document.getElementsByClassName('sort-keys-wrapper')[0]);
     renderKeys(defaultKeys.concat(getKeys(2)), document.getElementsByClassName('sort-keys-wrapper2')[0]);
 
-    document.getElementById('footerButton').addEventListener('click', function() {
+    document.getElementById('quickButton').addEventListener('click', function() {
+      textOutput.value = handleTextSort(textInput.value);
+    });
+
+    document.getElementById('goBottomButton').addEventListener('click', function() {
+      window.scrollTo(0, document.body.scrollHeight);
+      Array.prototype.slice.call(document.getElementsByTagName('textarea')).forEach(function($element){
+        $element.wrap = 'on';
+      });
+    });
+
+    document.getElementById('toggleWrapButton').addEventListener('click', function() {
+      Array.prototype.slice.call(document.getElementsByTagName('textarea')).forEach(function($element){
+        if ($element.getAttribute('wrap') === 'on') {
+          $element.wrap = 'off';
+        } else {
+          $element.wrap = 'on';
+        }
+      });
+    });
+
+    document.getElementById('goTopButton').addEventListener('click', function() {
+      window.scrollTo(0, 0);
+    });
+
+    document.getElementById('handleButton').addEventListener('click', function() {
       textOutput.value = handleTextSort(textInput.value);
     });
 
