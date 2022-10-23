@@ -149,11 +149,13 @@
     重要级别1
     <input placeholder="请输入关键字文本" id="define-key" />
     <button id="define">自定义+</button>
+    <button id="remove">删除-</button>
   </div>
   <div class="define-key-wrapper2">
     重要级别2
     <input placeholder="请输入关键字文本" id="define-key2" />
     <button id="define2">自定义+</button>
+    <button id="remove2">删除-</button>
   </div>
   <div id="footer">
     <button id="handleButton">开始处理</button>
@@ -163,21 +165,22 @@
 <script type="text/javascript">
   var textInput = document.getElementById('textInput');
   var textOutput = document.getElementById('textOutput');
-  var defaultKeys = [];
 
   function handleTextSort(text) {
     if (!text) {
       return '';
     }
-    var numberTitleReg = /^【(\d{1,}).*$/g;
-    var numberNormalReg = /^【.*$/g;
+    var numberTitleReg = /^\s*【(\d{1,}).*$/g;
+    var numberNormalReg = /^\s*【.*$/g;
     var lastMatched = null;
     var preText = '';
     var result = '';
     var matchedMap = {};
     var index = 0;
-    var keys = getKeys();
-    var keys2 = getKeys(2);
+    var originKeys = getKeys();
+    var originKeys2 = getKeys(2);
+    var keys = Object.keys(originKeys).filter(function(key) { return originKeys[key]; });
+    var keys2 = Object.keys(originKeys2).filter(function(key) { return originKeys2[key]; });
 
     text.split('\n').forEach(function (item) {
       var tmp = numberTitleReg.exec(item);
@@ -247,7 +250,7 @@
         }
         return 0;
       }).map(function(index, i) {
-        var numberTitleReg = /^【(\d{1,}).*$/;
+        var numberTitleReg = /^\s*【(\d{1,}).*$/;
         var originIndex = numberTitleReg.exec(matchedMap[index][0])[1];
         var length = matchedMap[index].length;
         matchedMap[index][0] = matchedMap[index][0].replace('【' + originIndex, '【' + (i+1));
@@ -264,12 +267,33 @@
     return preText + result;
   }
 
+  function setKeys(keys, level) {
+    if (!keys) {
+      return false;
+    }
+    window.localStorage.setItem('sortKeys' + (level || ''), JSON.stringify(keys));
+  }
+
   function addKeys(keys, level) {
     if (!keys || !keys.length) {
       return;
     }
     var existsKeys = getKeys(level);
-    window.localStorage.setItem('sortKeys' + (level || ''), keys.concat(existsKeys).join(','));
+    keys.forEach(function(key) {
+      existsKeys[key] = true;
+    });
+    setKeys(existsKeys, level);
+  }
+
+  function disableKeys(keys, level) {
+    if (!keys || !keys.length) {
+      return;
+    }
+    var existsKeys = getKeys(level || '');
+    keys.forEach(function(key) {
+      existsKeys[key] = false;
+    });
+    setKeys(existsKeys, level);
   }
 
   function removeKeys(keys, level) {
@@ -277,33 +301,38 @@
       return;
     }
     var existsKeys = getKeys(level || '');
-    var newKeys = existsKeys.filter(function (item) {
-      return keys.indexOf(item) === -1;
+    keys.forEach(function(key) {
+      delete existsKeys[key];
     });
-    window.localStorage.setItem('sortKeys' + (level || ''), newKeys.join(','));
+    setKeys(existsKeys, level);
   }
 
   function getKeys(level) {
     var defineKeys = window.localStorage.getItem('sortKeys' + (level || ''));
-    if (defineKeys) {
-      return defineKeys.split(',');
+    var keys;
+    try {
+      keys = JSON.parse(defineKeys);
+    } catch (e) {
+      keys = {};
     }
-    return [];
+
+    return keys;
   }
 
-  function renderKeys(keys, container) {
+  function renderKeys(originKeys, container) {
 
     if (!container) {
       return;
     }
 
     container.innerHTML = '';
+    const keys = Object.keys(originKeys);
 
     keys.forEach(function(key) {
       var inputDom = document.createElement('input');
       inputDom.type = 'checkbox';
       inputDom.value = key;
-      inputDom.checked = true;
+      inputDom.checked = originKeys[key];
       var labelDom = document.createElement('label');
       labelDom.htmlFor = key;
       labelDom.innerText = key;
@@ -313,8 +342,8 @@
   }
 
   function init() {
-    renderKeys(defaultKeys.concat(getKeys()), document.getElementsByClassName('sort-keys-wrapper')[0]);
-    renderKeys(defaultKeys.concat(getKeys(2)), document.getElementsByClassName('sort-keys-wrapper2')[0]);
+    renderKeys(getKeys(), document.getElementsByClassName('sort-keys-wrapper')[0]);
+    renderKeys(getKeys(2), document.getElementsByClassName('sort-keys-wrapper2')[0]);
 
     document.getElementById('quickButton').addEventListener('click', function() {
       textOutput.value = handleTextSort(textInput.value);
@@ -351,7 +380,15 @@
       var key = document.getElementById('define-key').value;
       if (key) {
         addKeys([key]);
-        renderKeys(defaultKeys.concat(getKeys()), document.getElementsByClassName('sort-keys-wrapper')[0]);
+        renderKeys(getKeys(), document.getElementsByClassName('sort-keys-wrapper')[0]);
+        document.getElementById('define-key').value = '';
+      }
+    });
+    document.getElementById('remove').addEventListener('click', function() {
+      var key = document.getElementById('define-key').value;
+      if (key) {
+        removeKeys([key]);
+        renderKeys(getKeys(), document.getElementsByClassName('sort-keys-wrapper')[0]);
         document.getElementById('define-key').value = '';
       }
     });
@@ -364,9 +401,9 @@
       if (value) {
         addKeys([e.target.value]);
       } else {
-        removeKeys([e.target.value]);
+        disableKeys([e.target.value]);
       }
-      renderKeys(defaultKeys.concat(getKeys()), document.getElementsByClassName('sort-keys-wrapper')[0]);
+      renderKeys(getKeys(), document.getElementsByClassName('sort-keys-wrapper')[0]);
     });
   }
 
@@ -375,7 +412,15 @@
       var key = document.getElementById('define-key2').value;
       if (key) {
         addKeys([key], 2);
-        renderKeys(defaultKeys.concat(getKeys(2)), document.getElementsByClassName('sort-keys-wrapper2')[0]);
+        renderKeys(getKeys(2), document.getElementsByClassName('sort-keys-wrapper2')[0]);
+        document.getElementById('define-key2').value = '';
+      }
+    });
+    document.getElementById('remove2').addEventListener('click', function() {
+      var key = document.getElementById('define-key2').value;
+      if (key) {
+        removeKeys([key], 2);
+        renderKeys(getKeys(2), document.getElementsByClassName('sort-keys-wrapper2')[0]);
         document.getElementById('define-key2').value = '';
       }
     });
@@ -388,9 +433,9 @@
       if (value) {
         addKeys([e.target.value], 2);
       } else {
-        removeKeys([e.target.value], 2);
+        disableKeys([e.target.value], 2);
       }
-      renderKeys(defaultKeys.concat(getKeys(2)), document.getElementsByClassName('sort-keys-wrapper2')[0]);
+      renderKeys(getKeys(2), document.getElementsByClassName('sort-keys-wrapper2')[0]);
     });
 
   init();
