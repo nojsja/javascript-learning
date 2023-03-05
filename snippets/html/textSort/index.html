@@ -166,6 +166,86 @@
   var textInput = document.getElementById('textInput');
   var textOutput = document.getElementById('textOutput');
 
+  function setKeys(keys, level) {
+    if (!keys) {
+      return false;
+    }
+    window.localStorage.setItem('sortKeys' + (level || ''), JSON.stringify(keys));
+  }
+
+  function addKeys(keys, level) {
+    if (!keys || !keys.length) {
+      return;
+    }
+    var existsKeys = getKeys(level);
+    for(var i = 0; i < keys.length; i++) {
+      existsKeys[keys[i]] = true;
+    }
+    setKeys(existsKeys, level);
+  }
+
+  function disableKeys(keys, level) {
+    if (!keys || !keys.length) {
+      return;
+    }
+    var existsKeys = getKeys(level || '');
+    for(var i = 0; i < keys.length; i++) {
+      existsKeys[keys[i]] = false;
+    }
+    setKeys(existsKeys, level);
+  }
+
+  function removeKeys(keys, level) {
+    if (!keys || !keys.length) {
+      return;
+    }
+    var existsKeys = getKeys(level || '');
+    var newKeys = [];
+    for(var i = 0; i < keys.length; i++) {
+      delete existsKeys[keys[i]];
+    }
+    setKeys(existsKeys, level);
+  }
+
+  function getKeys(level) {
+    var defineKeys = window.localStorage.getItem('sortKeys' + (level || ''));
+    var keys;
+    try {
+      keys = JSON.parse(defineKeys);
+    } catch (e) {
+      keys = {};
+    }
+
+    return keys;
+  }
+
+  function renderKeys(originKeys, container) {
+
+    if (!container) {
+      return;
+    }
+
+    container.innerHTML = '';
+
+    var keys = [];
+    for (var i in originKeys) {
+      keys.push(i);
+    }
+
+    for(var i = 0; i < keys.length; i++) {
+      var key = keys[i];
+      var inputDom = document.createElement('input');
+      inputDom.type = 'checkbox';
+      inputDom.value = key;
+      inputDom.checked = originKeys[key];
+      var labelDom = document.createElement('label');
+      labelDom.htmlFor = key;
+      labelDom.innerText = key;
+      container.appendChild(inputDom);
+      container.appendChild(labelDom);
+    }
+  }
+
   function handleTextSort(text) {
     if (!text) {
       return '';
@@ -179,10 +259,23 @@
     var index = 0;
     var originKeys = getKeys();
     var originKeys2 = getKeys(2);
-    var keys = Object.keys(originKeys).filter(function(key) { return originKeys[key]; });
-    var keys2 = Object.keys(originKeys2).filter(function(key) { return originKeys2[key]; });
+    var keys = [];
+    var keys2 = [];
 
-    text.split('\n').forEach(function (item) {
+    for(var i in originKeys) {
+      if(originKeys[i]) {
+        keys.push(i);
+      }
+    }
+    for(var i in originKeys2) {
+      if(originKeys2[i]) {
+        keys2.push(i);
+      }
+    }
+
+    var textSplitted = text.split('\n');
+    for(var i = 0; i < textSplitted.length; i++) {
+      var item = textSplitted[i];
       var tmp = numberTitleReg.exec(item);
       var tmp2 = numberNormalReg.exec(item);
       var matchCase1 = tmp && tmp[1] !== undefined;
@@ -206,18 +299,30 @@
           matchedMap[lastMatched].push(item);
         }
       }
-    });
+    }
 
-    result = Object.keys(matchedMap)
+    var objectKeys = [];
+    for (var i in matchedMap) {
+      objectKeys.push(i);
+    }
+    result = objectKeys
       .sort(function (a, b) { return (+a) - (+b); })
       .sort(function(a, b) { // level2
         if (matchedMap[a] && matchedMap[b]) {
-          var aMatched = keys2.find(function(key) {
-            return matchedMap[a][0].indexOf(key) !== -1;
-          });
-          var bMatched = keys2.find(function(key) {
-            return matchedMap[b][0].indexOf(key) !== -1;
-          });
+          var aMatched = false;
+          var bMatched = false;
+          for (var i = 0; i < keys2.length; i++) {
+            if (matchedMap[a][0].indexOf(keys2[i]) !== -1) {
+              aMatched = true;
+              break;
+            }
+          }
+          for (var i = 0; i < keys2.length; i++) {
+            if (matchedMap[b][0].indexOf(keys2[i]) !== -1) {
+              bMatched = true;
+              break;
+            }
+          }
           if (aMatched && bMatched) {
             return 0;
           }
@@ -232,12 +337,21 @@
       })
       .sort(function(a, b) { // level1
         if (matchedMap[a] && matchedMap[b]) {
-          var aMatched = keys.find(function(key) {
-            return matchedMap[a][0].indexOf(key) !== -1;
-          });
-          var bMatched = keys.find(function(key) {
-            return matchedMap[b][0].indexOf(key) !== -1;
-          });
+          var aMatched = false;
+          var bMatched = false;
+          for (var i = 0; i < keys.length; i++) {
+            if (matchedMap[a][0].indexOf(keys[i]) !== -1) {
+              aMatched = true;
+              break;
+            }
+          }
+          for (var i = 0; i < keys.length; i++) {
+            if (matchedMap[b][0].indexOf(keys[i]) !== -1) {
+              bMatched = true;
+              break;
+            }
+          }
+
           if (aMatched && bMatched) {
             return 0;
           }
@@ -267,132 +381,60 @@
     return preText + result;
   }
 
-  function setKeys(keys, level) {
-    if (!keys) {
-      return false;
-    }
-    window.localStorage.setItem('sortKeys' + (level || ''), JSON.stringify(keys));
-  }
-
-  function addKeys(keys, level) {
-    if (!keys || !keys.length) {
-      return;
-    }
-    var existsKeys = getKeys(level);
-    keys.forEach(function(key) {
-      existsKeys[key] = true;
-    });
-    setKeys(existsKeys, level);
-  }
-
-  function disableKeys(keys, level) {
-    if (!keys || !keys.length) {
-      return;
-    }
-    var existsKeys = getKeys(level || '');
-    keys.forEach(function(key) {
-      existsKeys[key] = false;
-    });
-    setKeys(existsKeys, level);
-  }
-
-  function removeKeys(keys, level) {
-    if (!keys || !keys.length) {
-      return;
-    }
-    var existsKeys = getKeys(level || '');
-    keys.forEach(function(key) {
-      delete existsKeys[key];
-    });
-    setKeys(existsKeys, level);
-  }
-
-  function getKeys(level) {
-    var defineKeys = window.localStorage.getItem('sortKeys' + (level || ''));
-    var keys;
-    try {
-      keys = JSON.parse(defineKeys);
-    } catch (e) {
-      keys = {};
-    }
-
-    return keys;
-  }
-
-  function renderKeys(originKeys, container) {
-
-    if (!container) {
-      return;
-    }
-
-    container.innerHTML = '';
-    const keys = Object.keys(originKeys);
-
-    keys.forEach(function(key) {
-      var inputDom = document.createElement('input');
-      inputDom.type = 'checkbox';
-      inputDom.value = key;
-      inputDom.checked = originKeys[key];
-      var labelDom = document.createElement('label');
-      labelDom.htmlFor = key;
-      labelDom.innerText = key;
-      container.appendChild(inputDom);
-      container.appendChild(labelDom);
-    });
-  }
-
   function init() {
     renderKeys(getKeys(), document.getElementsByClassName('sort-keys-wrapper')[0]);
     renderKeys(getKeys(2), document.getElementsByClassName('sort-keys-wrapper2')[0]);
 
-    document.getElementById('quickButton').addEventListener('click', function() {
+    document.getElementById('quickButton').onclick = function() {
       textOutput.value = handleTextSort(textInput.value);
-    });
+    };
 
-    document.getElementById('goBottomButton').addEventListener('click', function() {
+    document.getElementById('goBottomButton').onclick = function() {
       window.scrollTo(0, document.body.scrollHeight);
-      Array.prototype.slice.call(document.getElementsByTagName('textarea')).forEach(function($element){
-        $element.wrap = 'on';
-      });
-    });
+      var textareas = Array.prototype.slice.call(document.getElementsByTagName('textarea'));
+      for (var i = 0; i < textareas.length; i++) {
+        textareas[i].wrap = 'on';
+      }
+    };
 
-    document.getElementById('toggleWrapButton').addEventListener('click', function() {
-      Array.prototype.slice.call(document.getElementsByTagName('textarea')).forEach(function($element){
-        if ($element.getAttribute('wrap') === 'on') {
-          $element.wrap = 'off';
+    document.getElementById('toggleWrapButton').onclick = function() {
+      var textareas = document.getElementsByTagName('textarea');
+      for (var i = 0; i < textareas.length; i++) {
+        if (textareas[i].getAttribute('wrap') === 'on') {
+          textareas[i].wrap = 'off';
         } else {
-          $element.wrap = 'on';
+          textareas[i].wrap = 'on';
         }
-      });
-    });
+      }
+    };
 
-    document.getElementById('goTopButton').addEventListener('click', function() {
+    document.getElementById('goTopButton').onclick = function() {
       window.scrollTo(0, 0);
-    });
+    };
 
-    document.getElementById('handleButton').addEventListener('click', function() {
+    document.getElementById('handleButton').onclick = function() {
       textOutput.value = handleTextSort(textInput.value);
-    });
+    };
 
     /* -------------- level1 -------------- */
 
-    document.getElementById('define').addEventListener('click', function() {
+    document.getElementById('define').onclick = function() {
       var key = document.getElementById('define-key').value;
       if (key) {
         addKeys([key]);
         renderKeys(getKeys(), document.getElementsByClassName('sort-keys-wrapper')[0]);
         document.getElementById('define-key').value = '';
       }
-    });
-    document.getElementById('remove').addEventListener('click', function() {
+    };
+    document.getElementById('remove').onclick = function() {
       var key = document.getElementById('define-key').value;
       if (key) {
         removeKeys([key]);
         renderKeys(getKeys(), document.getElementsByClassName('sort-keys-wrapper')[0]);
         document.getElementById('define-key').value = '';
       }
-    });
-    document.querySelector('.sort-keys-wrapper').addEventListener('click', function(e) {
+    };
+    document.querySelector('.sort-keys-wrapper').onclick = function(e) {
       if (!e || !e.target || e.target.tagName !== 'INPUT') {
         return;
       }
@@ -404,27 +446,27 @@
         disableKeys([e.target.value]);
       }
       renderKeys(getKeys(), document.getElementsByClassName('sort-keys-wrapper')[0]);
-    });
+    };
   }
 
   /* -------------- level2 -------------- */
-  document.getElementById('define2').addEventListener('click', function() {
+  document.getElementById('define2').onclick = function() {
       var key = document.getElementById('define-key2').value;
       if (key) {
         addKeys([key], 2);
         renderKeys(getKeys(2), document.getElementsByClassName('sort-keys-wrapper2')[0]);
         document.getElementById('define-key2').value = '';
       }
-    });
-    document.getElementById('remove2').addEventListener('click', function() {
+    };
+    document.getElementById('remove2').onclick = function() {
       var key = document.getElementById('define-key2').value;
       if (key) {
         removeKeys([key], 2);
         renderKeys(getKeys(2), document.getElementsByClassName('sort-keys-wrapper2')[0]);
         document.getElementById('define-key2').value = '';
       }
-    });
-    document.querySelector('.sort-keys-wrapper2').addEventListener('click', function(e) {
+    };
+    document.querySelector('.sort-keys-wrapper2').onclick = function(e) {
       if (!e || !e.target || e.target.tagName !== 'INPUT') {
         return;
       }
@@ -436,7 +478,7 @@
         disableKeys([e.target.value], 2);
       }
       renderKeys(getKeys(2), document.getElementsByClassName('sort-keys-wrapper2')[0]);
-    });
+    };
 
   init();
 
