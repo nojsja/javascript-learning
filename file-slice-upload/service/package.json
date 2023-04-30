@@ -44,7 +44,7 @@
     "iconv-lite": "^0.5.1",
     "lowdb": "^1.0.0",
     "ping": "^0.2.2",
-    "qs": "^6.9.3",
+    "qs": "^6.9.7",
     "sudo-prompt": "^9.1.1"
   },
   "devDependencies": {
