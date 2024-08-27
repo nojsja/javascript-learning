@@ -21,40 +21,31 @@
  * @param {string} s
  * @return {string}
  */
-var longestPalindrome = function(s) {
-  if (!s || s.length < 1) return '';
-  var len = s.length;
-  var start = 0, max="", pre, next, bool;
+function longestPalindrome(string) {
+  const length = string.length;
+  let maxStr = string[0];
+  let i = 0, j, k;
 
-  while(start < len) {
-
-    tmp = s[start];
-    pre = next = start;
-    bool = true;
-
-    while(true) {
-      if (bool) {
-        if (s[pre-1] === s[start]) {
-          pre -= 1;
-        } else if (s[next+1] === s[start]) {
-          next += 1;  
-        } else {
-          bool = false;
-        }
+  while (i < length) {
+    k = i;
+    j = i+1;
+    if (string[k] !== string[j]) {
+      k = i - 1;
+    }
+    while (k >= 0 && j < length) {
+      if (string[k] === string[j]) {
+        const tmpLength = j - k + 1;
+        maxStr = tmpLength > maxStr.length ? string.slice(k, j + 1) : maxStr;
+        k--;
+        j++;
       } else {
-        if (!s[pre] || !s[next] || s[pre] !== s[next]) break;
-        bool = false;
-        pre -= 1;
-        next += 1;
+        break;
       }
     }
-
-    if (pre !== next) tmp = s.slice(pre+1, next);
-    max = (tmp.length > max.length) ? tmp : max;
-    start++;
+    i++;
   }
 
-  return max;
+  return maxStr;
 }
 
 console.log(longestPalindrome("tattarrattat"));
