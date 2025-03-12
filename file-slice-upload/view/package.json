@@ -30,7 +30,7 @@
     "mobx": "^4.4.1",
     "mobx-react": "^5.2.8",
     "prop-types": "^15.6.2",
-    "qs": "^6.9.3",
+    "qs": "^6.9.7",
     "react": "^16.5.1",
     "react-dom": "^16.5.1",
     "react-hot-loader": "^4.13.0",
