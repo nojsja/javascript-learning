@@ -33,7 +33,7 @@ function flattenLoop(treeNode) {
   const [originRightNode, tailNodeInRight] = flattenLoop(right);
   let tailNode;
 
-  tailNode = tailNodeInRight || originRightNode || tailNodeInLeft || newRightNode || treeNode;
+  tailNode = tailNodeInRight || tailNodeInLeft || treeNode;
 
   if (tailNodeInLeft) {
     tailNodeInLeft.right = originRightNode;
